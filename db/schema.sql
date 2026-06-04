@@ -31,6 +31,11 @@ CREATE TABLE users (
   city_id INT NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  email_verified TINYINT(1) NOT NULL DEFAULT 1,
+  verification_code CHAR(6) NULL,
+  verification_expires_at DATETIME NULL,
+  verification_attempts TINYINT NOT NULL DEFAULT 0,
+  verification_last_sent_at DATETIME NULL,
   FOREIGN KEY (city_id) REFERENCES cities(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
