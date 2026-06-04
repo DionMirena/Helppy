@@ -33,6 +33,10 @@ $router->post('/login',                    [AuthController::class,    'login']);
 $router->get('/register',                  [AuthController::class,    'registerForm']);
 $router->post('/register',                 [AuthController::class,    'register']);
 $router->post('/logout',                   [AuthController::class,    'logout']);
+$router->get('/verify-email',              [AuthController::class,    'verifyForm']);
+$router->post('/verify-email',             [AuthController::class,    'verify']);
+$router->post('/verify-email/resend',      [AuthController::class,    'resendVerification']);
+$router->post('/verify-email/cancel',      [AuthController::class,    'cancelVerification']);
 
 // CLIENT
 $router->get('/client/dashboard',          [ClientController::class,  'dashboard']);

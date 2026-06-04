@@ -113,4 +113,96 @@ final class AuthController extends Controller {
 
         $this->redirect($isProviderRole ? '/provider/dashboard' : '/');
     }
+
+    public function verifyForm(array $params = []): void {
+        $uid = Auth::pendingUid() ?? (Auth::check() ? (int)Auth::user()['id'] : null);
+        if ($uid === null) { $this->redirect('/login'); }
+
+        if (Auth::check() && Verification::isEmailVerified($uid) && Auth::pendingUid() === null) {
+            $this->postLoginRedirect(Auth::role());
+            return;
+        }
+
+        $email = (string)DB::q('SELECT email FROM users WHERE id=?', [$uid])->fetchColumn();
+        $this->render('auth/verify', [
+            'title'        => 'Verifiko emailin',
+            'masked_email' => self::maskEmail($email),
+            'resend_in'    => Verification::secondsUntilResend($uid),
+            'mode'         => Auth::pendingUid() !== null ? 'login' : 'signup',
+        ]);
+    }
+
+    public function verify(array $params = []): void {
+        $uid = Auth::pendingUid() ?? (Auth::check() ? (int)Auth::user()['id'] : null);
+        if ($uid === null) { $this->redirect('/login'); }
+
+        $code = trim((string)Request::post('code', ''));
+        if (!preg_match('/^\d{6}$/', $code)) {
+            $this->flash('danger', 'Shkruani nje kod 6-shifror.');
+            $this->redirect('/verify-email');
+        }
+
+        if (!Verification::verify($uid, $code)) {
+            $this->flash('danger', 'Kodi i pavlefshem ose i skaduar.');
+            $this->redirect('/verify-email');
+        }
+
+        if (Auth::pendingUid() !== null) {
+            $user = User::find($uid);
+            Auth::clearPending();
+            Auth::login($user);
+            $this->flash('success', 'Mire se erdhet, ' . $user['name'] . '!');
+            $this->postLoginRedirect($user['role']);
+        } else {
+            DB::q('UPDATE users SET email_verified=1 WHERE id=?', [$uid]);
+            $this->flash('success', 'Emaili u verifikua. Mire se erdhet ne Helppy!');
+            $this->postLoginRedirect(Auth::role());
+        }
+    }
+
+    public function resendVerification(array $params = []): void {
+        $uid = Auth::pendingUid() ?? (Auth::check() ? (int)Auth::user()['id'] : null);
+        if ($uid === null) { $this->redirect('/login'); }
+
+        $wait = Verification::secondsUntilResend($uid);
+        if ($wait > 0) {
+            $this->flash('danger', "Prisni $wait sekonda perpara se te dergoni perseri.");
+            $this->redirect('/verify-email');
+        }
+        Verification::generateCodeFor($uid);
+        try {
+            Verification::send($uid);
+            $this->flash('info', 'Kodi u dergua perseri.');
+        } catch (Throwable $e) {
+            $this->logMailError('resend', $e);
+            $this->flash('danger', 'Emaili nuk u dergua. Provoni perseri me vone.');
+        }
+        $this->redirect('/verify-email');
+    }
+
+    public function cancelVerification(array $params = []): void {
+        Auth::clearPending();
+        $this->flash('info', 'Anuluat verifikimin.');
+        $this->redirect('/login');
+    }
+
+    private static function maskEmail(string $email): string {
+        $at = strpos($email, '@');
+        if ($at === false || $at === 0) return $email;
+        return $email[0] . '***' . substr($email, $at);
+    }
+
+    private function postLoginRedirect(?string $role): void {
+        switch ($role) {
+            case 'admin':    $this->redirect('/admin'); break;
+            case 'provider': $this->redirect('/provider/dashboard'); break;
+            default:         $this->redirect('/');
+        }
+    }
+
+    private function logMailError(string $context, Throwable $e): void {
+        $dir = APP_ROOT . '/storage';
+        if (!is_dir($dir)) @mkdir($dir, 0775, true);
+        error_log(date('c') . " [$context] " . $e->getMessage() . PHP_EOL, 3, $dir . '/mail.log');
+    }
 }
