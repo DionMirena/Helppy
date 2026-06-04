@@ -38,6 +38,19 @@ final class Auth {
         return $_SESSION['role'] ?? null;
     }
 
+    public static function pendingUid(): ?int {
+        return isset($_SESSION['pending_2fa_uid']) ? (int)$_SESSION['pending_2fa_uid'] : null;
+    }
+
+    public static function setPending(int $uid): void {
+        session_regenerate_id(true);
+        $_SESSION['pending_2fa_uid'] = $uid;
+    }
+
+    public static function clearPending(): void {
+        unset($_SESSION['pending_2fa_uid']);
+    }
+
     /** Require login + optional role. Sends 403/redirect and exits if not allowed. */
     public static function require(?string $role = null): void {
         if (!self::check()) {
