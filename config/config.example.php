@@ -9,6 +9,10 @@ return [
         'pass'     => '',
         'charset'  => 'utf8mb4',
     ],
+    'base_url2'   => 'http://localhost/Helppy.com/public',
+    'upload_dir2' => __DIR__ . '/../public/uploads',
+    'upload_url2' => 'http://localhost/Helppy.com/public/uploads',
+    
     'base_url'   => 'http://localhost/Helppy.com/public',
     'upload_dir' => __DIR__ . '/../public/uploads',
     'upload_url' => 'http://localhost/Helppy.com/public/uploads',
