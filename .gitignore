@@ -1,0 +1,7 @@
+.superpowers/
+/public/uploads/*
+!/public/uploads/.gitkeep
+/config/config.php
+*.log
+.DS_Store
+Thumbs.db
