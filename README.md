@@ -40,6 +40,51 @@ If you set up a Laragon virtual host (e.g. `helppy.test`) pointing at the `/publ
 
 Six sample providers are seeded across multiple cities and categories, including two with `is_premium = 1` so the home page featured strip has something to rank.
 
+## Email verification setup (REQUIRED for login)
+
+Every login and registration sends a 6-digit code to the user's email. Without working Gmail SMTP credentials, **no one can log in** — including admin. Set this up before opening the site.
+
+### Generate a Gmail App Password
+
+1. Open https://myaccount.google.com/security
+2. Turn on "2-Step Verification" if it isn't already on.
+3. Click "App passwords" (search if you can't find it). Name it "Helppy", app type "Mail", device "Other (Windows Computer)".
+4. Copy the 16-character password Google shows you. You will not see it again.
+
+### Configure Helppy
+
+Edit `config/config.php`:
+
+```php
+'mailer' => [
+    'host'     => 'smtp.gmail.com',
+    'port'     => 587,
+    'username' => 'youremail@gmail.com',          // your Gmail
+    'password' => 'xxxxxxxxxxxxxxxx',             // the 16-char App Password
+    'from'     => 'Helppy.com <youremail@gmail.com>',
+    'reply_to' => '',
+    'timeout'  => 10,
+],
+```
+
+The `from` address must use the same Gmail you authenticate with — otherwise Gmail rejects the message.
+
+### Update the seeded admin email
+
+The seeded `admin@helppy.com` cannot receive emails. Before logging in as admin:
+
+```sql
+UPDATE users SET email = 'youremail@gmail.com' WHERE id = 1;
+```
+
+After that, log in normally — a 2FA code arrives at your Gmail every login.
+
+### Recovery if you lock yourself out
+
+If Gmail breaks or the App Password is revoked:
+- Non-admin user: edit their `users.email` in phpMyAdmin to a working Gmail.
+- Admin: same — edit `users.email` to a Gmail you currently control.
+
 ## Folder structure
 
 ```
