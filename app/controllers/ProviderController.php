@@ -28,6 +28,7 @@ final class ProviderController extends Controller {
 
     public function dashboard(array $params = []): void {
         Auth::require('provider');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $uid = (int)Auth::user()['id'];
         $provider = Provider::find($uid);
         $this->render('provider/dashboard', [
@@ -41,6 +42,7 @@ final class ProviderController extends Controller {
 
     public function update(array $params = []): void {
         Auth::require('provider');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $uid = (int)Auth::user()['id'];
 
         $name        = trim((string)Request::post('name', ''));
@@ -74,6 +76,7 @@ final class ProviderController extends Controller {
 
     public function uploadPhoto(array $params = []): void {
         Auth::require('provider');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $uid = (int)Auth::user()['id'];
 
         $file = Request::file('photo');

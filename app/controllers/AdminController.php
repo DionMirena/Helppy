@@ -4,6 +4,7 @@ declare(strict_types=1);
 final class AdminController extends Controller {
     public function index(array $params = []): void {
         Auth::require('admin');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $this->render('admin/index', [
             'title'  => 'Admin',
             'counts' => User::counts(),
@@ -12,6 +13,7 @@ final class AdminController extends Controller {
 
     public function providers(array $params = []): void {
         Auth::require('admin');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $this->render('admin/providers', [
             'title'     => 'Punetoret',
             'providers' => Provider::allWithStatus(),
@@ -20,6 +22,7 @@ final class AdminController extends Controller {
 
     public function toggleActive(array $params = []): void {
         Auth::require('admin');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $id = (int)($params['id'] ?? 0);
         if ($id <= 0) { $this->redirect('/admin/providers'); }
         User::toggleActive($id);
@@ -29,6 +32,7 @@ final class AdminController extends Controller {
 
     public function togglePremium(array $params = []): void {
         Auth::require('admin');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $id = (int)($params['id'] ?? 0);
         if ($id <= 0) { $this->redirect('/admin/providers'); }
         Provider::togglePremium($id);
@@ -38,6 +42,7 @@ final class AdminController extends Controller {
 
     public function categories(array $params = []): void {
         Auth::require('admin');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $this->render('admin/categories', [
             'title'      => 'Kategorite',
             'categories' => Category::all(),
@@ -46,6 +51,7 @@ final class AdminController extends Controller {
 
     public function createCategory(array $params = []): void {
         Auth::require('admin');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $name = trim((string)Request::post('name', ''));
         $slug = trim((string)Request::post('slug', ''));
         $icon = trim((string)Request::post('icon', '')) ?: null;
@@ -65,6 +71,7 @@ final class AdminController extends Controller {
 
     public function deleteCategory(array $params = []): void {
         Auth::require('admin');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $id = (int)($params['id'] ?? 0);
         if ($id <= 0) { $this->redirect('/admin/categories'); }
         if (Category::hasProviders($id)) {
@@ -78,6 +85,7 @@ final class AdminController extends Controller {
 
     public function deleteReview(array $params = []): void {
         Auth::require('admin');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $id = (int)($params['id'] ?? 0);
         if ($id <= 0) { $this->redirect('/admin'); }
         $r = Review::find($id);

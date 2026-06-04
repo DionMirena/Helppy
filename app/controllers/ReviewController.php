@@ -4,6 +4,7 @@ declare(strict_types=1);
 final class ReviewController extends Controller {
     public function store(array $params = []): void {
         Auth::require('client');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $providerId = (int)($params['id'] ?? 0);
         $clientId   = (int)Auth::user()['id'];
         $rating     = (int)Request::post('rating', 0);
@@ -32,6 +33,7 @@ final class ReviewController extends Controller {
 
     public function destroy(array $params = []): void {
         Auth::require();
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $id = (int)($params['id'] ?? 0);
         $r  = Review::find($id);
         if (!$r) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 final class ClientController extends Controller {
     public function dashboard(array $params = []): void {
         Auth::require('client');
+        if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $uid     = (int)Auth::user()['id'];
         $reviews = Review::byClient($uid);
         $this->render('client/dashboard', [
