@@ -7,7 +7,7 @@ final class ProviderController extends Controller {
         if ($id <= 0) { $this->notFound(); return; }
 
         $provider = Provider::find($id);
-        if (!$provider || empty($provider['is_active'])) { $this->notFound(); return; }
+        if (!$provider || empty($provider['is_active']) || empty($provider['email_verified'])) { $this->notFound(); return; }
 
         Provider::incrementViews($id);
 

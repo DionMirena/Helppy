@@ -4,7 +4,7 @@
     <thead>
       <tr>
         <th>ID</th><th>Emri</th><th>Email</th><th>Profesioni</th>
-        <th>Aktiv</th><th>Premium</th><th>Veprime</th>
+        <th>Email</th><th>Aktiv</th><th>Premium</th><th>Veprime</th>
       </tr>
     </thead>
     <tbody>
@@ -14,6 +14,7 @@
         <td><a href="<?= e(CONFIG['base_url']) ?>/provider/<?= (int)$p['id'] ?>" target="_blank"><?= e($p['name']) ?></a></td>
         <td><?= e($p['email']) ?></td>
         <td><?= e($p['profession']) ?></td>
+        <td><?= $p['email_verified'] ? '<i class="bi bi-check-circle-fill text-success" title="I verifikuar"></i>' : '<i class="bi bi-x-circle-fill text-danger" title="I paverifikuar"></i>' ?></td>
         <td><?= $p['is_active']  ? '<span class="badge bg-success">Aktiv</span>' : '<span class="badge bg-secondary">Joaktiv</span>' ?></td>
         <td><?= $p['is_premium'] ? '<span class="badge bg-warning text-dark">Premium</span>' : '<span class="text-muted">—</span>' ?></td>
         <td>

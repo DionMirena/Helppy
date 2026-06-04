@@ -4,7 +4,7 @@ declare(strict_types=1);
 final class Provider {
     /** Find a provider with joined user + city info. */
     public static function find(int $userId): ?array {
-        $sql = "SELECT u.id, u.name, u.email, u.phone, u.is_active, u.created_at,
+        $sql = "SELECT u.id, u.name, u.email, u.phone, u.is_active, u.email_verified, u.created_at,
                        c.name AS city,
                        p.profession, p.bio, p.photo, p.is_company, p.company_name,
                        p.is_premium, p.views
@@ -28,7 +28,7 @@ final class Provider {
                        (SELECT AVG(rating) FROM reviews WHERE provider_id = p.user_id) AS avg_rating,
                        (SELECT COUNT(*)   FROM reviews WHERE provider_id = p.user_id) AS review_count
                 FROM providers p
-                JOIN users u ON u.id = p.user_id AND u.is_active = 1
+                JOIN users u ON u.id = p.user_id AND u.is_active = 1 AND u.email_verified = 1
                 LEFT JOIN cities c ON c.id = u.city_id
                 WHERE 1=1 ";
         $args = [];
@@ -45,7 +45,7 @@ final class Provider {
                        p.profession, p.photo, p.is_company, p.is_premium,
                        (SELECT AVG(rating) FROM reviews WHERE provider_id = p.user_id) AS avg_rating
                 FROM providers p
-                JOIN users u ON u.id = p.user_id AND u.is_active = 1
+                JOIN users u ON u.id = p.user_id AND u.is_active = 1 AND u.email_verified = 1
                 LEFT JOIN cities c ON c.id = u.city_id
                 ORDER BY p.is_premium DESC, RAND()
                 LIMIT $limit";
@@ -104,7 +104,7 @@ final class Provider {
     }
 
     public static function allWithStatus(): array {
-        return DB::q("SELECT u.id, u.name, u.email, u.is_active, u.created_at,
+        return DB::q("SELECT u.id, u.name, u.email, u.is_active, u.email_verified, u.created_at,
                              p.profession, p.is_premium
                       FROM providers p
                       JOIN users u ON u.id = p.user_id
