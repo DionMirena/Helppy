@@ -21,14 +21,18 @@ final class AuthController extends Controller {
             $this->redirect('/login');
         }
 
-        Auth::login($user);
-        $this->flash('success', 'Mire se erdhet, ' . $user['name'] . '!');
-
-        switch ($user['role']) {
-            case 'admin':    $this->redirect('/admin'); break;
-            case 'provider': $this->redirect('/provider/dashboard'); break;
-            default:         $this->redirect('/');
+        // Every successful credential check issues a 2FA challenge — no role exemption.
+        Verification::generateCodeFor((int)$user['id']);
+        try {
+            Verification::send((int)$user['id']);
+        } catch (Throwable $e) {
+            $this->logMailError('login', $e);
+            $this->flash('danger', 'Kodi i verifikimit nuk u dergua. Provoni perseri.');
+            $this->redirect('/login');
         }
+        Auth::setPending((int)$user['id']);
+        $this->flash('info', 'Nje kod verifikimi u dergua ne emailin tuaj.');
+        $this->redirect('/verify-email');
     }
 
     public function logout(array $params = []): void {
@@ -107,11 +111,20 @@ final class AuthController extends Controller {
             $this->redirect('/register');
         }
 
+        // Mark new user as unverified, generate code, send email
+        DB::q('UPDATE users SET email_verified=0 WHERE id=?', [$uid]);
+        Verification::generateCodeFor($uid);
+        try {
+            Verification::send($uid);
+        } catch (Throwable $e) {
+            $this->logMailError('signup', $e);
+            $this->flash('danger', 'Llogaria u krijua, por emaili nuk u dergua. Provoni te dergoni perseri.');
+        }
+
         $user = User::find($uid);
         Auth::login($user);
-        $this->flash('success', 'Llogaria u krijua. Mire se erdhet!');
-
-        $this->redirect($isProviderRole ? '/provider/dashboard' : '/');
+        $this->flash('success', 'Llogaria u krijua. Verifikoni emailin per te vazhduar.');
+        $this->redirect('/verify-email');
     }
 
     public function verifyForm(array $params = []): void {
