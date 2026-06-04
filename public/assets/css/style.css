@@ -1,0 +1,44 @@
+:root {
+  --helppy-green: #4a6741;
+  --helppy-green-dark: #3a5234;
+  --helppy-green-light: #6b8a61;
+  --helppy-bg: #f3f4f6;
+}
+body { background: var(--helppy-bg); }
+.helppy-nav { background: var(--helppy-green); }
+.helppy-footer { background: var(--helppy-green-dark); color: white; }
+
+.btn-helppy { background: var(--helppy-green); color: white; border: none; }
+.btn-helppy:hover { background: var(--helppy-green-dark); color: white; }
+
+.category-chip {
+  display: inline-block; padding: 8px 16px; border-radius: 20px;
+  background: #d1d5db; color: #111; text-decoration: none;
+  margin: 4px; font-size: 14px; transition: background .15s;
+}
+.category-chip:hover { background: #b3b9c2; color: #111; }
+.category-chip.active { background: var(--helppy-green); color: white; }
+
+.provider-card {
+  background: white; border-radius: 12px; padding: 16px;
+  display: flex; gap: 12px; align-items: center; margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.provider-card .avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: #e5e7eb; }
+.provider-card .info { flex: 1; min-width: 0; }
+.provider-card .name { font-weight: 600; margin: 0; }
+.provider-card .profession { color: #6b7280; font-size: 13px; margin: 0; }
+.provider-card .stars { color: #f59e0b; font-size: 14px; }
+.provider-card .phone { color: #6b7280; font-size: 13px; }
+.provider-card .call-btn { background: var(--helppy-green); color: white; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; white-space: nowrap; }
+.provider-card .call-btn:hover { background: var(--helppy-green-dark); color: white; }
+.provider-card .premium-badge { background: #f59e0b; color: white; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-left: 6px; }
+
+.hero { background: var(--helppy-bg); padding: 24px 0; }
+.hero h1 { font-weight: 700; }
+
+.profile-photo { width: 160px; height: 160px; border-radius: 50%; object-fit: cover; background: #e5e7eb; }
+
+.review-card { background: white; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+.review-card .stars { color: #f59e0b; }
+.review-card .meta { color: #6b7280; font-size: 12px; }
