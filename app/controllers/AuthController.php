@@ -160,9 +160,6 @@ final class AuthController extends Controller {
             $this->redirect('/verify-email');
         }
 
-        // Code matched — clear dev fallback (if any).
-        unset($_SESSION['_dev_code']);
-
         if (Auth::pendingUid() !== null) {
             $user = User::find($uid);
             Auth::clearPending();
