@@ -14,6 +14,21 @@
         </li>
         <?php if (Auth::check()): ?>
           <?php $u = Auth::user(); ?>
+
+          <li class="nav-item">
+            <a class="nav-link text-white nav-icon-link" href="<?= e(CONFIG['base_url']) ?>/chat" title="Bisedat" aria-label="Bisedat">
+              <i class="bi bi-chat-dots"></i>
+              <span class="nav-badge" data-helppy-badge="chat" hidden>0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white nav-icon-link" href="<?= e(CONFIG['base_url']) ?>/notifications" title="Njoftimet" aria-label="Njoftimet">
+              <i class="bi bi-bell"></i>
+              <span class="nav-badge" data-helppy-badge="notifications" hidden>0</span>
+            </a>
+          </li>
+          <li class="nav-item"><a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/bookings">Rezervimet</a></li>
+
           <li class="nav-item"><span class="nav-link text-white-50"><?= e($u['name']) ?></span></li>
           <?php if (Auth::role() === 'admin'): ?>
             <li class="nav-item"><a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/admin">Admin</a></li>

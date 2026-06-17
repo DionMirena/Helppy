@@ -21,6 +21,9 @@ spl_autoload_register(function (string $class): void {
     }
 });
 
+// Eager-load Helpers (used by controllers as a static utility).
+require APP_ROOT . '/app/core/Helpers.php';
+
 $router = new Router();
 
 // PUBLIC
@@ -38,6 +41,25 @@ $router->get('/posts/{id}/edit',           [PostController::class,    'editForm'
 $router->post('/posts/{id}',               [PostController::class,    'update']);
 $router->post('/posts/{id}/close',         [PostController::class,    'close']);
 $router->post('/posts/{id}/delete',        [PostController::class,    'destroy']);
+
+// BOOKINGS
+$router->get('/provider/{id}/book',        [BookingController::class, 'createForm']);
+$router->post('/provider/{id}/book',       [BookingController::class, 'store']);
+$router->get('/bookings',                  [BookingController::class, 'index']);
+$router->get('/bookings/{id}',             [BookingController::class, 'show']);
+$router->post('/bookings/{id}/{action}',   [BookingController::class, 'transition']);
+
+// NOTIFICATIONS
+$router->get('/notifications',             [NotificationController::class, 'index']);
+$router->post('/notifications/read-all',   [NotificationController::class, 'readAll']);
+$router->get('/api/notifications/unread.json', [NotificationController::class, 'unreadJson']);
+
+// CHAT
+$router->get('/chat',                          [ChatController::class, 'index']);
+$router->get('/chat/with/{user_id}',           [ChatController::class, 'start']);
+$router->get('/chat/{id}',                     [ChatController::class, 'show']);
+$router->post('/chat/{id}/message',            [ChatController::class, 'send']);
+$router->get('/api/chat/{id}/messages.json',   [ChatController::class, 'pollMessages']);
 
 $router->get('/login',                     [AuthController::class,    'loginForm']);
 $router->post('/login',                    [AuthController::class,    'login']);

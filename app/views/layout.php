@@ -16,5 +16,7 @@
 </main>
 <?php View::partial('footer'); ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>window.HELPPY_BASE = <?= json_encode(CONFIG['base_url']) ?>;</script>
+<script src="<?= e(CONFIG['base_url']) ?>/assets/js/helppy.js?v=1"></script>
 </body>
 </html>

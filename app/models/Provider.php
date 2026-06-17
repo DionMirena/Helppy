@@ -6,7 +6,7 @@ final class Provider {
     public static function find(int $userId): ?array {
         $sql = "SELECT u.id, u.name, u.email, u.phone, u.is_active, u.email_verified, u.created_at,
                        c.name AS city,
-                       p.profession, p.bio, p.photo, p.is_company, p.company_name,
+                       p.profession, p.bio, p.skills_services, p.hourly_rate, p.photo, p.is_company, p.company_name,
                        p.is_premium, p.views
                 FROM providers p
                 JOIN users u ON u.id = p.user_id
@@ -81,7 +81,7 @@ final class Provider {
     }
 
     public static function update(int $userId, array $fields): void {
-        $allowed = ['profession','bio','company_name'];
+        $allowed = ['profession','bio','company_name','skills_services','hourly_rate'];
         $sets = []; $args = [];
         foreach ($fields as $k => $v) {
             if (in_array($k, $allowed, true)) { $sets[] = "$k = ?"; $args[] = $v; }

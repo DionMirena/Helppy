@@ -45,17 +45,24 @@ final class ProviderController extends Controller {
         if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $uid = (int)Auth::user()['id'];
 
-        $name        = trim((string)Request::post('name', ''));
-        $phone       = trim((string)Request::post('phone', ''));
-        $cityId      = Request::post('city_id');
-        $cityId      = is_numeric($cityId) ? (int)$cityId : null;
-        $profession  = trim((string)Request::post('profession', ''));
-        $bio         = trim((string)Request::post('bio', ''));
-        $companyName = trim((string)Request::post('company_name', ''));
-        $categoryIds = array_map('intval', (array)Request::post('categories', []));
+        $name           = trim((string)Request::post('name', ''));
+        $phone          = trim((string)Request::post('phone', ''));
+        $cityId         = Request::post('city_id');
+        $cityId         = is_numeric($cityId) ? (int)$cityId : null;
+        $profession     = trim((string)Request::post('profession', ''));
+        $bio            = trim((string)Request::post('bio', ''));
+        $skills         = trim((string)Request::post('skills_services', ''));
+        $hourlyRate     = Request::post('hourly_rate');
+        $hourlyRate     = ($hourlyRate === '' || $hourlyRate === null || !is_numeric($hourlyRate)) ? null : (float)$hourlyRate;
+        $companyName    = trim((string)Request::post('company_name', ''));
+        $categoryIds    = array_map('intval', (array)Request::post('categories', []));
 
         if ($name === '' || $profession === '') {
             $this->flash('danger', 'Emri dhe profesioni jane te detyrueshem.');
+            $this->redirect('/provider/dashboard');
+        }
+        if ($hourlyRate !== null && ($hourlyRate < 0 || $hourlyRate > 999999)) {
+            $this->flash('danger', 'Tarifa orare e pavlefshme.');
             $this->redirect('/provider/dashboard');
         }
 
@@ -63,9 +70,11 @@ final class ProviderController extends Controller {
               [$name, $phone ?: null, $cityId, $uid]);
 
         Provider::update($uid, [
-            'profession'   => $profession,
-            'bio'          => $bio !== '' ? $bio : null,
-            'company_name' => $companyName !== '' ? $companyName : null,
+            'profession'      => $profession,
+            'bio'             => $bio !== '' ? $bio : null,
+            'skills_services' => $skills !== '' ? $skills : null,
+            'hourly_rate'     => $hourlyRate,
+            'company_name'    => $companyName !== '' ? $companyName : null,
         ]);
 
         if ($categoryIds) Provider::setCategories($uid, $categoryIds);
