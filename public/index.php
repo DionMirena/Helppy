@@ -28,6 +28,10 @@ $router->get('/',                          [HomeController::class,    'index']);
 $router->get('/search',                    [SearchController::class,  'results']);
 $router->get('/provider/dashboard',        [ProviderController::class,'dashboard']);
 $router->get('/provider/{id}',             [ProviderController::class,'show']);
+
+// POSTS
+$router->get('/posts',                     [PostController::class,    'index']);
+
 $router->get('/login',                     [AuthController::class,    'loginForm']);
 $router->post('/login',                    [AuthController::class,    'login']);
 $router->get('/register',                  [AuthController::class,    'registerForm']);

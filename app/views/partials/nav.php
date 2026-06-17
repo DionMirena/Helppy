@@ -9,6 +9,9 @@
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navmenu">
       <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/posts">Postimet</a>
+        </li>
         <?php if (Auth::check()): ?>
           <?php $u = Auth::user(); ?>
           <li class="nav-item"><span class="nav-link text-white-50"><?= e($u['name']) ?></span></li>
