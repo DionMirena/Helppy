@@ -5,8 +5,9 @@ $photoUrl = !empty($p['photo'])
 $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
 ?>
 <div class="container py-4">
-  <div class="row">
-    <div class="col-md-4 text-center">
+  <div class="profile-card mb-4">
+  <div class="row align-items-center">
+    <div class="col-md-4 text-center mb-3 mb-md-0">
       <img class="profile-photo" src="<?= e($photoUrl) ?>" alt="<?= e($p['name']) ?>">
     </div>
     <div class="col-md-8">
@@ -44,10 +45,9 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
       <?php endif; ?>
     </div>
   </div>
+  </div>
 
-  <hr class="my-4">
-
-  <h3>Vleresime (<?= count($reviews) ?>)</h3>
+  <h3 class="section-title">Vleresime (<?= count($reviews) ?>)</h3>
 
   <?php if (Auth::check() && Auth::role() === 'client' && !$alreadyReviewed): ?>
     <form method="post" action="<?= e(CONFIG['base_url']) ?>/provider/<?= (int)$p['id'] ?>/review" class="mb-4 review-card">
