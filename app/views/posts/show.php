@@ -63,7 +63,7 @@ $phoneRaw = !empty($p['author_phone']) ? preg_replace('/[^0-9+]/', '', $p['autho
           <i class="bi <?= e($p['category_icon'] ?: 'bi-tag') ?>"></i> <?= e($p['category_name']) ?>
           &middot; <i class="bi bi-geo-alt"></i> <?= e($p['city_name']) ?>
           &middot; <i class="bi bi-person"></i> <?= e($p['author_name']) ?>
-          &middot; <?= e(date('d M Y', strtotime((string)$p['created_at']))) ?>
+          &middot; <?= e(timeAgoSq((string)$p['created_at'])) ?>
         </p>
 
         <div class="mb-3"><?= nl2br(e($p['description'])) ?></div>

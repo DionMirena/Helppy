@@ -39,6 +39,7 @@ if ($p['type'] === 'offer' && ($p['price_from'] !== null || $p['price_to'] !== n
     <?php endif; ?>
     <p class="post-card-author">
       <i class="bi bi-person"></i> <?= e($p['author_name']) ?>
+      <span class="text-muted">&middot; <?= e(timeAgoSq((string)$p['created_at'])) ?></span>
     </p>
   </div>
 </a>
