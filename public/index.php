@@ -31,6 +31,8 @@ $router->get('/provider/{id}',             [ProviderController::class,'show']);
 
 // POSTS
 $router->get('/posts',                     [PostController::class,    'index']);
+$router->get('/posts/create',              [PostController::class,    'createForm']);
+$router->post('/posts',                    [PostController::class,    'store']);
 
 $router->get('/login',                     [AuthController::class,    'loginForm']);
 $router->post('/login',                    [AuthController::class,    'login']);
