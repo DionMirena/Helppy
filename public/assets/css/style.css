@@ -422,3 +422,24 @@ a:hover { color: var(--helppy-green-darker); }
 .urgency-low    { background: #e0e7ff; color: #3730a3; }
 .urgency-normal { background: #fef3c7; color: #92400e; }
 .urgency-high   { background: #fee2e2; color: #991b1b; }
+
+/* ---------- Post type tabs ---------- */
+.post-type-tabs {
+  display: inline-flex;
+  background: #fff;
+  padding: 4px;
+  border-radius: var(--helppy-radius-pill);
+  box-shadow: var(--helppy-shadow);
+  gap: 2px;
+}
+.post-type-tab {
+  padding: 8px 18px;
+  border-radius: var(--helppy-radius-pill);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--helppy-text);
+  text-decoration: none;
+  transition: background .15s, color .15s;
+}
+.post-type-tab:hover { color: var(--helppy-green-dark); }
+.post-type-tab.is-active { background: var(--helppy-green); color: #fff; }
