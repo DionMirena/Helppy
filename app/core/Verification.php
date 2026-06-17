@@ -12,7 +12,16 @@ final class Verification {
         return $code;
     }
 
-    /** Sends the current verification code via Mailer. Rethrows on transport failure. */
+    /**
+     * Sends the current verification code via Mailer.
+     *
+     * Behavior on failure:
+     *   - production (debug=false): rethrows so the caller can log/redirect.
+     *   - dev (debug=true): swallows the failure, logs the attempt to
+     *     storage/mail.log, and stashes the code in $_SESSION['_dev_code']
+     *     so the verify-email view can surface it. This lets you develop
+     *     without configured SMTP credentials.
+     */
     public static function send(int $userId): void {
         $row = DB::q('SELECT name, email, verification_code FROM users WHERE id=?', [$userId])->fetch();
         if (!$row || $row['verification_code'] === null) {
@@ -28,7 +37,32 @@ final class Verification {
             "Ekipi Helppy.com\n",
             ['{NAME}' => $row['name'], '{CODE}' => $row['verification_code']]
         );
-        Mailer::send($row['email'], $subject, $body);
+
+        try {
+            Mailer::send($row['email'], $subject, $body);
+            // Production / successful send: do NOT leak the code into session.
+            unset($_SESSION['_dev_code']);
+            return;
+        } catch (Throwable $e) {
+            // Re-throw in prod so the caller can show a real error.
+            if (empty(CONFIG['debug'])) {
+                throw $e;
+            }
+
+            // DEV fallback: code didn't go out but we know it. Make it usable.
+            $stamp = date('c');
+            $logLine = "{$stamp} [DEV-FALLBACK] to={$row['email']} code={$row['verification_code']} reason=" . $e->getMessage() . "\n";
+            $logDir  = APP_ROOT . '/storage';
+            if (!is_dir($logDir)) @mkdir($logDir, 0775, true);
+            @file_put_contents($logDir . '/mail.log', $logLine, FILE_APPEND);
+
+            // Stash the code so verify.php can surface it as a dev banner.
+            $_SESSION['_dev_code'] = [
+                'code'  => (string)$row['verification_code'],
+                'email' => (string)$row['email'],
+                'when'  => time(),
+            ];
+        }
     }
 
     /** TRUE on match (clears columns), FALSE otherwise. 5 wrong attempts nulls the code. */
