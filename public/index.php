@@ -28,6 +28,17 @@ $router->get('/',                          [HomeController::class,    'index']);
 $router->get('/search',                    [SearchController::class,  'results']);
 $router->get('/provider/dashboard',        [ProviderController::class,'dashboard']);
 $router->get('/provider/{id}',             [ProviderController::class,'show']);
+
+// POSTS
+$router->get('/posts',                     [PostController::class,    'index']);
+$router->get('/posts/create',              [PostController::class,    'createForm']);
+$router->post('/posts',                    [PostController::class,    'store']);
+$router->get('/posts/{id}',                [PostController::class,    'show']);
+$router->get('/posts/{id}/edit',           [PostController::class,    'editForm']);
+$router->post('/posts/{id}',               [PostController::class,    'update']);
+$router->post('/posts/{id}/close',         [PostController::class,    'close']);
+$router->post('/posts/{id}/delete',        [PostController::class,    'destroy']);
+
 $router->get('/login',                     [AuthController::class,    'loginForm']);
 $router->post('/login',                    [AuthController::class,    'login']);
 $router->get('/register',                  [AuthController::class,    'registerForm']);
@@ -56,6 +67,8 @@ $router->get('/admin/categories',          [AdminController::class,   'categorie
 $router->post('/admin/categories',         [AdminController::class,   'createCategory']);
 $router->post('/admin/categories/{id}/delete', [AdminController::class,'deleteCategory']);
 $router->post('/admin/reviews/{id}/delete',[AdminController::class,   'deleteReview']);
+$router->get('/admin/posts',               [AdminController::class,   'posts']);
+$router->post('/admin/posts/{id}/hide',    [AdminController::class,   'hidePost']);
 
 $url = $_GET['url'] ?? '/';
 $router->dispatch(Request::method(), $url);

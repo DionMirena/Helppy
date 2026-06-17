@@ -94,4 +94,22 @@ final class AdminController extends Controller {
         $this->flash('info', 'Vleresimi u fshi.');
         $this->redirect('/provider/' . (int)$r['provider_id']);
     }
+
+    public function posts(array $params = []): void {
+        Auth::require('admin');
+        $posts = Post::allForAdmin(200);
+        $this->render('admin/posts', [
+            'title' => 'Postimet — Admin',
+            'posts' => $posts,
+        ]);
+    }
+
+    public function hidePost(array $params = []): void {
+        Auth::require('admin');
+        $id = (int)($params['id'] ?? 0);
+        if ($id <= 0 || !Post::find($id)) { $this->notFound(); return; }
+        Post::hide($id);
+        $this->flash('success', 'Postimi u fshi nga publiku.');
+        $this->redirect('/admin/posts');
+    }
 }

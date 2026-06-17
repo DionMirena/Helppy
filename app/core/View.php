@@ -27,3 +27,15 @@ final class View {
 function e(?string $s): string {
     return htmlspecialchars($s ?? '', ENT_QUOTES, 'UTF-8');
 }
+
+/** Albanian relative time helper: "tani", "para X minutash/orësh/ditësh". */
+function timeAgoSq(string $dt): string {
+    $t = strtotime($dt);
+    if ($t === false) return '';
+    $diff = time() - $t;
+    if ($diff < 60)         return 'tani';
+    if ($diff < 3600)       { $n = (int)floor($diff / 60);    return "para $n " . ($n === 1 ? 'minute' : 'minutash'); }
+    if ($diff < 86400)      { $n = (int)floor($diff / 3600);  return "para $n " . ($n === 1 ? 'ore'    : 'orësh'); }
+    if ($diff < 30 * 86400) { $n = (int)floor($diff / 86400); return "para $n " . ($n === 1 ? 'dite'   : 'ditësh'); }
+    return date('d M Y', $t);
+}
