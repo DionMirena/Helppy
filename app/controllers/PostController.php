@@ -182,6 +182,34 @@ final class PostController extends Controller {
         $this->redirect('/posts/' . $postId);
     }
 
+    public function show(array $params = []): void {
+        $id = (int)($params['id'] ?? 0);
+        if ($id <= 0) { $this->notFound(); return; }
+
+        $post = Post::find($id);
+        if (!$post) { $this->notFound(); return; }
+
+        $viewerIsOwner = Auth::check() && (int)Auth::user()['id'] === (int)$post['user_id'];
+        $viewerIsAdmin = Auth::role() === 'admin';
+
+        // Hidden posts: visible to owner + admin only.
+        if ($post['status'] === 'hidden' && !$viewerIsOwner && !$viewerIsAdmin) {
+            $this->notFound();
+            return;
+        }
+
+        Post::incrementViews($id);
+        $photos = PostPhoto::forPost($id);
+
+        $this->render('posts/show', [
+            'title'         => $post['title'],
+            'p'             => $post,
+            'photos'        => $photos,
+            'viewerIsOwner' => $viewerIsOwner,
+            'viewerIsAdmin' => $viewerIsAdmin,
+        ]);
+    }
+
     /** Convert a stringy number to float or null. Empty => null. */
     private static function numOrNull($v): ?float {
         if ($v === null || $v === '' || $v === false) return null;

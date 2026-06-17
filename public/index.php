@@ -33,6 +33,7 @@ $router->get('/provider/{id}',             [ProviderController::class,'show']);
 $router->get('/posts',                     [PostController::class,    'index']);
 $router->get('/posts/create',              [PostController::class,    'createForm']);
 $router->post('/posts',                    [PostController::class,    'store']);
+$router->get('/posts/{id}',                [PostController::class,    'show']);
 
 $router->get('/login',                     [AuthController::class,    'loginForm']);
 $router->post('/login',                    [AuthController::class,    'login']);
