@@ -67,6 +67,7 @@ $router->get('/admin/categories',          [AdminController::class,   'categorie
 $router->post('/admin/categories',         [AdminController::class,   'createCategory']);
 $router->post('/admin/categories/{id}/delete', [AdminController::class,'deleteCategory']);
 $router->post('/admin/reviews/{id}/delete',[AdminController::class,   'deleteReview']);
+$router->get('/admin/posts',               [AdminController::class,   'posts']);
 $router->post('/admin/posts/{id}/hide',    [AdminController::class,   'hidePost']);
 
 $url = $_GET['url'] ?? '/';
