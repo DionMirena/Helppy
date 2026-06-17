@@ -368,6 +368,42 @@ final class PostController extends Controller {
         $this->redirect('/posts/' . $id);
     }
 
+    public function close(array $params = []): void {
+        Auth::require();
+        $id = (int)($params['id'] ?? 0);
+        $post = Post::find($id);
+        if (!$post) { $this->notFound(); return; }
+        $uid = (int)Auth::user()['id'];
+        if ((int)$post['user_id'] !== $uid && Auth::role() !== 'admin') {
+            http_response_code(403); View::render('errors/403', []); return;
+        }
+        Post::close($id);
+        $this->flash('success', 'Postimi u mbyll.');
+        $this->redirect('/posts/' . $id);
+    }
+
+    public function destroy(array $params = []): void {
+        Auth::require();
+        $id = (int)($params['id'] ?? 0);
+        $post = Post::find($id);
+        if (!$post) { $this->notFound(); return; }
+        $uid = (int)Auth::user()['id'];
+        if ((int)$post['user_id'] !== $uid && Auth::role() !== 'admin') {
+            http_response_code(403); View::render('errors/403', []); return;
+        }
+
+        // Remove photo files from disk
+        $filenames = PostPhoto::removeAllForPost($id);
+        foreach ($filenames as $fn) {
+            $p = CONFIG['upload_dir'] . DIRECTORY_SEPARATOR . $fn;
+            if (is_file($p)) @unlink($p);
+        }
+        Post::delete($id);
+
+        $this->flash('success', 'Postimi u fshi.');
+        $this->redirect('/posts');
+    }
+
     /** Convert a stringy number to float or null. Empty => null. */
     private static function numOrNull($v): ?float {
         if ($v === null || $v === '' || $v === false) return null;
