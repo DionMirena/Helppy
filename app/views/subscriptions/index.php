@@ -72,10 +72,6 @@
                     <i class="bi bi-credit-card"></i> Paguaj me kartë
                   </button>
                 </form>
-              <?php else: ?>
-                <button class="btn btn-helppy w-100" disabled title="Stripe nuk është konfiguruar">
-                  <i class="bi bi-credit-card"></i> Kartë (e çaktivizuar)
-                </button>
               <?php endif; ?>
               <button class="btn btn-helppy-outline w-100"
                       type="button"

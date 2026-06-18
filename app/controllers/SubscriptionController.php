@@ -125,6 +125,24 @@ final class SubscriptionController extends Controller {
         $subId = Subscription::createPending($uid, $tier, 'bank', $ref);
         DB::q('UPDATE subscriptions SET bank_chosen = ? WHERE id = ?', [$bank['key'], $subId]);
 
+        // Notify every admin so they don't miss the inbound transfer.
+        $providerName = Auth::user()['name'];
+        $amount = Subscription::priceFor($tier);
+        $title  = "Pagesë e re në pritje (" . $bank['short'] . ")";
+        $body   = "{$providerName} ka nisur një transfer për tier {$tier} (€{$amount}).\n"
+                . "Kodi i referencës: {$ref}\n"
+                . "Banka: {$bank['name']}\n\n"
+                . "Kontrollo llogarinë bankare dhe aktivizo te /admin/subscriptions sapo paratë të mbërrijnë.";
+        $admins = DB::q("SELECT id, email FROM users WHERE role='admin' AND is_active=1")->fetchAll();
+        foreach ($admins as $a) {
+            Notification::create((int)$a['id'], 'subscription.pending',
+                $title, $body, '/admin/subscriptions');
+            if (!empty($a['email'])) {
+                Helpers::sendEmailSafe((string)$a['email'],
+                    'Helppy.com — ' . $title, $body);
+            }
+        }
+
         $this->redirect('/subscribe/bank/' . $subId);
     }
 

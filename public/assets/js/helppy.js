@@ -48,11 +48,42 @@
     });
   }
 
+  function wireCopyButtons() {
+    document.querySelectorAll('[data-copy-target]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = document.getElementById(btn.dataset.copyTarget);
+        if (!target) return;
+        var text = (target.innerText || target.textContent || '').trim();
+        var done = function () {
+          var label = btn.querySelector('.copy-label');
+          var icon  = btn.querySelector('i');
+          if (label) label.textContent = 'U kopjua!';
+          if (icon)  icon.className = 'bi bi-check2';
+          setTimeout(function () {
+            if (label) label.textContent = 'Kopjo';
+            if (icon)  icon.className = 'bi bi-clipboard';
+          }, 1400);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () {});
+        } else {
+          var range = document.createRange();
+          range.selectNode(target);
+          window.getSelection().removeAllRanges();
+          window.getSelection().addRange(range);
+          try { document.execCommand('copy'); done(); } catch (e) {}
+          window.getSelection().removeAllRanges();
+        }
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     autoHideFlashes();
+    wireCopyButtons();
     if (!window.HELPPY_BASE) return;
     refreshBadges();
-    setInterval(refreshBadges, 15000);
+    setInterval(refreshBadges, 25000);
   });
 
   // Expose for the chat page to call after sending/refreshing

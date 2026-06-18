@@ -18,7 +18,15 @@
         <dd class="col-sm-8"><?= e($bank['name'] ?? ($bank['bank_name'] ?? '')) ?></dd>
 
         <dt class="col-sm-4">IBAN</dt>
-        <dd class="col-sm-8"><code><?= e($bank['iban']) ?></code></dd>
+        <dd class="col-sm-8">
+          <div class="copy-row">
+            <code id="iban-value" class="flex-grow-1"><?= e($bank['iban']) ?></code>
+            <button type="button" class="btn-ghost copy-btn" data-copy-target="iban-value"
+                    aria-label="Kopjo IBAN">
+              <i class="bi bi-clipboard"></i> <span class="copy-label">Kopjo</span>
+            </button>
+          </div>
+        </dd>
 
         <?php if (!empty($bank['swift'])): ?>
           <dt class="col-sm-4">SWIFT / BIC</dt>
@@ -27,7 +35,13 @@
 
         <dt class="col-sm-4">Kodi i referencës</dt>
         <dd class="col-sm-8">
-          <span class="bank-ref"><?= e((string)$sub['bank_reference']) ?></span>
+          <div class="copy-row">
+            <span class="bank-ref" id="ref-value"><?= e((string)$sub['bank_reference']) ?></span>
+            <button type="button" class="btn-ghost copy-btn" data-copy-target="ref-value"
+                    aria-label="Kopjo kodin">
+              <i class="bi bi-clipboard"></i> <span class="copy-label">Kopjo</span>
+            </button>
+          </div>
           <div class="small text-muted mt-1"><?= e($bank['note']) ?></div>
         </dd>
       </dl>
