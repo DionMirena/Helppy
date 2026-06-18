@@ -24,7 +24,7 @@ final class Provider {
     public static function search(?int $cityId, ?int $categoryId): array {
         $sql = "SELECT u.id, u.name, u.phone, c.name AS city,
                        p.profession, p.photo, p.is_company, p.company_name,
-                       p.is_premium,
+                       p.is_premium, p.hourly_rate,
                        (SELECT AVG(rating) FROM reviews WHERE provider_id = p.user_id) AS avg_rating,
                        (SELECT COUNT(*)   FROM reviews WHERE provider_id = p.user_id) AS review_count
                 FROM providers p
@@ -42,7 +42,7 @@ final class Provider {
     public static function featured(int $limit = 8): array {
         $limit = max(1, min(50, $limit));
         $sql = "SELECT u.id, u.name, u.phone, c.name AS city,
-                       p.profession, p.photo, p.is_company, p.is_premium,
+                       p.profession, p.photo, p.is_company, p.is_premium, p.hourly_rate,
                        (SELECT AVG(rating) FROM reviews WHERE provider_id = p.user_id) AS avg_rating
                 FROM providers p
                 JOIN users u ON u.id = p.user_id AND u.is_active = 1 AND u.email_verified = 1

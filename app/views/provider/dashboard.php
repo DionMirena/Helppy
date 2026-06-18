@@ -81,7 +81,10 @@ $selectedCats = array_column($p['categories'], 'id');
 
         <div class="mb-3"><label class="form-label">Tarifa standarde (€/orë)</label>
           <input class="form-control" type="number" step="0.01" min="0" max="999999" name="hourly_rate" value="<?= e($p['hourly_rate'] !== null ? (string)$p['hourly_rate'] : '') ?>" placeholder="p.sh. 25.00">
-          <small class="text-muted">Opsionale. Shfaqet në profilin tënd publik.</small>
+          <small class="text-muted">
+            Opsionale. Lëre bosh nëse nuk dëshiron të caktosh çmim — atëherë profili yt do të shfaqë
+            <em>“Çmimi sipas marrëveshjes”</em>.
+          </small>
         </div>
 
         <div class="mb-3"><label class="form-label">Kategorite</label>

@@ -36,13 +36,17 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
         <?php endforeach; ?>
       </div>
 
-      <?php if ($p['hourly_rate'] !== null): ?>
-        <p class="mb-2">
+      <p class="mb-2">
+        <?php if ($p['hourly_rate'] !== null): ?>
           <span class="rate-badge"><i class="bi bi-cash-coin"></i>
             Tarifa standarde: <strong>€<?= e(rtrim(rtrim(number_format((float)$p['hourly_rate'], 2, '.', ''), '0'), '.')) ?></strong> / orë
           </span>
-        </p>
-      <?php endif; ?>
+        <?php else: ?>
+          <span class="rate-badge rate-badge-muted"><i class="bi bi-chat-left-text"></i>
+            Çmimi sipas marrëveshjes
+          </span>
+        <?php endif; ?>
+      </p>
 
       <div class="provider-actions mt-3 d-flex flex-wrap gap-2">
         <?php if (!empty($p['phone'])): ?>

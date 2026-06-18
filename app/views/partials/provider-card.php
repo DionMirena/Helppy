@@ -29,6 +29,16 @@ $phoneRaw = !empty($p['phone']) ? preg_replace('/[^0-9+]/', '', $p['phone']) : '
         <span class="meta">Pa vleresime</span>
       <?php endif; ?>
     </p>
+    <p class="rate">
+      <?php if (isset($p['hourly_rate']) && $p['hourly_rate'] !== null): ?>
+        <i class="bi bi-cash-coin"></i>
+        <strong>€<?= e(rtrim(rtrim(number_format((float)$p['hourly_rate'], 2, '.', ''), '0'), '.')) ?></strong>
+        <span class="meta">/ orë</span>
+      <?php else: ?>
+        <i class="bi bi-chat-left-text"></i>
+        <span class="meta">Çmimi sipas marrëveshjes</span>
+      <?php endif; ?>
+    </p>
   </div>
 
   <?php if (!empty($p['phone'])): ?>

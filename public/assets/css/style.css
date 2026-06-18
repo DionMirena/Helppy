@@ -451,6 +451,18 @@ a:hover { color: var(--helppy-green-darker); }
   padding: 6px 12px; border-radius: var(--helppy-radius-pill);
   font-size: 14px; font-weight: 500;
 }
+.rate-badge-muted {
+  background: #f3f4f6;
+  color: var(--helppy-muted);
+  font-weight: 400;
+}
+.provider-card .rate {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--helppy-green-darker);
+  display: flex; align-items: center; gap: 4px;
+}
+.provider-card .rate .meta { color: var(--helppy-muted); font-weight: 400; }
 .provider-actions .btn { flex: 0 0 auto; }
 @media (max-width: 575.98px) { .provider-actions .btn { flex: 1 1 auto; } }
 
