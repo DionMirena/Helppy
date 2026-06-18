@@ -11,7 +11,7 @@
     <div class="meta"><?= e(date('d.m.Y', strtotime($r['created_at']))) ?></div>
   </div>
   <?php if (!empty($r['comment'])): ?>
-    <p class="mb-1 mt-1"><?= nl2br(e($r['comment'])) ?></p>
+    <p class="mb-1 mt-1 long-text"><?= nl2br(e($r['comment'])) ?></p>
   <?php endif; ?>
   <?php if (Auth::check()): ?>
     <?php $uid = (int)Auth::user()['id']; ?>

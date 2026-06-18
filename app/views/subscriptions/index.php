@@ -95,7 +95,9 @@
     <form method="post" action="<?= e(CONFIG['base_url']) ?>/subscribe/cancel-current" class="mt-3"
           onsubmit="return confirm('Anulo abonimin aktiv? Do të mund të rikthehesh kur të duash.');">
       <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-      <button class="btn btn-link text-danger" type="submit">Anulo abonimin aktiv</button>
+      <button class="btn-ghost danger" type="submit">
+        <i class="bi bi-slash-circle"></i> Anulo abonimin aktiv
+      </button>
     </form>
   <?php endif; ?>
 </section>

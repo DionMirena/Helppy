@@ -42,10 +42,14 @@
         <?php if (isset($errors['notes'])): ?><div class="invalid-feedback"><?= e($errors['notes']) ?></div><?php endif; ?>
       </div>
 
-      <button class="btn btn-helppy btn-lg" type="submit">
-        <i class="bi bi-calendar-check"></i> Dërgo kërkesën
-      </button>
-      <a href="<?= e(CONFIG['base_url']) ?>/provider/<?= (int)$provider['id'] ?>" class="btn btn-link">Anulo</a>
+      <div class="action-bar">
+        <button class="btn btn-helppy btn-lg" type="submit">
+          <i class="bi bi-calendar-check"></i> Dërgo kërkesën
+        </button>
+        <a href="<?= e(CONFIG['base_url']) ?>/provider/<?= (int)$provider['id'] ?>" class="btn-ghost">
+          <i class="bi bi-x-lg"></i> Anulo
+        </a>
+      </div>
     </form>
   </div>
 </section>

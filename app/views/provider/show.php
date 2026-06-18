@@ -74,7 +74,7 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
         <div class="col-md-6">
           <div class="profile-card h-100">
             <h5 class="mb-2"><i class="bi bi-person-vcard"></i> Rreth meje</h5>
-            <p class="mb-0"><?= nl2br(e($p['bio'])) ?></p>
+            <p class="mb-0 long-text"><?= nl2br(e($p['bio'])) ?></p>
           </div>
         </div>
       <?php endif; ?>
@@ -82,7 +82,7 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
         <div class="col-md-6">
           <div class="profile-card h-100">
             <h5 class="mb-2"><i class="bi bi-tools"></i> Aftësitë & Shërbimet</h5>
-            <p class="mb-0"><?= nl2br(e($p['skills_services'])) ?></p>
+            <p class="mb-0 long-text"><?= nl2br(e($p['skills_services'])) ?></p>
           </div>
         </div>
       <?php endif; ?>

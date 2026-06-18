@@ -16,7 +16,11 @@
       <p class="text-muted">
         Po presim konfirmimin nga banka. Aktivizimi do të ndodhë automatikisht sapo pagesa të konfirmohet.
       </p>
-      <a class="btn btn-link mt-3" href="<?= e(CONFIG['base_url']) ?>/subscribe">← Kthehu te abonimet</a>
+      <div class="action-bar justify-content-center mt-3" style="justify-content: center;">
+        <a class="btn-ghost" href="<?= e(CONFIG['base_url']) ?>/subscribe">
+          <i class="bi bi-arrow-left"></i> Kthehu te abonimet
+        </a>
+      </div>
     <?php endif; ?>
   </div>
 </section>

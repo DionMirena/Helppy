@@ -66,7 +66,7 @@ $phoneRaw = !empty($p['author_phone']) ? preg_replace('/[^0-9+]/', '', $p['autho
           &middot; <?= e(timeAgoSq((string)$p['created_at'])) ?>
         </p>
 
-        <div class="mb-3"><?= nl2br(e($p['description'])) ?></div>
+        <div class="mb-3 long-text"><?= nl2br(e($p['description'])) ?></div>
 
         <?php if ($p['type'] === 'offer'): ?>
           <ul class="list-unstyled small">

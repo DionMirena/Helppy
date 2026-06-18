@@ -33,6 +33,10 @@
       Administratori i konfirmon transferet brenda 24 orëve dhe abonimi yt aktivizohet automatikisht.
     </p>
 
-    <a href="<?= e(CONFIG['base_url']) ?>/subscribe" class="btn btn-link">← Kthehu te abonimet</a>
+    <div class="action-bar">
+      <a href="<?= e(CONFIG['base_url']) ?>/subscribe" class="btn-ghost">
+        <i class="bi bi-arrow-left"></i> Kthehu te abonimet
+      </a>
+    </div>
   </div>
 </section>

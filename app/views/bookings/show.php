@@ -49,7 +49,7 @@ $statusClass = 'status-' . $b['status'];
 
           <?php if (!empty($b['notes'])): ?>
             <dt class="col-sm-4">Shënime</dt>
-            <dd class="col-sm-8"><?= nl2br(e($b['notes'])) ?></dd>
+            <dd class="col-sm-8 long-text"><?= nl2br(e($b['notes'])) ?></dd>
           <?php endif; ?>
         </dl>
       </div>
