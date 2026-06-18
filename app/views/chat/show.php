@@ -93,13 +93,77 @@
   }
   setInterval(poll, 3000);
 
-  // Submit via Enter (Shift+Enter for newline)
-  var ta = document.querySelector('.chat-composer textarea');
-  ta && ta.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
+  // ===== AJAX send =====
+  var form = document.querySelector('.chat-composer');
+  var ta   = form ? form.querySelector('textarea') : null;
+  var btn  = form ? form.querySelector('button[type=submit]') : null;
+  var sending = false;
+
+  function doSend() {
+    if (!form || sending) return;
+    var body = ta.value.replace(/\s+$/, '');
+    if (!body) return;
+    sending = true;
+    if (btn) btn.disabled = true;
+
+    var data = new FormData(form);
+    fetch(form.action, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: data
+    })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (resp) {
+        if (resp && resp.message) {
+          appendMessage(resp.message);
+          ta.value = '';
+          autoGrow();
+          ta.focus();
+        } else {
+          // Server didn't return JSON — fall back to a normal POST.
+          form.submit();
+        }
+      })
+      .catch(function () {
+        // Network failure → fallback
+        form.submit();
+      })
+      .finally(function () {
+        sending = false;
+        if (btn) btn.disabled = false;
+      });
+  }
+
+  if (form) {
+    form.addEventListener('submit', function (e) {
       e.preventDefault();
-      ta.form.submit();
-    }
-  });
+      doSend();
+    });
+  }
+
+  // Enter to send, Shift+Enter for newline
+  if (ta) {
+    ta.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        doSend();
+      }
+    });
+  }
+
+  // Auto-grow the textarea up to the CSS max-height
+  function autoGrow() {
+    if (!ta) return;
+    ta.style.height = 'auto';
+    ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+  }
+  if (ta) {
+    ta.addEventListener('input', autoGrow);
+    autoGrow();
+  }
 })();
 </script>

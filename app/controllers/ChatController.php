@@ -51,26 +51,32 @@ final class ChatController extends Controller {
         ]);
     }
 
-    /** POST /chat/{id}/message — send a message */
+    /** POST /chat/{id}/message — send a message. Returns JSON when AJAX. */
     public function send(array $params = []): void {
         Auth::require();
-        $id  = (int)($params['id'] ?? 0);
-        $uid = (int)Auth::user()['id'];
-        if (!Conversation::userIn($id, $uid)) { http_response_code(403); View::render('errors/403', []); return; }
+        $id    = (int)($params['id'] ?? 0);
+        $uid   = (int)Auth::user()['id'];
+        $isAjax = self::wantsJson();
+
+        if (!Conversation::userIn($id, $uid)) {
+            if ($isAjax) { self::jsonError(403, 'forbidden'); return; }
+            http_response_code(403); View::render('errors/403', []); return;
+        }
 
         $body = trim((string)Request::post('body', ''));
         if ($body === '' || mb_strlen($body) > 4000) {
+            if ($isAjax) { self::jsonError(422, 'invalid_body'); return; }
             $this->flash('danger', 'Mesazhi është bosh ose tepër i gjatë.');
             $this->redirect('/chat/' . $id);
             return;
         }
 
-        Message::send($id, $uid, $body);
+        $msgId = Message::send($id, $uid, $body);
 
         // Notify the other participant
         $conv = Conversation::find($id);
         if ($conv) {
-            $otherId = Conversation::otherUserId($conv, $uid);
+            $otherId    = Conversation::otherUserId($conv, $uid);
             $senderName = Auth::user()['name'];
             $preview    = mb_substr($body, 0, 160);
             Notification::create(
@@ -80,18 +86,47 @@ final class ChatController extends Controller {
                 $preview,
                 '/chat/' . $id
             );
-            // Email summary
             $otherEmail = DB::q('SELECT email FROM users WHERE id = ?', [$otherId])->fetchColumn();
             if ($otherEmail) {
                 Helpers::sendEmailSafe(
                     (string)$otherEmail,
                     "Mesazh i ri nga {$senderName} në Helppy.com",
-                    "{$senderName} të ka shkruar:\n\n{$preview}\n\nPërgjigju në https://helppy.com.loc/chat/{$id}"
+                    "{$senderName} të ka shkruar:\n\n{$preview}\n\nPërgjigju në " . CONFIG['base_url'] . "/chat/{$id}"
                 );
             }
         }
 
+        if ($isAjax) {
+            $row = DB::q('SELECT id, sender_id, body, created_at FROM messages WHERE id=?', [$msgId])->fetch();
+            header('Content-Type: application/json');
+            echo json_encode([
+                'ok'      => true,
+                'message' => [
+                    'id'         => (int)$row['id'],
+                    'sender_id'  => (int)$row['sender_id'],
+                    'is_mine'    => true,
+                    'body'       => (string)$row['body'],
+                    'created_at' => (string)$row['created_at'],
+                ],
+            ]);
+            return;
+        }
+
         $this->redirect('/chat/' . $id);
+    }
+
+    /** True when the client asked for JSON (fetch/XHR). */
+    private static function wantsJson(): bool {
+        $xrw    = (string)($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '');
+        $accept = (string)($_SERVER['HTTP_ACCEPT'] ?? '');
+        return strcasecmp($xrw, 'XMLHttpRequest') === 0
+            || stripos($accept, 'application/json') !== false;
+    }
+
+    private static function jsonError(int $code, string $msg): void {
+        http_response_code($code);
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => false, 'error' => $msg]);
     }
 
     /** GET /api/chat/{id}/messages.json?after=N — poll for new messages */
