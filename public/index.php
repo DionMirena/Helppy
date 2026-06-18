@@ -83,6 +83,7 @@ $router->post('/subscribe/cancel-current',     [SubscriptionController::class, '
 $router->post('/subscribe/webhook',            [SubscriptionController::class, 'webhook'], false);
 
 $router->get('/admin/subscriptions',                       [AdminController::class, 'subscriptions']);
+$router->get('/admin/payouts',                             [AdminController::class, 'payouts']);
 $router->post('/admin/subscriptions/{id}/activate',        [AdminController::class, 'activateSubscription']);
 $router->post('/admin/subscriptions/{id}/cancel',          [AdminController::class, 'cancelSubscription']);
 

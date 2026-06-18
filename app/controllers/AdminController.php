@@ -122,6 +122,17 @@ final class AdminController extends Controller {
         ]);
     }
 
+    public function payouts(array $params = []): void {
+        Auth::require('admin');
+        $this->render('admin/payouts', [
+            'title'           => 'Llogaria e admin (Payouts)',
+            'admin'           => Payments::admin(),
+            'adminConfigured' => Payments::adminConfigured(),
+            'stripeEnabled'   => Stripe::isConfigured(),
+            'banks'           => Payments::banks(),
+        ]);
+    }
+
     public function activateSubscription(array $params = []): void {
         Auth::require('admin');
         $id = (int)($params['id'] ?? 0);

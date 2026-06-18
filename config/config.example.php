@@ -16,104 +16,42 @@ return [
     'debug'      => true,
 
     // ============================================================
-    // PAYMENTS — fill in only the parts you have, leave the rest blank.
-    // The system enables/disables flows automatically based on what is set.
+    // PAYMENTS — every subscription payment from every provider lands
+    // in the SINGLE admin account configured here.
+    //
+    // You fill in ONE Stripe account + ONE bank account (the admin account).
+    // Every bank chip on the public /subscribe page automatically routes
+    // to that admin IBAN, so providers can pay from Raiffeisen, NLB, TEB,
+    // BKT, ProCredit — but all money ends up in your account.
     // ============================================================
     'payments' => [
 
-        // -------- CARDS (any bank) via Stripe --------
-        // Stripe routes cards from RAIFFEISEN/NLB/TEB/BKT/ProCredit etc.,
-        // so a single Stripe account handles every Kosovo bank's cards.
-        // Sign up free at https://dashboard.stripe.com, then paste keys
-        // from https://dashboard.stripe.com/test/apikeys.
+        // -------- THE ADMIN ACCOUNT (where ALL transfers land) --------
+        'admin' => [
+            'beneficiary' => 'Helppy SH.P.K.',                // your registered name
+            'iban'        => 'XK00 0000 0000 0000 0000',      // your IBAN
+            'bank_name'   => '',                              // optional, e.g. "Raiffeisen Bank Kosovo"
+            'swift'       => '',                              // optional, your bank's SWIFT/BIC
+            'note'        => 'Përdor kodin e referencës si arsye e pagesës.',
+        ],
+
+        // -------- CARDS via Stripe (one admin Stripe account) --------
+        // Stripe routes cards from Raiffeisen/NLB/TEB/BKT/ProCredit etc.
         'stripe' => [
             'enabled'         => false,            // flip true after pasting keys
             'secret_key'      => '',               // sk_test_... (or sk_live_... in production)
             'publishable_key' => '',               // pk_test_...
-            'webhook_secret'  => '',               // whsec_... from https://dashboard.stripe.com/test/webhooks
+            'webhook_secret'  => '',               // whsec_...
         ],
 
-        // -------- DIRECT BANK TRANSFER (per bank) --------
-        // Each entry is a bank you accept transfers to. Providers will see
-        // a card-grid and can pick any one. Add or remove entries freely.
-        //
-        // 'gateway' field:
-        //   'manual' — provider transfers from their app; admin manually
-        //              activates at /admin/subscriptions after the money
-        //              lands. THIS IS THE ONLY OPTION KOSOVO BANKS SUPPORT
-        //              today as a self-serve API does not exist for them.
-        //   'auto'   — reserved for the future: if Raiffeisen/NLB/TEB ever
-        //              publishes a direct payment API, set gateway='auto'
-        //              + paste the api_key, and we'll add a controller for
-        //              that specific bank.
-        //
-        // Set 'enabled' => false to hide a bank without deleting its entry.
+        // -------- BANK CHIPS (display labels for the picker) --------
+        // All share the admin IBAN above. Set 'enabled' => false to hide one.
         'banks' => [
-            [
-                'key'         => 'raiffeisen',
-                'name'        => 'Raiffeisen Bank Kosovo',
-                'short'       => 'Raiffeisen',
-                'color'       => '#FFEB00',
-                'beneficiary' => 'Helppy SH.P.K.',
-                'iban'        => 'XK00 0000 0000 0000 0000',  // paste real IBAN
-                'swift'       => 'RBKORS22',
-                'note'        => 'Përdor kodin e referencës si arsye e pagesës.',
-                'gateway'     => 'manual',
-                'api_key'     => '',
-                'enabled'     => true,
-            ],
-            [
-                'key'         => 'nlb',
-                'name'        => 'NLB Banka',
-                'short'       => 'NLB',
-                'color'       => '#00803D',
-                'beneficiary' => 'Helppy SH.P.K.',
-                'iban'        => 'XK00 0000 0000 0000 0000',
-                'swift'       => 'NLPBXKPR',
-                'note'        => 'Përdor kodin e referencës si arsye e pagesës.',
-                'gateway'     => 'manual',
-                'api_key'     => '',
-                'enabled'     => true,
-            ],
-            [
-                'key'         => 'teb',
-                'name'        => 'TEB SH.A.',
-                'short'       => 'TEB',
-                'color'       => '#005DA8',
-                'beneficiary' => 'Helppy SH.P.K.',
-                'iban'        => 'XK00 0000 0000 0000 0000',
-                'swift'       => 'TEBKXKPR',
-                'note'        => 'Përdor kodin e referencës si arsye e pagesës.',
-                'gateway'     => 'manual',
-                'api_key'     => '',
-                'enabled'     => true,
-            ],
-            [
-                'key'         => 'bkt',
-                'name'        => 'BKT Kosova',
-                'short'       => 'BKT',
-                'color'       => '#003083',
-                'beneficiary' => 'Helppy SH.P.K.',
-                'iban'        => 'XK00 0000 0000 0000 0000',
-                'swift'       => 'NCBAALTR',
-                'note'        => 'Përdor kodin e referencës si arsye e pagesës.',
-                'gateway'     => 'manual',
-                'api_key'     => '',
-                'enabled'     => true,
-            ],
-            [
-                'key'         => 'procredit',
-                'name'        => 'ProCredit Bank Kosovo',
-                'short'       => 'ProCredit',
-                'color'       => '#E2001A',
-                'beneficiary' => 'Helppy SH.P.K.',
-                'iban'        => 'XK00 0000 0000 0000 0000',
-                'swift'       => 'MBKOXKPR',
-                'note'        => 'Përdor kodin e referencës si arsye e pagesës.',
-                'gateway'     => 'manual',
-                'api_key'     => '',
-                'enabled'     => true,
-            ],
+            [ 'key' => 'raiffeisen', 'name' => 'Raiffeisen Bank Kosovo', 'short' => 'Raiffeisen', 'color' => '#FFEB00', 'gateway' => 'manual', 'enabled' => true ],
+            [ 'key' => 'nlb',        'name' => 'NLB Banka',              'short' => 'NLB',        'color' => '#00803D', 'gateway' => 'manual', 'enabled' => true ],
+            [ 'key' => 'teb',        'name' => 'TEB SH.A.',              'short' => 'TEB',        'color' => '#005DA8', 'gateway' => 'manual', 'enabled' => true ],
+            [ 'key' => 'bkt',        'name' => 'BKT Kosova',             'short' => 'BKT',        'color' => '#003083', 'gateway' => 'manual', 'enabled' => true ],
+            [ 'key' => 'procredit',  'name' => 'ProCredit Bank Kosovo',  'short' => 'ProCredit',  'color' => '#E2001A', 'gateway' => 'manual', 'enabled' => true ],
         ],
     ],
 
