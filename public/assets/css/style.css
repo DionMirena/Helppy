@@ -1131,6 +1131,35 @@ section + section { margin-top: var(--helppy-space-2); }
   .bank-picker { padding: 12px; }
 }
 
+/* ---------- Button groups — separate, don't bunch ----------
+   Bootstrap's .btn-group glues buttons edge-to-edge. For Helppy's
+   role/segment pickers (Klient / Punues / Kompani, etc.) we want
+   real gap between them and full rounded corners on every button. */
+.btn-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--helppy-space-2);
+}
+.btn-group > .btn,
+.btn-group > .btn-check + .btn {
+  border-radius: var(--helppy-radius-sm) !important;
+  margin-left: 0 !important;
+  border-left-width: 1.5px !important;
+}
+.btn-group > .btn:not(:last-child),
+.btn-group > .btn:not(:first-child) { margin-right: 0 !important; }
+.btn-group > .btn-check:checked + .btn,
+.btn-group > .btn.active {
+  box-shadow: var(--helppy-shadow);
+}
+
+/* On phones, segment pickers stack so labels don't truncate */
+@media (max-width: 575.98px) {
+  .btn-group { width: 100%; gap: var(--helppy-space-2); }
+  .btn-group > .btn { flex: 1 1 calc(33.333% - var(--helppy-space-2)); }
+  .btn-group > .btn:only-child { flex: 1 1 100%; }
+}
+
 /* ---------- Empty state — softer ---------- */
 .empty-state {
   padding: clamp(36px, 8vw, 64px) 24px;
