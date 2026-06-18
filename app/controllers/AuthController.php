@@ -21,18 +21,27 @@ final class AuthController extends Controller {
             $this->redirect('/login');
         }
 
-        // Every successful credential check issues a 2FA challenge — no role exemption.
-        Verification::generateCodeFor((int)$user['id']);
-        try {
-            Verification::send((int)$user['id']);
-        } catch (Throwable $e) {
-            $this->logMailError('login', $e);
-            $this->flash('danger', 'Kodi i verifikimit nuk u dergua. Provoni perseri.');
-            $this->redirect('/login');
+        // If the email was never verified (e.g. user registered but didn't
+        // finish), bounce them through the verification step. Otherwise log
+        // them straight in — no per-login 2FA.
+        if (empty($user['email_verified'])) {
+            Verification::generateCodeFor((int)$user['id']);
+            try {
+                Verification::send((int)$user['id']);
+            } catch (Throwable $e) {
+                $this->logMailError('login', $e);
+                $this->flash('danger', 'Kodi i verifikimit nuk u dergua. Provoni perseri.');
+                $this->redirect('/login');
+            }
+            Auth::setPending((int)$user['id']);
+            $this->flash('info', 'Llogaria juaj nuk eshte verifikuar ende. Kontrollo email-in per kodin e verifikimit.');
+            $this->redirect('/verify-email');
+            return;
         }
-        Auth::setPending((int)$user['id']);
-        $this->flash('info', 'Nje kod verifikimi u dergua ne emailin tuaj.');
-        $this->redirect('/verify-email');
+
+        Auth::login($user);
+        $this->flash('success', 'Mire se erdhet, ' . $user['name'] . '!');
+        $this->postLoginRedirect($user['role']);
     }
 
     public function logout(array $params = []): void {
