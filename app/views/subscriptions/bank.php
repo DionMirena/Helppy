@@ -1,9 +1,9 @@
 <section class="container py-4">
   <div class="form-card mx-auto" style="max-width: 640px;">
-    <h1 class="section-title">Transfer bankar</h1>
+    <h1 class="section-title">Transfer bankar — <?= e($bank['name'] ?? ($bank['bank_name'] ?? '')) ?></h1>
     <p class="text-muted">Bëj transferin në llogarinë e mëposhtme. Pasi ne ta konfirmojmë, abonimi yt aktivizohet brenda 24 orëve.</p>
 
-    <div class="profile-card mb-3">
+    <div class="profile-card mb-3" style="border-left: 4px solid <?= e($bank['color'] ?? '#5a7a4f') ?>;">
       <dl class="row mb-0">
         <dt class="col-sm-4">Tier</dt>
         <dd class="col-sm-8"><?= e(ucfirst((string)$sub['tier'])) ?></dd>
@@ -15,10 +15,15 @@
         <dd class="col-sm-8"><?= e($bank['beneficiary']) ?></dd>
 
         <dt class="col-sm-4">Banka</dt>
-        <dd class="col-sm-8"><?= e($bank['bank_name']) ?></dd>
+        <dd class="col-sm-8"><?= e($bank['name'] ?? ($bank['bank_name'] ?? '')) ?></dd>
 
         <dt class="col-sm-4">IBAN</dt>
         <dd class="col-sm-8"><code><?= e($bank['iban']) ?></code></dd>
+
+        <?php if (!empty($bank['swift'])): ?>
+          <dt class="col-sm-4">SWIFT / BIC</dt>
+          <dd class="col-sm-8"><code><?= e($bank['swift']) ?></code></dd>
+        <?php endif; ?>
 
         <dt class="col-sm-4">Kodi i referencës</dt>
         <dd class="col-sm-8">

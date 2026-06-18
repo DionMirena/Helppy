@@ -107,15 +107,23 @@ final class SubscriptionController extends Controller {
         if (Auth::role() !== 'provider' && Auth::role() !== 'admin') {
             http_response_code(403); View::render('errors/403', []); return;
         }
-        $uid  = (int)Auth::user()['id'];
-        $tier = (string)Request::post('tier', '');
+        $uid     = (int)Auth::user()['id'];
+        $tier    = (string)Request::post('tier', '');
+        $bankKey = (string)Request::post('bank', '');
         if (!in_array($tier, [Subscription::TIER_STANDARD, Subscription::TIER_PREMIUM], true)) {
             $this->flash('danger', 'Tier i pavlefshëm.');
             $this->redirect('/subscribe');
             return;
         }
+        $bank = Payments::findBank($bankKey);
+        if (!$bank) {
+            $this->flash('danger', 'Banka e zgjedhur nuk është e vlefshme.');
+            $this->redirect('/subscribe');
+            return;
+        }
         $ref   = Subscription::generateBankRef($uid);
         $subId = Subscription::createPending($uid, $tier, 'bank', $ref);
+        DB::q('UPDATE subscriptions SET bank_chosen = ? WHERE id = ?', [$bank['key'], $subId]);
 
         $this->redirect('/subscribe/bank/' . $subId);
     }
@@ -128,10 +136,18 @@ final class SubscriptionController extends Controller {
         if (!$sub || (int)$sub['provider_id'] !== (int)Auth::user()['id']) {
             $this->notFound(); return;
         }
+        $bank = Payments::findBank((string)($sub['bank_chosen'] ?? '')) ?? [
+            'name'        => '—',
+            'short'       => '—',
+            'beneficiary' => 'Helppy SH.P.K.',
+            'iban'        => 'XK00 0000 0000 0000 0000',
+            'swift'       => '',
+            'note'        => 'Përdor kodin e referencës si arsye e pagesës.',
+        ];
         $this->render('subscriptions/bank', [
-            'title' => 'Pagesë me transfer bankar',
+            'title' => 'Pagesë me transfer bankar — ' . $bank['short'],
             'sub'   => $sub,
-            'bank'  => CONFIG['bank'],
+            'bank'  => $bank,
         ]);
     }
 
@@ -140,7 +156,7 @@ final class SubscriptionController extends Controller {
      * Activates the matching subscription on successful payment.
      */
     public function webhook(array $params = []): void {
-        $secret = (string)(CONFIG['stripe']['webhook_secret'] ?? '');
+        $secret = Stripe::webhookSecret();
         $sig    = (string)($_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '');
         $raw    = file_get_contents('php://input');
         if ($raw === false) $raw = '';

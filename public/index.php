@@ -33,6 +33,7 @@ spl_autoload_register(function (string $class): void {
 // Eager-load Helpers (used by controllers as a static utility).
 require APP_ROOT . '/app/core/Helpers.php';
 require APP_ROOT . '/app/core/Stripe.php';
+require APP_ROOT . '/app/core/Payments.php';
 
 $router = new Router();
 

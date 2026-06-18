@@ -20,11 +20,11 @@ $statusBadge = function (string $s): string {
       <table class="table table-hover align-middle mb-0">
         <thead>
           <tr>
-            <th>#</th><th>Punëtor</th><th>Email</th><th>Tier</th><th>Shuma</th><th>Ref</th><th>Krijuar</th><th>Veprime</th>
+            <th>#</th><th>Punëtor</th><th>Email</th><th>Tier</th><th>Shuma</th><th>Ref</th><th>Banka</th><th>Krijuar</th><th>Veprime</th>
           </tr>
         </thead>
         <tbody>
-          <?php foreach ($pending as $p): ?>
+          <?php foreach ($pending as $p): $b = Payments::findBank((string)($p['bank_chosen'] ?? '')); ?>
             <tr>
               <td><?= (int)$p['id'] ?></td>
               <td><?= e($p['provider_name']) ?></td>
@@ -32,6 +32,7 @@ $statusBadge = function (string $s): string {
               <td><?= e(ucfirst((string)$p['tier'])) ?></td>
               <td>€<?= e(rtrim(rtrim(number_format((float)$p['amount_eur'], 2, '.', ''), '0'), '.')) ?></td>
               <td><code><?= e((string)$p['bank_reference']) ?></code></td>
+              <td><?= $b ? '<span class="bank-tag" style="background:' . e((string)$b['color']) . '20; color:#111;">' . e((string)$b['short']) . '</span>' : '<small class="text-muted">—</small>' ?></td>
               <td><small><?= e(date('d M Y, H:i', strtotime((string)$p['created_at']))) ?></small></td>
               <td>
                 <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/subscriptions/<?= (int)$p['id'] ?>/activate" class="d-inline">

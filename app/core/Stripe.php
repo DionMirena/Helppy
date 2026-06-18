@@ -16,8 +16,18 @@ final class Stripe {
     private const API_BASE = 'https://api.stripe.com';
 
     public static function isConfigured(): bool {
-        $k = CONFIG['stripe']['secret_key'] ?? '';
+        $s = CONFIG['payments']['stripe'] ?? [];
+        if (empty($s['enabled'])) return false;
+        $k = $s['secret_key'] ?? '';
         return is_string($k) && str_starts_with($k, 'sk_');
+    }
+
+    public static function secretKey(): string {
+        return (string)(CONFIG['payments']['stripe']['secret_key'] ?? '');
+    }
+
+    public static function webhookSecret(): string {
+        return (string)(CONFIG['payments']['stripe']['webhook_secret'] ?? '');
     }
 
     /**
@@ -82,7 +92,7 @@ final class Stripe {
 
     /** Internal: make an HTTP call to Stripe with the secret key. */
     private static function call(string $method, string $path, array $params): array {
-        $secret = (string)(CONFIG['stripe']['secret_key'] ?? '');
+        $secret = self::secretKey();
         $url = self::API_BASE . $path;
 
         $ch = curl_init();

@@ -77,13 +77,27 @@
                   <i class="bi bi-credit-card"></i> Kartë (e çaktivizuar)
                 </button>
               <?php endif; ?>
-              <form method="post" action="<?= e(CONFIG['base_url']) ?>/subscribe/bank">
-                <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                <input type="hidden" name="tier" value="<?= e($t['key']) ?>">
-                <button class="btn btn-helppy-outline w-100" type="submit">
-                  <i class="bi bi-bank"></i> Transfer bankar
-                </button>
-              </form>
+              <button class="btn btn-helppy-outline w-100"
+                      type="button"
+                      onclick="document.getElementById('bank-picker-<?= e($t['key']) ?>').classList.toggle('open');">
+                <i class="bi bi-bank"></i> Transfer bankar
+              </button>
+              <div class="bank-picker mt-2" id="bank-picker-<?= e($t['key']) ?>">
+                <p class="small text-muted mb-2">Zgjidh bankën nga e cila do të bësh transferin:</p>
+                <div class="bank-grid">
+                  <?php foreach (Payments::banks() as $b): ?>
+                    <form method="post" action="<?= e(CONFIG['base_url']) ?>/subscribe/bank">
+                      <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+                      <input type="hidden" name="tier" value="<?= e($t['key']) ?>">
+                      <input type="hidden" name="bank" value="<?= e($b['key']) ?>">
+                      <button class="bank-chip" type="submit" style="--bank-color: <?= e($b['color']) ?>;">
+                        <span class="bank-chip-dot"></span>
+                        <?= e($b['short']) ?>
+                      </button>
+                    </form>
+                  <?php endforeach; ?>
+                </div>
+              </div>
             <?php endif; ?>
           </div>
         </div>
