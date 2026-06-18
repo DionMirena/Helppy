@@ -23,5 +23,6 @@
     <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/providers">Menaxho punetoret</a>
     <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/categories">Menaxho kategorite</a>
     <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/posts">Menaxho postimet</a>
+    <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/subscriptions">Abonimet</a>
   </div>
 </div>

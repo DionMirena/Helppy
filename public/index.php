@@ -23,6 +23,7 @@ spl_autoload_register(function (string $class): void {
 
 // Eager-load Helpers (used by controllers as a static utility).
 require APP_ROOT . '/app/core/Helpers.php';
+require APP_ROOT . '/app/core/Stripe.php';
 
 $router = new Router();
 
@@ -60,6 +61,20 @@ $router->get('/chat/with/{user_id}',           [ChatController::class, 'start'])
 $router->get('/chat/{id}',                     [ChatController::class, 'show']);
 $router->post('/chat/{id}/message',            [ChatController::class, 'send']);
 $router->get('/api/chat/{id}/messages.json',   [ChatController::class, 'pollMessages']);
+
+// SUBSCRIPTIONS
+$router->get('/subscribe',                     [SubscriptionController::class, 'index']);
+$router->post('/subscribe/checkout',           [SubscriptionController::class, 'checkout']);
+$router->post('/subscribe/bank',               [SubscriptionController::class, 'bank']);
+$router->get('/subscribe/bank/{id}',           [SubscriptionController::class, 'bankInstructions']);
+$router->get('/subscribe/success',             [SubscriptionController::class, 'success']);
+$router->post('/subscribe/cancel-current',     [SubscriptionController::class, 'cancelMine']);
+// Stripe webhook — no CSRF (it's signed by Stripe instead).
+$router->post('/subscribe/webhook',            [SubscriptionController::class, 'webhook'], false);
+
+$router->get('/admin/subscriptions',                       [AdminController::class, 'subscriptions']);
+$router->post('/admin/subscriptions/{id}/activate',        [AdminController::class, 'activateSubscription']);
+$router->post('/admin/subscriptions/{id}/cancel',          [AdminController::class, 'cancelSubscription']);
 
 $router->get('/login',                     [AuthController::class,    'loginForm']);
 $router->post('/login',                    [AuthController::class,    'login']);

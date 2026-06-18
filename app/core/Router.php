@@ -6,10 +6,10 @@ final class Router {
     private array $routes = [];
 
     public function get(string $pattern, array $handler): void {
-        $this->routes[] = ['method' => 'GET',  'pattern' => $pattern, 'handler' => $handler];
+        $this->routes[] = ['method' => 'GET',  'pattern' => $pattern, 'handler' => $handler, 'csrf' => true];
     }
-    public function post(string $pattern, array $handler): void {
-        $this->routes[] = ['method' => 'POST', 'pattern' => $pattern, 'handler' => $handler];
+    public function post(string $pattern, array $handler, bool $csrf = true): void {
+        $this->routes[] = ['method' => 'POST', 'pattern' => $pattern, 'handler' => $handler, 'csrf' => $csrf];
     }
 
     public function dispatch(string $method, string $url): void {
@@ -21,7 +21,7 @@ final class Router {
             if (preg_match($regex, $url, $m)) {
                 $params = array_filter($m, 'is_string', ARRAY_FILTER_USE_KEY);
                 [$ctrl, $action] = $r['handler'];
-                if ($method === 'POST') Request::verifyCsrf();
+                if ($method === 'POST' && !empty($r['csrf'])) Request::verifyCsrf();
                 $obj = new $ctrl();
                 $obj->$action($params);
                 return;

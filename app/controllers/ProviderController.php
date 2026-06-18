@@ -37,6 +37,7 @@ final class ProviderController extends Controller {
             'cities'     => City::all(),
             'categories' => Category::all(),
             'user'       => Auth::user(),
+            'subscription' => Subscription::activeFor($uid),
         ]);
     }
 

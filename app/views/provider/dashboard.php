@@ -27,6 +27,23 @@ $selectedCats = array_column($p['categories'], 'id');
         <p class="mb-1">Numri i vleresimeve: <strong><?= (int)$p['review_count'] ?></strong></p>
         <p class="mb-0">Vizita ne profil: <strong><?= (int)$p['views'] ?></strong></p>
       </div>
+
+      <div class="bg-white p-3 rounded mt-3">
+        <h6>Abonimi</h6>
+        <?php if ($subscription): ?>
+          <p class="mb-1">Tier: <strong><?= e(ucfirst((string)$subscription['tier'])) ?></strong></p>
+          <p class="mb-1">Skadon: <strong><?= e(date('d M Y', strtotime((string)$subscription['expires_at']))) ?></strong></p>
+          <p class="mb-2 small text-muted">
+            <?= max(0, (int)floor((strtotime((string)$subscription['expires_at']) - time()) / 86400)) ?> ditë të mbetura
+          </p>
+          <a class="btn btn-helppy-outline btn-sm w-100" href="<?= e(CONFIG['base_url']) ?>/subscribe">Menaxho</a>
+        <?php else: ?>
+          <p class="mb-2 small text-muted">Nuk ke abonim aktiv. Aktivizo një tier për të postuar oferta.</p>
+          <a class="btn btn-helppy btn-sm w-100" href="<?= e(CONFIG['base_url']) ?>/subscribe">
+            <i class="bi bi-credit-card"></i> Abonohu
+          </a>
+        <?php endif; ?>
+      </div>
     </div>
 
     <div class="col-md-8">

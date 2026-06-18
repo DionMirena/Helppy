@@ -650,6 +650,33 @@ a:hover { color: var(--helppy-green-darker); }
   font-size: 18px; flex: 0 0 42px;
 }
 
+/* ---------- Subscription tier cards ---------- */
+.tier-card { position: relative; border: 2px solid transparent; }
+.tier-card.tier-premium {
+  border-color: var(--helppy-green);
+  box-shadow: 0 8px 24px rgba(90, 122, 79, .15);
+}
+.tier-card h3 { color: var(--helppy-green-dark); }
+.tier-price { font-size: 32px; font-weight: 800; color: var(--helppy-text); }
+.tier-price .text-muted { font-size: 14px; font-weight: 400; }
+.tier-perks { list-style: none; padding: 0; margin: 0; }
+.tier-perks li {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; font-size: 14px;
+}
+.tier-perks li i { color: var(--helppy-green); flex: 0 0 auto; }
+
+.bank-ref {
+  display: inline-block;
+  padding: 6px 14px;
+  background: var(--helppy-green-bg);
+  color: var(--helppy-green-darker);
+  border-radius: 6px;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 18px; font-weight: 700; letter-spacing: 1.5px;
+  user-select: all;
+}
+
 @media (max-width: 575.98px) {
   .chat-shell { height: calc(100vh - 120px); min-height: 360px; border-radius: 0; margin-left: -12px; margin-right: -12px; }
   .chat-bubble { max-width: 85%; }

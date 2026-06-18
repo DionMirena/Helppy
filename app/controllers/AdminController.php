@@ -112,4 +112,46 @@ final class AdminController extends Controller {
         $this->flash('success', 'Postimi u fshi nga publiku.');
         $this->redirect('/admin/posts');
     }
+
+    public function subscriptions(array $params = []): void {
+        Auth::require('admin');
+        $this->render('admin/subscriptions', [
+            'title'   => 'Abonimet — Admin',
+            'pending' => Subscription::pendingForAdmin(),
+            'all'     => Subscription::allForAdmin(),
+        ]);
+    }
+
+    public function activateSubscription(array $params = []): void {
+        Auth::require('admin');
+        $id = (int)($params['id'] ?? 0);
+        $sub = Subscription::find($id);
+        if (!$sub) { $this->notFound(); return; }
+        if ($sub['status'] === 'active') {
+            $this->flash('info', 'Tashmë është aktiv.');
+            $this->redirect('/admin/subscriptions');
+            return;
+        }
+        Subscription::activate($id, null);
+        Notification::create((int)$sub['provider_id'], 'subscription.activated',
+            'Abonimi yt u aktivizua', 'Tier ' . $sub['tier'] . '. Tani mund të postosh oferta.',
+            '/subscribe');
+        $email = (string)DB::q('SELECT email FROM users WHERE id=?', [$sub['provider_id']])->fetchColumn();
+        if ($email) {
+            Helpers::sendEmailSafe($email, 'Abonimi yt në Helppy.com u aktivizua',
+                "Pagesa u konfirmua. Tier: {$sub['tier']}. Tani mund të postosh oferta.\n\nFalemnderit!");
+        }
+        $this->flash('success', 'Abonimi u aktivizua.');
+        $this->redirect('/admin/subscriptions');
+    }
+
+    public function cancelSubscription(array $params = []): void {
+        Auth::require('admin');
+        $id = (int)($params['id'] ?? 0);
+        $sub = Subscription::find($id);
+        if (!$sub) { $this->notFound(); return; }
+        Subscription::cancel($id);
+        $this->flash('info', 'Abonimi u anulua.');
+        $this->redirect('/admin/subscriptions');
+    }
 }
