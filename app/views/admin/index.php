@@ -24,5 +24,6 @@
     <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/categories">Menaxho kategorite</a>
     <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/posts">Menaxho postimet</a>
     <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/subscriptions">Abonimet</a>
+    <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/users">Përdoruesit</a>
   </div>
 </div>

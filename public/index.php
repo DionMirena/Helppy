@@ -76,6 +76,16 @@ $router->get('/admin/subscriptions',                       [AdminController::cla
 $router->post('/admin/subscriptions/{id}/activate',        [AdminController::class, 'activateSubscription']);
 $router->post('/admin/subscriptions/{id}/cancel',          [AdminController::class, 'cancelSubscription']);
 
+// Full admin: users, photos, bookings, conversations
+$router->get('/admin/users',                               [AdminController::class, 'users']);
+$router->post('/admin/users/{id}/active',                  [AdminController::class, 'toggleUserActive']);
+$router->post('/admin/users/{id}/role',                    [AdminController::class, 'setUserRole']);
+$router->post('/admin/users/{id}/delete',                  [AdminController::class, 'deleteUser']);
+$router->post('/admin/providers/{id}/photo/delete',        [AdminController::class, 'deleteProviderPhoto']);
+$router->post('/admin/post-photos/{photo_id}/delete',      [AdminController::class, 'deletePostPhoto']);
+$router->post('/admin/bookings/{id}/delete',               [AdminController::class, 'deleteBooking']);
+$router->post('/admin/conversations/{id}/delete',          [AdminController::class, 'deleteConversation']);
+
 $router->get('/login',                     [AuthController::class,    'loginForm']);
 $router->post('/login',                    [AuthController::class,    'login']);
 $router->get('/register',                  [AuthController::class,    'registerForm']);

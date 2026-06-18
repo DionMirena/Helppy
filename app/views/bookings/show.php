@@ -88,6 +88,14 @@ $statusClass = 'status-' . $b['status'];
             <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-slash-circle"></i> Anulo</button>
           </form>
         <?php endif; ?>
+
+        <?php if ($isAdmin): ?>
+          <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/bookings/<?= (int)$b['id'] ?>/delete" class="d-grid mt-2"
+                onsubmit="return confirm('FSHI rezervimin përgjithmonë?');">
+            <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+            <button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Fshi (admin)</button>
+          </form>
+        <?php endif; ?>
       </div>
     </div>
   </div>

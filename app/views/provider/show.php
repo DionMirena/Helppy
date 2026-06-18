@@ -9,6 +9,15 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
   <div class="row align-items-center">
     <div class="col-md-4 text-center mb-3 mb-md-0">
       <img class="profile-photo" src="<?= e($photoUrl) ?>" alt="<?= e($p['name']) ?>">
+      <?php if (Auth::role() === 'admin' && !empty($p['photo'])): ?>
+        <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/providers/<?= (int)$p['id'] ?>/photo/delete"
+              class="mt-2" onsubmit="return confirm('Fshi foton e profilit të këtij përdoruesi?');">
+          <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+          <button type="submit" class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-trash"></i> Fshi foton (admin)
+          </button>
+        </form>
+      <?php endif; ?>
     </div>
     <div class="col-md-8">
       <h1 class="mb-1">

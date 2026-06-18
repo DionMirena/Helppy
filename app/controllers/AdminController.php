@@ -154,4 +154,116 @@ final class AdminController extends Controller {
         $this->flash('info', 'Abonimi u anulua.');
         $this->redirect('/admin/subscriptions');
     }
+
+    /* ===========================================================
+       FULL ADMIN POWERS — users, photos, bookings, conversations
+       =========================================================== */
+
+    public function users(array $params = []): void {
+        Auth::require('admin');
+        $this->render('admin/users', [
+            'title' => 'Përdoruesit — Admin',
+            'users' => User::allForAdmin(),
+        ]);
+    }
+
+    public function toggleUserActive(array $params = []): void {
+        Auth::require('admin');
+        $id = (int)($params['id'] ?? 0);
+        if ($id <= 0 || !User::find($id)) { $this->notFound(); return; }
+        $me = (int)Auth::user()['id'];
+        if ($id === $me) {
+            $this->flash('danger', 'Nuk mund të çaktivizosh vetveten.');
+            $this->redirect('/admin/users');
+            return;
+        }
+        User::toggleActive($id);
+        $this->flash('info', 'Statusi u ndryshua.');
+        $this->redirect('/admin/users');
+    }
+
+    public function setUserRole(array $params = []): void {
+        Auth::require('admin');
+        $id   = (int)($params['id'] ?? 0);
+        $role = (string)Request::post('role', '');
+        if ($id <= 0 || !User::find($id)) { $this->notFound(); return; }
+        $me = (int)Auth::user()['id'];
+        if ($id === $me) {
+            $this->flash('danger', 'Nuk mund ta ndryshosh rolin tënd.');
+            $this->redirect('/admin/users');
+            return;
+        }
+        if (!in_array($role, ['client','provider','admin'], true)) {
+            $this->flash('danger', 'Rol i pavlefshëm.');
+            $this->redirect('/admin/users');
+            return;
+        }
+        User::setRole($id, $role);
+        $this->flash('success', 'Roli u ndryshua në ' . $role . '.');
+        $this->redirect('/admin/users');
+    }
+
+    public function deleteUser(array $params = []): void {
+        Auth::require('admin');
+        $id = (int)($params['id'] ?? 0);
+        $u  = User::find($id);
+        if (!$u) { $this->notFound(); return; }
+        $me = (int)Auth::user()['id'];
+        if ($id === $me) {
+            $this->flash('danger', 'Nuk mund ta fshish vetveten.');
+            $this->redirect('/admin/users');
+            return;
+        }
+        User::deleteFully($id);
+        $this->flash('success', 'Përdoruesi u fshi përgjithmonë.');
+        $this->redirect('/admin/users');
+    }
+
+    /** Delete the provider's profile photo. The provider's row stays. */
+    public function deleteProviderPhoto(array $params = []): void {
+        Auth::require('admin');
+        $id = (int)($params['id'] ?? 0);
+        $row = DB::q('SELECT photo FROM providers WHERE user_id = ?', [$id])->fetch();
+        if (!$row) { $this->notFound(); return; }
+        if (!empty($row['photo'])) {
+            $path = CONFIG['upload_dir'] . DIRECTORY_SEPARATOR . $row['photo'];
+            if (is_file($path)) @unlink($path);
+            DB::q('UPDATE providers SET photo = NULL WHERE user_id = ?', [$id]);
+        }
+        $this->flash('success', 'Foto u fshi.');
+        $this->redirect('/provider/' . $id);
+    }
+
+    /** Delete a single photo from a post (leaves the post + other photos in place). */
+    public function deletePostPhoto(array $params = []): void {
+        Auth::require('admin');
+        $photoId = (int)($params['photo_id'] ?? 0);
+        $row = DB::q('SELECT id, post_id, filename FROM post_photos WHERE id = ?', [$photoId])->fetch();
+        if (!$row) { $this->notFound(); return; }
+        $fn = PostPhoto::removeOne((int)$row['id'], (int)$row['post_id']);
+        if ($fn) {
+            $path = CONFIG['upload_dir'] . DIRECTORY_SEPARATOR . $fn;
+            if (is_file($path)) @unlink($path);
+        }
+        $this->flash('success', 'Foto u fshi.');
+        $this->redirect('/posts/' . (int)$row['post_id']);
+    }
+
+    public function deleteBooking(array $params = []): void {
+        Auth::require('admin');
+        $id = (int)($params['id'] ?? 0);
+        if ($id <= 0 || !Booking::find($id)) { $this->notFound(); return; }
+        DB::q('DELETE FROM bookings WHERE id = ?', [$id]);
+        $this->flash('success', 'Rezervimi u fshi.');
+        $this->redirect('/bookings');
+    }
+
+    public function deleteConversation(array $params = []): void {
+        Auth::require('admin');
+        $id = (int)($params['id'] ?? 0);
+        if ($id <= 0 || !Conversation::find($id)) { $this->notFound(); return; }
+        DB::q('DELETE FROM conversations WHERE id = ?', [$id]);  // CASCADE deletes messages
+        $this->flash('success', 'Biseda u fshi.');
+        $this->redirect('/chat');
+    }
 }

@@ -9,6 +9,15 @@
         </a>
         <div class="chat-peer-status" data-helppy-typing="">online</div>
       </div>
+      <?php if (Auth::role() === 'admin'): ?>
+        <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/conversations/<?= (int)$conv['id'] ?>/delete"
+              onsubmit="return confirm('FSHI të gjithë bisedën përgjithmonë?');">
+          <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+          <button class="btn btn-sm btn-outline-danger" type="submit" title="Fshi bisedën (admin)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+      <?php endif; ?>
     </div>
 
     <div id="chat-thread" class="chat-thread"
