@@ -1,6 +1,15 @@
 <?php
 declare(strict_types=1);
 
+// Sessions live inside the project (storage/sessions/) so we never collide
+// with C:/laragon/tmp permissions or another app's sess_* files.
+$__sessDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'sessions';
+if (!is_dir($__sessDir)) @mkdir($__sessDir, 0775, true);
+session_save_path($__sessDir);
+ini_set('session.gc_maxlifetime', '86400');  // 24h
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.use_strict_mode', '1');
 session_start();
 
 define('APP_ROOT', dirname(__DIR__));
@@ -95,6 +104,12 @@ $router->get('/verify-email',              [AuthController::class,    'verifyFor
 $router->post('/verify-email',             [AuthController::class,    'verify']);
 $router->post('/verify-email/resend',      [AuthController::class,    'resendVerification']);
 $router->post('/verify-email/cancel',      [AuthController::class,    'cancelVerification']);
+$router->get('/password/forgot',           [AuthController::class,    'forgotForm']);
+$router->post('/password/forgot',          [AuthController::class,    'forgotSend']);
+$router->get('/password/reset',            [AuthController::class,    'resetForm']);
+$router->post('/password/reset',           [AuthController::class,    'reset']);
+$router->get('/password/change',           [AuthController::class,    'changeForm']);
+$router->post('/password/change',          [AuthController::class,    'change']);
 
 // CLIENT
 $router->get('/client/dashboard',          [ClientController::class,  'dashboard']);

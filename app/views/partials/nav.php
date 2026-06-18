@@ -38,6 +38,11 @@
             <li class="nav-item"><a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/client/dashboard">Llogaria ime</a></li>
           <?php endif; ?>
           <li class="nav-item">
+            <a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/password/change" title="Ndrysho passwordin">
+              <i class="bi bi-key"></i>
+            </a>
+          </li>
+          <li class="nav-item">
             <form method="post" action="<?= e(CONFIG['base_url']) ?>/logout" class="d-inline">
               <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
               <button class="btn btn-link nav-link text-white" type="submit">Dilni</button>
