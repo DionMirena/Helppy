@@ -12,7 +12,13 @@
     </div>
     <button class="btn btn-helppy w-100" type="submit">Hyr</button>
   </form>
-  <p class="text-center mt-3">
+
+  <p class="text-center mt-3 mb-1">
+    <a href="<?= e(CONFIG['base_url']) ?>/password/forgot">
+      Keni harruar passwordin apo dëshironi të ndryshoni passwordin?
+    </a>
+  </p>
+  <p class="text-center mt-2">
     Nuk keni llogari? <a href="<?= e(CONFIG['base_url']) ?>/register">Regjistrohu</a>
   </p>
 </div>

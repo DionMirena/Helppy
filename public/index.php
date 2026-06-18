@@ -1,6 +1,15 @@
 <?php
 declare(strict_types=1);
 
+// Sessions live inside the project (storage/sessions/) so we never collide
+// with C:/laragon/tmp permissions or another app's sess_* files.
+$__sessDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'sessions';
+if (!is_dir($__sessDir)) @mkdir($__sessDir, 0775, true);
+session_save_path($__sessDir);
+ini_set('session.gc_maxlifetime', '86400');  // 24h
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.use_strict_mode', '1');
 session_start();
 
 define('APP_ROOT', dirname(__DIR__));
@@ -21,6 +30,11 @@ spl_autoload_register(function (string $class): void {
     }
 });
 
+// Eager-load Helpers (used by controllers as a static utility).
+require APP_ROOT . '/app/core/Helpers.php';
+require APP_ROOT . '/app/core/Stripe.php';
+require APP_ROOT . '/app/core/Payments.php';
+
 $router = new Router();
 
 // PUBLIC
@@ -39,6 +53,50 @@ $router->post('/posts/{id}',               [PostController::class,    'update'])
 $router->post('/posts/{id}/close',         [PostController::class,    'close']);
 $router->post('/posts/{id}/delete',        [PostController::class,    'destroy']);
 
+// BOOKINGS
+$router->get('/provider/{id}/book',        [BookingController::class, 'createForm']);
+$router->post('/provider/{id}/book',       [BookingController::class, 'store']);
+$router->get('/bookings',                  [BookingController::class, 'index']);
+$router->get('/bookings/{id}',             [BookingController::class, 'show']);
+$router->post('/bookings/{id}/{action}',   [BookingController::class, 'transition']);
+
+// NOTIFICATIONS
+$router->get('/notifications',             [NotificationController::class, 'index']);
+$router->post('/notifications/read-all',   [NotificationController::class, 'readAll']);
+$router->get('/api/notifications/unread.json', [NotificationController::class, 'unreadJson']);
+
+// CHAT
+$router->get('/chat',                          [ChatController::class, 'index']);
+$router->get('/chat/with/{user_id}',           [ChatController::class, 'start']);
+$router->get('/chat/{id}',                     [ChatController::class, 'show']);
+$router->post('/chat/{id}/message',            [ChatController::class, 'send']);
+$router->get('/api/chat/{id}/messages.json',   [ChatController::class, 'pollMessages']);
+
+// SUBSCRIPTIONS
+$router->get('/subscribe',                     [SubscriptionController::class, 'index']);
+$router->post('/subscribe/checkout',           [SubscriptionController::class, 'checkout']);
+$router->post('/subscribe/bank',               [SubscriptionController::class, 'bank']);
+$router->get('/subscribe/bank/{id}',           [SubscriptionController::class, 'bankInstructions']);
+$router->get('/subscribe/success',             [SubscriptionController::class, 'success']);
+$router->post('/subscribe/cancel-current',     [SubscriptionController::class, 'cancelMine']);
+// Stripe webhook — no CSRF (it's signed by Stripe instead).
+$router->post('/subscribe/webhook',            [SubscriptionController::class, 'webhook'], false);
+
+$router->get('/admin/subscriptions',                       [AdminController::class, 'subscriptions']);
+$router->get('/admin/payouts',                             [AdminController::class, 'payouts']);
+$router->post('/admin/subscriptions/{id}/activate',        [AdminController::class, 'activateSubscription']);
+$router->post('/admin/subscriptions/{id}/cancel',          [AdminController::class, 'cancelSubscription']);
+
+// Full admin: users, photos, bookings, conversations
+$router->get('/admin/users',                               [AdminController::class, 'users']);
+$router->post('/admin/users/{id}/active',                  [AdminController::class, 'toggleUserActive']);
+$router->post('/admin/users/{id}/role',                    [AdminController::class, 'setUserRole']);
+$router->post('/admin/users/{id}/delete',                  [AdminController::class, 'deleteUser']);
+$router->post('/admin/providers/{id}/photo/delete',        [AdminController::class, 'deleteProviderPhoto']);
+$router->post('/admin/post-photos/{photo_id}/delete',      [AdminController::class, 'deletePostPhoto']);
+$router->post('/admin/bookings/{id}/delete',               [AdminController::class, 'deleteBooking']);
+$router->post('/admin/conversations/{id}/delete',          [AdminController::class, 'deleteConversation']);
+
 $router->get('/login',                     [AuthController::class,    'loginForm']);
 $router->post('/login',                    [AuthController::class,    'login']);
 $router->get('/register',                  [AuthController::class,    'registerForm']);
@@ -48,6 +106,12 @@ $router->get('/verify-email',              [AuthController::class,    'verifyFor
 $router->post('/verify-email',             [AuthController::class,    'verify']);
 $router->post('/verify-email/resend',      [AuthController::class,    'resendVerification']);
 $router->post('/verify-email/cancel',      [AuthController::class,    'cancelVerification']);
+$router->get('/password/forgot',           [AuthController::class,    'forgotForm']);
+$router->post('/password/forgot',          [AuthController::class,    'forgotSend']);
+$router->get('/password/reset',            [AuthController::class,    'resetForm']);
+$router->post('/password/reset',           [AuthController::class,    'reset']);
+$router->get('/password/change',           [AuthController::class,    'changeForm']);
+$router->post('/password/change',          [AuthController::class,    'change']);
 
 // CLIENT
 $router->get('/client/dashboard',          [ClientController::class,  'dashboard']);

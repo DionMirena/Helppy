@@ -21,18 +21,27 @@ final class AuthController extends Controller {
             $this->redirect('/login');
         }
 
-        // Every successful credential check issues a 2FA challenge — no role exemption.
-        Verification::generateCodeFor((int)$user['id']);
-        try {
-            Verification::send((int)$user['id']);
-        } catch (Throwable $e) {
-            $this->logMailError('login', $e);
-            $this->flash('danger', 'Kodi i verifikimit nuk u dergua. Provoni perseri.');
-            $this->redirect('/login');
+        // If the email was never verified (e.g. user registered but didn't
+        // finish), bounce them through the verification step. Otherwise log
+        // them straight in — no per-login 2FA.
+        if (empty($user['email_verified'])) {
+            Verification::generateCodeFor((int)$user['id']);
+            try {
+                Verification::send((int)$user['id']);
+            } catch (Throwable $e) {
+                $this->logMailError('login', $e);
+                $this->flash('danger', 'Kodi i verifikimit nuk u dergua. Provoni perseri.');
+                $this->redirect('/login');
+            }
+            Auth::setPending((int)$user['id']);
+            $this->flash('info', 'Llogaria juaj nuk eshte verifikuar ende. Kontrollo email-in per kodin e verifikimit.');
+            $this->redirect('/verify-email');
+            return;
         }
-        Auth::setPending((int)$user['id']);
-        $this->flash('info', 'Nje kod verifikimi u dergua ne emailin tuaj.');
-        $this->redirect('/verify-email');
+
+        Auth::login($user);
+        $this->flash('success', 'Mire se erdhet, ' . $user['name'] . '!');
+        $this->postLoginRedirect($user['role']);
     }
 
     public function logout(array $params = []): void {
@@ -197,6 +206,150 @@ final class AuthController extends Controller {
         Auth::clearPending();
         $this->flash('info', 'Anuluat verifikimin.');
         $this->redirect('/login');
+    }
+
+    /* ===========================================================
+       PASSWORD RESET (forgot) + PASSWORD CHANGE (logged-in)
+       =========================================================== */
+
+    public function forgotForm(array $params = []): void {
+        if (Auth::check()) { $this->redirect('/password/change'); return; }
+        $this->render('auth/forgot', ['title' => 'Keni harruar passwordin?']);
+    }
+
+    public function forgotSend(array $params = []): void {
+        $email = trim((string)Request::post('email', ''));
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->flash('danger', 'Email i pavlefshëm.');
+            $this->redirect('/password/forgot');
+            return;
+        }
+
+        // Always redirect to /password/reset so we don't leak whether the email exists.
+        $user = User::findByEmail($email);
+        if ($user) {
+            // Rate-limit: 60s between sends.
+            $last = (string)DB::q('SELECT password_reset_last_sent_at FROM users WHERE id=?', [$user['id']])->fetchColumn();
+            if ($last && strtotime($last) > time() - 60) {
+                $this->flash('info', 'Kodi u dërgua para pak. Kontrollo email-in.');
+                $_SESSION['pw_reset_email'] = $email;
+                $this->redirect('/password/reset');
+                return;
+            }
+
+            $code = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            DB::q(
+                'UPDATE users SET password_reset_code = ?,
+                                  password_reset_expires_at = DATE_ADD(NOW(), INTERVAL 30 MINUTE),
+                                  password_reset_last_sent_at = NOW()
+                 WHERE id = ?',
+                [$code, $user['id']]
+            );
+
+            $body = strtr(
+                "Pershendetje {NAME},\n\n" .
+                "Kodi i ndryshimit te fjalekalimit per Helppy.com:\n\n" .
+                "  {CODE}\n\n" .
+                "Ky kod vlen 30 minuta. Nese nuk e ke kerkuar ti, injoroje kete email.\n\n" .
+                "Ekipi Helppy.com\n",
+                ['{NAME}' => (string)$user['name'], '{CODE}' => $code]
+            );
+            try {
+                Mailer::send($email, 'Helppy.com — ndrysho fjalekalimin', $body);
+            } catch (Throwable $e) {
+                $this->logMailError('pwreset', $e);
+            }
+        }
+
+        $_SESSION['pw_reset_email'] = $email;
+        $this->flash('info', 'Nëse email-i është i regjistruar, kodi u dërgua. Kontrollo kutinë postare.');
+        $this->redirect('/password/reset');
+    }
+
+    public function resetForm(array $params = []): void {
+        $email = (string)($_SESSION['pw_reset_email'] ?? Request::get('email', ''));
+        if ($email === '') { $this->redirect('/password/forgot'); return; }
+        $this->render('auth/reset', [
+            'title'         => 'Vendos passwordin e ri',
+            'email'         => $email,
+            'masked_email'  => self::maskEmail($email),
+        ]);
+    }
+
+    public function reset(array $params = []): void {
+        $email   = trim((string)Request::post('email', ''));
+        $code    = trim((string)Request::post('code', ''));
+        $newPass = (string)Request::post('password', '');
+        $confirm = (string)Request::post('password_confirm', '');
+
+        $errors = [];
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))        $errors[] = 'Email i pavlefshëm.';
+        if (!preg_match('/^\d{6}$/', $code))                   $errors[] = 'Kodi duhet të jetë 6 shifra.';
+        if (strlen($newPass) < 8)                              $errors[] = 'Passwordi duhet të jetë të paktën 8 karaktere.';
+        if ($newPass !== $confirm)                             $errors[] = 'Passwordet nuk përputhen.';
+        if ($errors) {
+            $this->flash('danger', implode(' ', $errors));
+            $this->redirect('/password/reset');
+            return;
+        }
+
+        $user = User::findByEmail($email);
+        if (!$user
+            || empty($user['password_reset_code'])
+            || $user['password_reset_code'] !== $code
+            || empty($user['password_reset_expires_at'])
+            || strtotime((string)$user['password_reset_expires_at']) < time()
+        ) {
+            $this->flash('danger', 'Kodi i pavlefshëm ose i skaduar.');
+            $this->redirect('/password/reset');
+            return;
+        }
+
+        DB::q(
+            'UPDATE users SET password_hash = ?,
+                              password_reset_code = NULL,
+                              password_reset_expires_at = NULL
+             WHERE id = ?',
+            [password_hash($newPass, PASSWORD_DEFAULT), (int)$user['id']]
+        );
+        unset($_SESSION['pw_reset_email']);
+        $this->flash('success', 'Passwordi u ndryshua. Tani mund të hysh.');
+        $this->redirect('/login');
+    }
+
+    public function changeForm(array $params = []): void {
+        Auth::require();
+        $this->render('auth/change-password', ['title' => 'Ndrysho passwordin']);
+    }
+
+    public function change(array $params = []): void {
+        Auth::require();
+        $uid = (int)Auth::user()['id'];
+        $cur     = (string)Request::post('current_password', '');
+        $newPass = (string)Request::post('password', '');
+        $confirm = (string)Request::post('password_confirm', '');
+
+        $row = DB::q('SELECT password_hash FROM users WHERE id=?', [$uid])->fetch();
+        if (!$row || !password_verify($cur, (string)$row['password_hash'])) {
+            $this->flash('danger', 'Passwordi aktual i pasaktë.');
+            $this->redirect('/password/change');
+            return;
+        }
+        if (strlen($newPass) < 8) {
+            $this->flash('danger', 'Passwordi i ri duhet të jetë të paktën 8 karaktere.');
+            $this->redirect('/password/change');
+            return;
+        }
+        if ($newPass !== $confirm) {
+            $this->flash('danger', 'Passwordet e reja nuk përputhen.');
+            $this->redirect('/password/change');
+            return;
+        }
+
+        DB::q('UPDATE users SET password_hash = ? WHERE id = ?',
+              [password_hash($newPass, PASSWORD_DEFAULT), $uid]);
+        $this->flash('success', 'Passwordi u ndryshua me sukses.');
+        $this->redirect('/password/change');
     }
 
     private static function maskEmail(string $email): string {

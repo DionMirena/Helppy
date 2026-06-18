@@ -9,6 +9,15 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
   <div class="row align-items-center">
     <div class="col-md-4 text-center mb-3 mb-md-0">
       <img class="profile-photo" src="<?= e($photoUrl) ?>" alt="<?= e($p['name']) ?>">
+      <?php if (Auth::role() === 'admin' && !empty($p['photo'])): ?>
+        <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/providers/<?= (int)$p['id'] ?>/photo/delete"
+              class="mt-2" onsubmit="return confirm('Fshi foton e profilit të këtij përdoruesi?');">
+          <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+          <button type="submit" class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-trash"></i> Fshi foton (admin)
+          </button>
+        </form>
+      <?php endif; ?>
     </div>
     <div class="col-md-8">
       <h1 class="mb-1">
@@ -35,17 +44,59 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
           <span class="category-chip"><?= e($cat['name']) ?></span>
         <?php endforeach; ?>
       </div>
-      <?php if (!empty($p['bio'])): ?>
-        <p class="mb-3"><?= nl2br(e($p['bio'])) ?></p>
-      <?php endif; ?>
-      <?php if (!empty($p['phone'])): ?>
-        <a class="btn btn-helppy btn-lg" href="tel:<?= e(preg_replace('/[^0-9+]/','',$p['phone'])) ?>">
-          <i class="bi bi-telephone-fill"></i> Telefono Tani
-        </a>
-      <?php endif; ?>
+
+      <p class="mb-2">
+        <?php if ($p['hourly_rate'] !== null): ?>
+          <span class="rate-badge"><i class="bi bi-cash-coin"></i>
+            Tarifa standarde: <strong>€<?= e(rtrim(rtrim(number_format((float)$p['hourly_rate'], 2, '.', ''), '0'), '.')) ?></strong> / orë
+          </span>
+        <?php else: ?>
+          <span class="rate-badge rate-badge-muted"><i class="bi bi-chat-left-text"></i>
+            Çmimi sipas marrëveshjes
+          </span>
+        <?php endif; ?>
+      </p>
+
+      <div class="provider-actions mt-3 d-flex flex-wrap gap-2">
+        <?php if (!empty($p['phone'])): ?>
+          <a class="btn btn-helppy" href="tel:<?= e(preg_replace('/[^0-9+]/','',$p['phone'])) ?>">
+            <i class="bi bi-telephone-fill"></i> Telefono
+          </a>
+        <?php endif; ?>
+        <?php $isViewerSelf = Auth::check() && (int)Auth::user()['id'] === (int)$p['id']; ?>
+        <?php if (!$isViewerSelf): ?>
+          <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/provider/<?= (int)$p['id'] ?>/book">
+            <i class="bi bi-calendar-check"></i> Rezervo Tani
+          </a>
+          <a class="btn btn-helppy-outline" href="<?= e(CONFIG['base_url']) ?>/chat/with/<?= (int)$p['id'] ?>">
+            <i class="bi bi-chat-dots"></i> Bisedo
+          </a>
+        <?php endif; ?>
+      </div>
     </div>
   </div>
   </div>
+
+  <?php if (!empty($p['bio']) || !empty($p['skills_services'])): ?>
+    <div class="row g-3 mb-4">
+      <?php if (!empty($p['bio'])): ?>
+        <div class="col-md-6">
+          <div class="profile-card h-100">
+            <h5 class="mb-2"><i class="bi bi-person-vcard"></i> Rreth meje</h5>
+            <p class="mb-0 long-text"><?= nl2br(e($p['bio'])) ?></p>
+          </div>
+        </div>
+      <?php endif; ?>
+      <?php if (!empty($p['skills_services'])): ?>
+        <div class="col-md-6">
+          <div class="profile-card h-100">
+            <h5 class="mb-2"><i class="bi bi-tools"></i> Aftësitë & Shërbimet</h5>
+            <p class="mb-0 long-text"><?= nl2br(e($p['skills_services'])) ?></p>
+          </div>
+        </div>
+      <?php endif; ?>
+    </div>
+  <?php endif; ?>
 
   <h3 class="section-title">Vleresime (<?= count($reviews) ?>)</h3>
 

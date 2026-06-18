@@ -35,6 +35,16 @@ $phoneRaw = !empty($p['author_phone']) ? preg_replace('/[^0-9+]/', '', $p['autho
             <?php foreach ($photos as $i => $ph): ?>
               <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
                 <img src="<?= e(CONFIG['upload_url'] . '/' . rawurlencode($ph['filename'])) ?>" alt="<?= e($p['title']) ?>">
+                <?php if (Auth::role() === 'admin'): ?>
+                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/post-photos/<?= (int)$ph['id'] ?>/delete"
+                        class="carousel-admin-delete"
+                        onsubmit="return confirm('Fshi këtë foto nga postimi?');">
+                    <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                      <i class="bi bi-trash"></i> Fshi foton
+                    </button>
+                  </form>
+                <?php endif; ?>
               </div>
             <?php endforeach; ?>
           </div>
@@ -66,7 +76,7 @@ $phoneRaw = !empty($p['author_phone']) ? preg_replace('/[^0-9+]/', '', $p['autho
           &middot; <?= e(timeAgoSq((string)$p['created_at'])) ?>
         </p>
 
-        <div class="mb-3"><?= nl2br(e($p['description'])) ?></div>
+        <div class="mb-3 long-text"><?= nl2br(e($p['description'])) ?></div>
 
         <?php if ($p['type'] === 'offer'): ?>
           <ul class="list-unstyled small">

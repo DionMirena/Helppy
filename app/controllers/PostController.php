@@ -35,6 +35,17 @@ final class PostController extends Controller {
             $type = Request::get('type');
         }
 
+        // SUBSCRIPTION GATE — providers need an active subscription to post 'offer' type.
+        // Admins bypass; clients only post 'request' which is always free.
+        if ($type === 'offer' && $role === 'provider') {
+            $uid = (int)Auth::user()['id'];
+            if (!Subscription::isActive($uid)) {
+                $this->flash('info', 'Për të postuar oferta, aktivizo një abonim mujor.');
+                $this->redirect('/subscribe');
+                return;
+            }
+        }
+
         $this->render('posts/create', [
             'title'      => $type === 'offer' ? 'Posto ofertën tënde' : 'Posto kërkesën tënde',
             'type'       => $type,
@@ -56,6 +67,13 @@ final class PostController extends Controller {
             $type = Request::post('type');
         } elseif ($role !== 'client' && $role !== 'provider' && $role !== 'admin') {
             http_response_code(403); View::render('errors/403', []); return;
+        }
+
+        // SUBSCRIPTION GATE — enforce on POST as well so a hand-crafted request can't bypass.
+        if ($type === 'offer' && $role === 'provider' && !Subscription::isActive($uid)) {
+            $this->flash('info', 'Për të postuar oferta, aktivizo një abonim mujor.');
+            $this->redirect('/subscribe');
+            return;
         }
 
         // Collect raw input

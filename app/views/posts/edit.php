@@ -131,8 +131,14 @@
         <?php if (isset($errors['photos'])): ?><div class="invalid-feedback"><?= e($errors['photos']) ?></div><?php endif; ?>
       </div>
 
-      <button class="btn btn-helppy btn-lg" type="submit">Ruaj ndryshimet</button>
-      <a href="<?= e(CONFIG['base_url']) ?>/posts/<?= (int)$p['id'] ?>" class="btn btn-link">Anulo</a>
+      <div class="action-bar">
+        <button class="btn btn-helppy btn-lg" type="submit">
+          <i class="bi bi-check2"></i> Ruaj ndryshimet
+        </button>
+        <a href="<?= e(CONFIG['base_url']) ?>/posts/<?= (int)$p['id'] ?>" class="btn-ghost">
+          <i class="bi bi-x-lg"></i> Anulo
+        </a>
+      </div>
     </form>
   </div>
 </section>

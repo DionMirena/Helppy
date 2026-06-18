@@ -28,6 +28,13 @@ function e(?string $s): string {
     return htmlspecialchars($s ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+/** Bootstrap-icon glyph for a notification type. Falls back to a bell. */
+function notificationIcon(string $type): string {
+    if (str_starts_with($type, 'booking.')) return 'bi-calendar-event';
+    if (str_starts_with($type, 'message.')) return 'bi-chat-dots';
+    return 'bi-bell';
+}
+
 /** Albanian relative time helper: "tani", "para X minutash/orësh/ditësh". */
 function timeAgoSq(string $dt): string {
     $t = strtotime($dt);
