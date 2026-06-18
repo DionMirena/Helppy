@@ -708,6 +708,23 @@ a:hover { color: var(--helppy-green-darker); }
   user-select: all;
 }
 
+/* ---------- Flash alerts (auto-hide) ---------- */
+.helppy-flash {
+  transition: opacity .3s ease, transform .3s ease, max-height .35s ease, margin .35s ease, padding .35s ease;
+  opacity: 1;
+  transform: translateY(0);
+}
+.helppy-flash-leaving {
+  opacity: 0;
+  transform: translateY(-6px);
+  max-height: 0;
+  overflow: hidden;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
 /* ---------- Long-text safety + responsive utilities ---------- */
 .text-soft-wrap {
   overflow-wrap: anywhere;

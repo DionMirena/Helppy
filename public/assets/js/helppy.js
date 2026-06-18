@@ -34,7 +34,22 @@
       .catch(function () { /* silent */ });
   }
 
+  function autoHideFlashes() {
+    var flashes = document.querySelectorAll('.helppy-flash[data-helppy-autohide]');
+    flashes.forEach(function (el) {
+      var ms = parseInt(el.getAttribute('data-helppy-autohide'), 10) || 3000;
+      setTimeout(function () {
+        el.classList.add('helppy-flash-leaving');
+        // Match the CSS transition duration; then remove from DOM.
+        setTimeout(function () {
+          if (el.parentNode) el.parentNode.removeChild(el);
+        }, 350);
+      }, ms);
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    autoHideFlashes();
     if (!window.HELPPY_BASE) return;
     refreshBadges();
     setInterval(refreshBadges, 15000);
