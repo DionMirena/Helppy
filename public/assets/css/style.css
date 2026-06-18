@@ -16,12 +16,23 @@
   --helppy-star:         #f5b400;
   --helppy-shadow:       0 2px 8px rgba(17, 24, 39, .06);
   --helppy-shadow-lg:    0 10px 30px rgba(17, 24, 39, .08);
+  --helppy-shadow-ring:  0 0 0 .2rem rgba(90, 122, 79, .22);
   --helppy-radius:       14px;
   --helppy-radius-sm:    10px;
   --helppy-radius-pill:  999px;
+  --helppy-touch:        44px;     /* min touch target */
+  --helppy-space-1:      4px;
+  --helppy-space-2:      8px;
+  --helppy-space-3:      12px;
+  --helppy-space-4:      16px;
+  --helppy-space-5:      24px;
+  --helppy-space-6:      32px;
 }
 
 * { -webkit-tap-highlight-color: transparent; }
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--helppy-bg);
@@ -886,4 +897,271 @@ code, .bank-ref { overflow-wrap: anywhere; word-break: break-all; }
 @media (max-width: 575.98px) {
   .chat-shell { height: calc(100vh - 120px); min-height: 360px; border-radius: 0; margin-left: -12px; margin-right: -12px; }
   .chat-bubble { max-width: 85%; }
+}
+
+/* ===========================================================
+   POLISH PASS — button spacing, mobile rhythm, beauty
+   =========================================================== */
+
+/* ---------- Button system (consistent sizing + touch targets) ---------- */
+.btn,
+.btn-helppy,
+.btn-helppy-outline,
+.btn-ghost {
+  min-height: var(--helppy-touch);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: .1px;
+  transition: background-color .18s ease, border-color .18s ease,
+              color .18s ease, transform .08s ease, box-shadow .18s ease;
+}
+.btn:focus-visible,
+.btn-helppy:focus-visible,
+.btn-helppy-outline:focus-visible,
+.btn-ghost:focus-visible {
+  outline: none;
+  box-shadow: var(--helppy-shadow-ring);
+}
+.btn-helppy:active,
+.btn-helppy-outline:active,
+.btn-ghost:active { transform: translateY(1px); }
+.btn-sm { min-height: 36px; padding: 6px 12px; font-size: 13px; }
+.btn-lg { min-height: 52px; padding: 12px 22px; font-size: 16px; }
+.btn-helppy.btn-lg { padding: 14px 24px; }
+
+/* Helppy buttons that sit inside .d-grid look consistent */
+.d-grid > .btn,
+.d-grid > .btn-helppy,
+.d-grid > .btn-helppy-outline,
+.d-grid > .btn-ghost { width: 100%; }
+
+/* Bootstrap outline-* variants — gentle helppy ring on focus */
+.btn-outline-secondary:focus-visible,
+.btn-outline-danger:focus-visible,
+.btn-outline-warning:focus-visible { box-shadow: var(--helppy-shadow-ring); }
+
+/* ---------- Spacing utilities ---------- */
+.stack > * + * { margin-top: var(--helppy-space-3); }
+.stack-sm > * + * { margin-top: var(--helppy-space-2); }
+.stack-lg > * + * { margin-top: var(--helppy-space-4); }
+
+/* Action bar — already exists; tighten spacing + accessibility */
+.action-bar { gap: var(--helppy-space-3); margin-top: var(--helppy-space-4); }
+.action-bar.action-bar-end { justify-content: flex-end; }
+.action-bar.action-bar-center { justify-content: center; }
+
+/* Inline form actions that aren't in action-bar (legacy) — still get breathing room */
+form > .btn + .btn,
+form > .btn-helppy + .btn-helppy-outline,
+form > .btn-helppy + .btn-ghost,
+form > button + a,
+form > a + button { margin-left: var(--helppy-space-2); }
+@media (max-width: 575.98px) {
+  form > .btn + .btn,
+  form > button + a,
+  form > a + button { margin-left: 0; margin-top: var(--helppy-space-2); display: block; }
+}
+
+/* ---------- Forms ---------- */
+.form-card {
+  background: #fff;
+  border-radius: var(--helppy-radius);
+  padding: clamp(20px, 4vw, 32px);
+  box-shadow: var(--helppy-shadow);
+}
+.form-label { font-weight: 600; color: #1f2937; margin-bottom: 6px; }
+.form-control, .form-select {
+  min-height: var(--helppy-touch);
+  border-radius: var(--helppy-radius-sm);
+  border: 1px solid var(--helppy-border);
+  padding: 10px 14px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--helppy-green-light);
+  box-shadow: var(--helppy-shadow-ring);
+}
+.form-control::placeholder { color: #9ca3af; }
+.form-control-lg, .form-select-lg { min-height: 52px; padding: 12px 16px; font-size: 16px; }
+
+textarea.form-control { line-height: 1.5; padding-top: 12px; padding-bottom: 12px; }
+
+/* Group form-label + input visually */
+.mb-3, .mb-4 { margin-bottom: var(--helppy-space-4) !important; }
+
+/* ---------- Containers + page rhythm ---------- */
+main { min-height: 60vh; }
+.container > section + section,
+section + section { margin-top: var(--helppy-space-2); }
+.section-title + p { margin-top: -6px; }
+.profile-card { padding: clamp(16px, 3vw, 24px); }
+.profile-card + .profile-card { margin-top: var(--helppy-space-3); }
+.row.g-3 { row-gap: var(--helppy-space-3) !important; }
+.row.g-4 { row-gap: var(--helppy-space-4) !important; }
+
+/* ---------- Navbar polish ---------- */
+.helppy-nav .container-fluid { padding-left: var(--helppy-space-4); padding-right: var(--helppy-space-4); }
+.helppy-nav .navbar-brand img { transition: transform .18s ease; }
+.helppy-nav .navbar-brand:hover img { transform: rotate(-6deg) scale(1.05); }
+.helppy-nav .nav-link { padding: 8px 12px !important; border-radius: 8px; transition: background-color .15s; }
+.helppy-nav .nav-link:hover { background: rgba(255,255,255,.08); }
+@media (max-width: 991.98px) {
+  .helppy-nav .navbar-collapse {
+    background: var(--helppy-green-darker);
+    border-radius: var(--helppy-radius);
+    margin-top: 12px;
+    padding: 12px;
+  }
+  .helppy-nav .nav-item { width: 100%; }
+  .helppy-nav .nav-link { width: 100%; }
+  .profile-menu .dropdown-menu { position: static !important; transform: none !important; box-shadow: none; border: 1px solid var(--helppy-border); }
+}
+
+/* ---------- Provider profile actions ---------- */
+.provider-actions {
+  display: flex; flex-wrap: wrap; gap: var(--helppy-space-3);
+  margin-top: var(--helppy-space-4) !important;
+}
+.provider-actions .btn { flex: 0 1 auto; padding: 10px 18px; }
+@media (max-width: 575.98px) {
+  .provider-actions { gap: var(--helppy-space-2); }
+  .provider-actions .btn { flex: 1 1 calc(50% - var(--helppy-space-2)); justify-content: center; }
+}
+
+/* ---------- Subscription tier cards (more beautiful) ---------- */
+.tier-card { transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease; }
+.tier-card:hover { box-shadow: var(--helppy-shadow-lg); transform: translateY(-2px); }
+.tier-card.tier-premium { background: linear-gradient(180deg, #ffffff, var(--helppy-green-bg)); }
+.tier-price { line-height: 1; margin-top: var(--helppy-space-3); }
+.tier-perks { margin-top: var(--helppy-space-3); margin-bottom: var(--helppy-space-3); }
+.tier-perks li { padding: 8px 0; border-bottom: 1px dashed var(--helppy-border); }
+.tier-perks li:last-child { border-bottom: none; }
+.tier-card .d-grid { row-gap: var(--helppy-space-2); }
+
+/* ---------- Bank picker — generous spacing ---------- */
+.bank-picker { padding: var(--helppy-space-4); }
+.bank-grid { gap: var(--helppy-space-3); }
+.bank-chip {
+  padding: 12px 14px;
+  min-height: var(--helppy-touch);
+}
+
+/* ---------- Cards in feeds (general) ---------- */
+.post-card { padding: 0; }
+.post-card-body { padding: 14px 16px 16px; gap: 6px; }
+.post-card-title { font-size: 16px; }
+.provider-card { padding: 16px; gap: 12px 14px; }
+
+/* ---------- Notifications + lists ---------- */
+.notification-item { padding: 16px; gap: 14px; }
+.notification-item .notification-icon { width: 44px; height: 44px; flex: 0 0 44px; }
+
+/* ---------- Status badges (slightly bigger, easier to scan) ---------- */
+.status-badge, .post-badge, .urgency-badge, .bank-tag, .premium-badge {
+  padding: 4px 10px;
+  font-size: 11.5px;
+  letter-spacing: .4px;
+}
+
+/* ---------- Tables — better mobile experience ---------- */
+.table-responsive { border-radius: var(--helppy-radius); overflow: auto; }
+.table thead th {
+  background: #fafbfa;
+  color: #374151;
+  font-weight: 700;
+  border-bottom: 1px solid var(--helppy-border);
+  padding-top: 12px; padding-bottom: 12px;
+}
+.table > :not(caption) > * > * { padding: 12px 14px; }
+.table-hover tbody tr:hover { background: var(--helppy-green-bg); }
+
+/* ---------- Admin dashboard buttons spacing ---------- */
+.admin-actions, .admin-actions-row {
+  display: flex; flex-wrap: wrap; gap: var(--helppy-space-3);
+  margin-top: var(--helppy-space-4);
+}
+
+/* Fallback: any container with .btn-helppy siblings that aren't in an action-bar */
+.admin-page .btn + .btn { margin-left: 0; }
+
+/* ---------- Alerts — softer, modern ---------- */
+.alert {
+  border: none;
+  border-radius: var(--helppy-radius);
+  padding: 14px 18px;
+  box-shadow: var(--helppy-shadow);
+}
+.alert-success { background: #e8f5e9; color: #1b5e20; }
+.alert-danger  { background: #fdecea; color: #7f1d1d; }
+.alert-warning { background: #fff8e1; color: #78350f; }
+.alert-info    { background: #e8f0fe; color: #1e3a8a; }
+.alert-light   { background: #f9fafb; color: var(--helppy-text); }
+
+/* ---------- Footer breathing room ---------- */
+.helppy-footer { margin-top: var(--helppy-space-6) * 2; padding: var(--helppy-space-5) 0; }
+.helppy-footer .container { padding-top: 4px; padding-bottom: 4px; }
+
+/* ---------- Container side padding on phones ---------- */
+@media (max-width: 575.98px) {
+  .container, .container-fluid { padding-left: 16px; padding-right: 16px; }
+  .form-card { padding: 18px; }
+  .profile-card { padding: 16px; }
+  .section-title { margin-top: var(--helppy-space-4); }
+  .btn-lg, .form-control-lg, .form-select-lg { font-size: 15px; }
+  .tier-price { font-size: 28px; }
+  .bank-grid { grid-template-columns: repeat(2, 1fr); }
+  .table { font-size: 14px; }
+  .table thead th { font-size: 12px; }
+  .bookings-table th:nth-child(1),
+  .bookings-table td:nth-child(1) { display: none; }  /* hide ID col on phones */
+}
+
+@media (max-width: 359.98px) {
+  .bank-grid { grid-template-columns: 1fr; }
+  .provider-actions .btn { flex: 1 1 100%; }
+}
+
+/* ---------- Subscribe page — tighter on phones ---------- */
+@media (max-width: 575.98px) {
+  .tier-card { padding: 18px; }
+  .bank-picker { padding: 12px; }
+}
+
+/* ---------- Empty state — softer ---------- */
+.empty-state {
+  padding: clamp(36px, 8vw, 64px) 24px;
+  background: linear-gradient(180deg, #fff, #fafbfa);
+  border: 1px dashed var(--helppy-border);
+  box-shadow: none;
+}
+.empty-state i { font-size: 64px; opacity: .65; }
+
+/* ---------- Bell + chat icon nav badges (refined) ---------- */
+.nav-badge {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.05);
+}
+
+/* ---------- Profile dropdown polish ---------- */
+.profile-dropdown-header { border-bottom: 1px solid var(--helppy-border); }
+.profile-dropdown { animation: dropIn .14s ease-out; }
+@keyframes dropIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ---------- Subtle entrance for primary cards ---------- */
+.profile-card, .post-card, .notification-item, .conversation-item, .empty-state {
+  animation: cardIn .26s ease-out both;
+}
+@keyframes cardIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---------- Print: hide nav, footer, chat composer ---------- */
+@media print {
+  .helppy-nav, .helppy-footer, .chat-composer, .provider-actions { display: none !important; }
+  .profile-card { box-shadow: none; border: 1px solid var(--helppy-border); }
 }
