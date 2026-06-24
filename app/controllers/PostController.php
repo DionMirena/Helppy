@@ -11,12 +11,35 @@ final class PostController extends Controller {
 
         $posts = Post::feed($filters, 60);
 
+        // District fallback: a city was picked but no posts exist there →
+        // pull from the rest of the same Kosovo district so the page can
+        // suggest nearby posts instead of just showing an empty state.
+        $nearbyPosts    = [];
+        $nearbyDistrict = null;
+        $selectedCity   = null;
+        if (!empty($filters['city_id']) && !$posts) {
+            $selectedCity = City::find((int)$filters['city_id']);
+            if ($selectedCity) {
+                $siblingIds = Geography::siblingCityIds((int)$selectedCity['id']);
+                if ($siblingIds) {
+                    $nearbyFilters = $filters;
+                    $nearbyFilters['city_id']  = null;
+                    $nearbyFilters['city_ids'] = $siblingIds;
+                    $nearbyPosts    = Post::feed($nearbyFilters, 60);
+                    $nearbyDistrict = Geography::districtOfCityName((string)$selectedCity['name']);
+                }
+            }
+        }
+
         $this->render('posts/index', [
-            'title'      => 'Postimet',
-            'posts'      => $posts,
-            'filters'    => $filters,
-            'categories' => Category::all(),
-            'cities'     => City::all(),
+            'title'           => 'Postimet',
+            'posts'           => $posts,
+            'filters'         => $filters,
+            'categories'      => Category::all(),
+            'cities'          => City::all(),
+            'nearby_posts'    => $nearbyPosts,
+            'nearby_district' => $nearbyDistrict,
+            'selected_city'   => $selectedCity,
         ]);
     }
 

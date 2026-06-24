@@ -1,9 +1,21 @@
+<?php
+// Show the back button on every page except the homepage.
+$__currentPath = trim((string)($_GET['url'] ?? ''), '/');
+$__isHome      = $__currentPath === '';
+?>
 <nav class="navbar navbar-expand-lg helppy-nav">
   <div class="container-fluid">
     <a class="navbar-brand text-white d-flex align-items-center" href="<?= e(CONFIG['base_url']) ?>/">
       <img src="<?= e(CONFIG['base_url']) ?>/assets/img/logo.svg" alt="Helppy" height="32" class="me-2">
       <span class="fw-bold">Helppy</span>
     </a>
+    <?php if (!$__isHome): ?>
+      <button type="button" class="helppy-back-btn" data-helppy-back
+              aria-label="Kthehu mbrapa" title="Kthehu mbrapa">
+        <i class="bi bi-arrow-left"></i>
+        <span class="d-none d-md-inline ms-1">Kthehu mbrapa</span>
+      </button>
+    <?php endif; ?>
     <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
       <span class="navbar-toggler-icon"></span>
     </button>

@@ -25,37 +25,28 @@
     <strong>Punëtorët dhe kompanitë paguajnë vetëm për të postuar oferta.</strong>
   </p>
 
-  <div class="row g-3 mt-2">
+  <div class="row g-3 mt-2" id="plan-grid">
     <?php
-    $tiers = [
-        ['key' => 'standard', 'name' => 'Standard', 'price' => $price_standard, 'perks' => [
-            'Krijo oferta të pakufizuara',
-            'Renditja e zakonshme në kërkim',
-            'Vlerësime nga klientë',
-            '30 ditë qasje',
-        ]],
-        ['key' => 'premium',  'name' => 'Premium',  'price' => $price_premium, 'perks' => [
-            'Çdo gjë në Standard',
-            'Rendit në krye të rezultateve',
-            'Shenjë “PREMIUM” e dukshme',
-            '30 ditë qasje',
-        ]],
-    ];
-    foreach ($tiers as $t):
-      $isCurrent = $current && $current['tier'] === $t['key'];
+    $currentPlanKey = $current['plan'] ?? '';
+    foreach ($plans as $planKey => $plan):
+      $isCurrent = $current && $currentPlanKey === $planKey;
+      $isPremium = $plan['tier'] === 'premium';
     ?>
-      <div class="col-md-6">
-        <div class="profile-card tier-card <?= $t['key'] === 'premium' ? 'tier-premium' : '' ?>">
+      <div class="col-md-6 col-lg-4">
+        <div class="profile-card tier-card<?= $isPremium ? ' tier-premium' : '' ?>"
+             data-plan-key="<?= e($planKey) ?>"
+             role="button"
+             tabindex="0">
           <div class="d-flex justify-content-between align-items-start">
-            <h3 class="mb-0"><?= e($t['name']) ?></h3>
-            <?php if ($t['key'] === 'premium'): ?><span class="premium-badge">PREMIUM</span><?php endif; ?>
+            <h3 class="mb-0"><?= e($plan['name']) ?></h3>
+            <?php if ($isPremium): ?><span class="premium-badge">PREMIUM</span><?php endif; ?>
           </div>
           <div class="tier-price mt-2">
-            €<?= e(rtrim(rtrim(number_format($t['price'], 2, '.', ''), '0'), '.')) ?>
-            <span class="text-muted small">/ <?= (int)$period_days ?> ditë</span>
+            €<?= e(rtrim(rtrim(number_format((float)$plan['price'], 2, '.', ''), '0'), '.')) ?>
+            <span class="text-muted small">/ <?= (int)$plan['period_days'] ?> ditë</span>
           </div>
           <ul class="tier-perks mt-3">
-            <?php foreach ($t['perks'] as $perk): ?>
+            <?php foreach ($plan['perks'] as $perk): ?>
               <li><i class="bi bi-check2"></i> <?= e($perk) ?></li>
             <?php endforeach; ?>
           </ul>
@@ -67,33 +58,43 @@
               <?php if ($stripe_enabled): ?>
                 <form method="post" action="<?= e(CONFIG['base_url']) ?>/subscribe/checkout">
                   <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                  <input type="hidden" name="tier" value="<?= e($t['key']) ?>">
+                  <input type="hidden" name="plan" value="<?= e($planKey) ?>">
                   <button class="btn btn-helppy w-100" type="submit">
-                    <i class="bi bi-credit-card"></i> Paguaj me kartë
+                    <i class="bi bi-credit-card"></i> Paguaj me kartë (Stripe)
                   </button>
                 </form>
               <?php endif; ?>
-              <button class="btn btn-helppy-outline w-100"
-                      type="button"
-                      onclick="document.getElementById('bank-picker-<?= e($t['key']) ?>').classList.toggle('open');">
-                <i class="bi bi-bank"></i> Transfer bankar
-              </button>
-              <div class="bank-picker mt-2" id="bank-picker-<?= e($t['key']) ?>">
-                <p class="small text-muted mb-2">Zgjidh bankën nga e cila do të bësh transferin:</p>
-                <div class="bank-grid">
-                  <?php foreach (Payments::banks() as $b): ?>
-                    <form method="post" action="<?= e(CONFIG['base_url']) ?>/subscribe/bank">
-                      <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                      <input type="hidden" name="tier" value="<?= e($t['key']) ?>">
-                      <input type="hidden" name="bank" value="<?= e($b['key']) ?>">
-                      <button class="bank-chip" type="submit" style="--bank-color: <?= e($b['color']) ?>;">
-                        <span class="bank-chip-dot"></span>
-                        <?= e($b['short']) ?>
-                      </button>
-                    </form>
-                  <?php endforeach; ?>
+
+              <?php if (!empty($enabled_banks)): ?>
+                <button class="btn btn-helppy<?= $stripe_enabled ? '-outline' : '' ?> w-100"
+                        type="button"
+                        onclick="event.stopPropagation(); document.getElementById('bank-picker-<?= e($planKey) ?>').classList.toggle('open');">
+                  <i class="bi bi-bank"></i> Paguaj me kartë (Bankë)
+                </button>
+                <div class="bank-picker mt-2" id="bank-picker-<?= e($planKey) ?>" onclick="event.stopPropagation();">
+                  <p class="small text-muted mb-2">Zgjidh bankën ku ke kartën:</p>
+                  <div class="bank-grid">
+                    <?php foreach ($enabled_banks as $b): ?>
+                      <form method="post" action="<?= e(CONFIG['base_url']) ?>/subscribe/card-bank">
+                        <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+                        <input type="hidden" name="plan" value="<?= e($planKey) ?>">
+                        <input type="hidden" name="bank" value="<?= e($b['key']) ?>">
+                        <button class="bank-chip" type="submit" style="--bank-color: <?= e($b['color']) ?>;">
+                          <span class="bank-chip-dot"></span>
+                          <?= e($b['short']) ?>
+                        </button>
+                      </form>
+                    <?php endforeach; ?>
+                  </div>
                 </div>
-              </div>
+              <?php elseif (!$stripe_enabled): ?>
+                <button class="btn btn-secondary w-100" type="button" disabled>
+                  <i class="bi bi-credit-card"></i> Pagesa nuk është konfiguruar ende
+                </button>
+                <!-- <p class="small text-muted mb-0 mt-1">
+                  Shto çelësat e ndonjë banke ose të Stripe te <code>config/config.php</code>.
+                </p> -->
+              <?php endif; ?>
             <?php endif; ?>
           </div>
         </div>
@@ -111,3 +112,29 @@
     </form>
   <?php endif; ?>
 </section>
+
+<script>
+(function () {
+  var grid = document.getElementById('plan-grid');
+  if (!grid) return;
+  var cards = grid.querySelectorAll('.tier-card[data-plan-key]');
+  function select(card) {
+    cards.forEach(function (c) { c.classList.remove('selected'); });
+    card.classList.add('selected');
+  }
+  cards.forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      // Don't steal clicks meant for the buttons / forms / bank picker inside.
+      var tag = (e.target && e.target.tagName) || '';
+      if (e.target.closest('button, a, form, .bank-picker, input')) return;
+      select(card);
+    });
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        select(card);
+      }
+    });
+  });
+})();
+</script>

@@ -35,15 +35,17 @@ $statusBadge = function (string $s): string {
               <td><?= $b ? '<span class="bank-tag" style="background:' . e((string)$b['color']) . '20; color:#111;">' . e((string)$b['short']) . '</span>' : '<small class="text-muted">—</small>' ?></td>
               <td><small><?= e(date('d M Y, H:i', strtotime((string)$p['created_at']))) ?></small></td>
               <td>
-                <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/subscriptions/<?= (int)$p['id'] ?>/activate" class="d-inline">
-                  <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                  <button class="btn btn-sm btn-helppy" type="submit"><i class="bi bi-check2"></i> Aktivizo</button>
-                </form>
-                <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/subscriptions/<?= (int)$p['id'] ?>/cancel" class="d-inline"
-                      onsubmit="return confirm('Anulo këtë pagesë në pritje?');">
-                  <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                  <button class="btn btn-sm btn-outline-danger" type="submit">Anulo</button>
-                </form>
+                <div class="inline-actions">
+                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/subscriptions/<?= (int)$p['id'] ?>/activate" class="d-inline">
+                    <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+                    <button class="btn btn-sm btn-helppy" type="submit"><i class="bi bi-check2"></i> Aktivizo</button>
+                  </form>
+                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/subscriptions/<?= (int)$p['id'] ?>/cancel" class="d-inline"
+                        onsubmit="return confirm('Anulo këtë pagesë në pritje?');">
+                    <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+                    <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-x"></i> Anulo</button>
+                  </form>
+                </div>
               </td>
             </tr>
           <?php endforeach; ?>

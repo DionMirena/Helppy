@@ -123,6 +123,223 @@ a:hover { color: var(--helppy-green-darker); }
   background: var(--helppy-border);
   margin: 8px 2px;
 }
+/* ---------- District badge on cards & profile ---------- */
+.district-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(90, 122, 79, .12);
+  color: var(--helppy-green-dark);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.district-badge i { font-size: 11px; }
+
+/* ---------- "Nearby workers" + invite banner on /search and /posts ---------- */
+.nearby-banner {
+  border: 1px solid #b6d4e3;
+  background: #eaf6fc;
+  color: #0c5a7a;
+  border-radius: var(--helppy-radius);
+  padding: 12px 14px;
+  margin-bottom: var(--helppy-space-3);
+}
+.nearby-banner i.bi-info-circle-fill { color: #2293c4; font-size: 18px; }
+
+/* ---------- Provider dashboard form (sectioned card layout) ---------- */
+.provider-form { display: flex; flex-direction: column; gap: var(--helppy-space-3); }
+.form-card {
+  background: #fff;
+  border: 1px solid var(--helppy-border);
+  border-radius: var(--helppy-radius);
+  padding: var(--helppy-space-4);
+  box-shadow: var(--helppy-shadow);
+}
+.form-card-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--helppy-green-dark);
+  padding: 0;
+  margin: 0 0 var(--helppy-space-3);
+  border-bottom: 1px solid var(--helppy-border);
+  padding-bottom: 8px;
+  width: 100%;
+}
+.form-card-title i { color: var(--helppy-green); }
+
+.category-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.category-check {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--helppy-border);
+  border-radius: 999px;
+  cursor: pointer;
+  background: #fff;
+  transition: background .12s, border-color .12s;
+  font-size: 14px;
+}
+.category-check input { accent-color: var(--helppy-green); }
+.category-check:has(input:checked) {
+  background: var(--helppy-green);
+  border-color: var(--helppy-green);
+  color: #fff;
+}
+
+/* ---------- Provider location map (Leaflet / Google Maps) ---------- */
+.provider-map {
+  height: 320px;
+  border-radius: var(--helppy-radius);
+  border: 1px solid var(--helppy-border);
+  overflow: hidden;
+}
+.provider-map:focus { outline: 2px solid var(--helppy-green); outline-offset: 2px; }
+@media (max-width: 575.98px) {
+  .provider-map { height: 260px; }
+}
+
+/* ---------- Custom city picker (replaces native <select>) ---------- */
+.helppy-citypicker {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.helppy-citypicker-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  padding: 10px 8px;
+  font-size: 16px;
+  color: var(--helppy-text);
+  cursor: pointer;
+  border-radius: var(--helppy-radius-sm);
+  text-align: left;
+  min-height: var(--helppy-touch);
+}
+.helppy-citypicker-toggle:hover { background: rgba(90, 122, 79, .06); }
+.helppy-citypicker-toggle:focus { outline: none; background: rgba(90, 122, 79, .08); }
+.helppy-citypicker-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #9ca3af;
+}
+.helppy-citypicker.is-selected .helppy-citypicker-label { color: var(--helppy-text); font-weight: 600; }
+.helppy-citypicker-caret {
+  color: var(--helppy-green);
+  font-size: 14px;
+  transition: transform .18s ease;
+}
+.helppy-citypicker.is-open .helppy-citypicker-caret { transform: rotate(180deg); }
+
+.helppy-citypicker-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: #fff;
+  border: 1px solid var(--helppy-border);
+  border-radius: var(--helppy-radius);
+  box-shadow: 0 12px 32px rgba(17, 24, 39, .12);
+  overflow: hidden;
+  animation: cityPickerIn .16s ease-out;
+}
+@keyframes cityPickerIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+.helppy-citypicker-search {
+  position: relative;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--helppy-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fafaf7;
+}
+.helppy-citypicker-search i {
+  color: var(--helppy-green);
+  font-size: 16px;
+  flex: 0 0 auto;
+}
+.helppy-citypicker-search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  outline: none;
+  min-width: 0;
+  color: var(--helppy-text);
+}
+.helppy-citypicker-search input::placeholder { color: #9ca3af; }
+
+.helppy-citypicker-list {
+  list-style: none;
+  padding: 6px;
+  margin: 0;
+  max-height: min(50vh, 340px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.helppy-citypicker-list::-webkit-scrollbar { width: 8px; }
+.helppy-citypicker-list::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+.helppy-citypicker-list::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+.helppy-citypicker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--helppy-radius-sm);
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--helppy-text);
+  transition: background .12s ease, color .12s ease;
+}
+.helppy-citypicker-item i { color: var(--helppy-green); font-size: 16px; }
+.helppy-citypicker-item:hover,
+.helppy-citypicker-item.is-active {
+  background: rgba(90, 122, 79, .10);
+  color: var(--helppy-green-dark);
+}
+.helppy-citypicker-item.is-selected {
+  background: var(--helppy-green);
+  color: #fff;
+}
+.helppy-citypicker-item.is-selected i { color: #fff; }
+.helppy-citypicker-item.is-clear {
+  font-style: italic;
+  color: var(--helppy-text-muted, #6b7280);
+  border-bottom: 1px dashed var(--helppy-border);
+  border-radius: 0;
+  margin-bottom: 4px;
+}
+.helppy-citypicker-item.is-hidden { display: none; }
+
+.helppy-citypicker-empty {
+  padding: 16px 12px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+@media (max-width: 575.98px) {
+  .helppy-citypicker-toggle { padding: 10px 8px; font-size: 16px; }
+  .helppy-citypicker-list { max-height: 50vh; }
+}
+
 .helppy-search .btn-helppy {
   border-radius: var(--helppy-radius-sm);
   padding: 10px 22px;
@@ -274,28 +491,85 @@ a:hover { color: var(--helppy-green-darker); }
 .provider-card .card-bottom {
   grid-column: 1 / -1;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
   border-top: 1px dashed var(--helppy-border);
   padding-top: 10px;
   margin-top: 4px;
 }
-.provider-card .call-btn {
-  background: var(--helppy-green);
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: var(--helppy-radius-sm);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
+/* Three equal-width action buttons (Telefono / Hap profilin / Bisedo) */
+.provider-card .card-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.provider-card .card-action {
+  width: 100%;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  transition: background .15s;
+  justify-content: center;
+  gap: 4px;
+  padding: 7px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--helppy-radius-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background .15s, color .15s, border-color .15s, transform .08s;
+  min-height: 36px;
+  border: 1px solid transparent;
 }
-.provider-card .call-btn:hover { background: var(--helppy-green-dark); color: #fff; }
+.provider-card .card-action i { font-size: 13px; flex-shrink: 0; }
+.provider-card .card-action:active { transform: translateY(1px); }
+
+.provider-card .card-action-primary {
+  background: var(--helppy-green);
+  color: #fff;
+  border-color: var(--helppy-green);
+}
+.provider-card .card-action-primary:hover {
+  background: var(--helppy-green-dark);
+  border-color: var(--helppy-green-dark);
+  color: #fff;
+}
+.provider-card .card-action-outline {
+  background: #f3f4f6;
+  color: var(--helppy-text);
+  border-color: var(--helppy-border);
+}
+.provider-card .card-action-outline:hover {
+  background: #fff;
+  color: var(--helppy-green-dark);
+  border-color: var(--helppy-green-light);
+}
+.provider-card .card-action-secondary {
+  background: #fff;
+  color: var(--helppy-green-dark);
+  border-color: var(--helppy-green-light);
+}
+.provider-card .card-action-secondary:hover {
+  background: var(--helppy-green-bg);
+  color: var(--helppy-green-darker);
+  border-color: var(--helppy-green);
+}
+.provider-card .card-action-disabled {
+  background: #f3f4f6;
+  color: var(--helppy-muted);
+  border-color: var(--helppy-border);
+  cursor: not-allowed;
+  opacity: .8;
+}
+.provider-card .card-action-disabled i { color: #b91c1c; opacity: .55; }
+
+/* Even narrower screens — 2 columns to keep labels readable */
+@media (max-width: 359.98px) {
+  .provider-card .card-actions { grid-template-columns: 1fr 1fr; }
+  .provider-card .card-action-secondary { grid-column: 1 / -1; }   /* Bisedo full-width row 2 */
+}
 
 .premium-badge {
   background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -348,11 +622,20 @@ a:hover { color: var(--helppy-green-darker); }
   box-shadow: 0 0 0 .2rem rgba(90, 122, 79, .18);
 }
 
+/* ---------- Sticky footer layout ----------
+   The body is a flex column, <main> grows to fill the viewport, so the
+   green footer always sits flush at the bottom — no white strip below it
+   on short pages. */
+html, body { min-height: 100vh; }
+body { display: flex; flex-direction: column; }
+main { flex: 1 0 auto; }
+.helppy-footer { flex-shrink: 0; }
+
 /* ---------- Footer ---------- */
 .helppy-footer {
   background: var(--helppy-green-darker);
   color: rgba(255, 255, 255, .8);
-  margin-top: 60px;
+  margin-top: 32px;
 }
 .helppy-footer a { color: #fff; }
 
@@ -360,7 +643,7 @@ a:hover { color: var(--helppy-green-darker); }
 @media (max-width: 575.98px) {
   .helppy-search { padding: 6px; }
   .helppy-search .btn-helppy { padding: 10px 16px; min-width: 56px; }
-  .helppy-search .form-select { padding: 10px 8px; font-size: 15px; }
+  .helppy-search .form-select { padding: 10px 8px; font-size: 16px; }
   .hero { padding: 18px 0 4px; }
   .provider-card { padding: 12px; gap: 8px 10px; }
   .provider-card .avatar { width: 56px; height: 56px; }
@@ -492,8 +775,7 @@ a:hover { color: var(--helppy-green-darker); }
   display: flex; align-items: center; gap: 4px;
 }
 .provider-card .rate .meta { color: var(--helppy-muted); font-weight: 400; }
-.provider-actions .btn { flex: 0 0 auto; }
-@media (max-width: 575.98px) { .provider-actions .btn { flex: 1 1 auto; } }
+/* The full equalised-grid rule for .provider-actions lives further down. */
 
 /* ---------- Status badges (bookings) ---------- */
 .status-badge {
@@ -706,6 +988,19 @@ a:hover { color: var(--helppy-green-darker); }
   border: 1px solid var(--helppy-border);
   border-bottom-left-radius: 4px;
 }
+.chat-bubble.is-pending { opacity: .65; }
+.chat-bubble.chat-bubble-failed {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+  border: 1px solid #fca5a5;
+}
+.chat-bubble.chat-bubble-failed::after {
+  content: 'Dështoi — riprovo';
+  display: block;
+  font-size: 10px;
+  margin-top: 4px;
+  opacity: .8;
+}
 .chat-text { white-space: pre-wrap; }
 .chat-meta { font-size: 10px; opacity: .7; margin-top: 4px; text-align: right; }
 .chat-bubble.is-theirs .chat-meta { opacity: .55; }
@@ -722,7 +1017,8 @@ a:hover { color: var(--helppy-green-darker); }
   border: 1px solid var(--helppy-border);
   border-radius: var(--helppy-radius-pill);
   padding: 10px 16px;
-  font-size: 14px;
+  font-size: 16px;            /* ≥16px keeps iOS Safari from zooming on focus */
+  line-height: 1.4;
   max-height: 120px;
   outline: none;
 }
@@ -1022,14 +1318,42 @@ section + section { margin-top: var(--helppy-space-2); }
 }
 
 /* ---------- Provider profile actions ---------- */
+/* Equal flex children — every button (Telefono / Rezervo Tani / Bisedo)
+   has identical width regardless of label length, since flex: 1 1 0 +
+   min-width: 0 makes each item ignore its intrinsic content size and
+   share the available space evenly. */
 .provider-actions {
-  display: flex; flex-wrap: wrap; gap: var(--helppy-space-3);
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--helppy-space-2);
   margin-top: var(--helppy-space-4) !important;
 }
-.provider-actions .btn { flex: 0 1 auto; padding: 10px 18px; }
-@media (max-width: 575.98px) {
-  .provider-actions { gap: var(--helppy-space-2); }
-  .provider-actions .btn { flex: 1 1 calc(50% - var(--helppy-space-2)); justify-content: center; }
+.provider-actions .btn,
+.provider-actions a.btn,
+.provider-actions button.btn {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  width: auto;
+  padding: 7px 10px !important;
+  font-size: 13px !important;
+  min-height: 36px !important;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  gap: 4px;
+}
+.provider-actions .btn i { font-size: 14px; }
+@media (max-width: 480px) {
+  .provider-actions { flex-wrap: wrap; }
+  .provider-actions .btn,
+  .provider-actions a.btn,
+  .provider-actions button.btn { flex: 1 1 calc(50% - var(--helppy-space-2)) !important; }
+}
+@media (max-width: 359.98px) {
+  .provider-actions .btn,
+  .provider-actions a.btn,
+  .provider-actions button.btn { flex: 1 1 100% !important; }
 }
 
 /* ---------- Subscription tier cards (more beautiful) ---------- */
@@ -1041,6 +1365,19 @@ section + section { margin-top: var(--helppy-space-2); }
 .tier-perks li { padding: 8px 0; border-bottom: 1px dashed var(--helppy-border); }
 .tier-perks li:last-child { border-bottom: none; }
 .tier-card .d-grid { row-gap: var(--helppy-space-2); }
+
+/* Click-to-select highlight — a colored ring + glow around the chosen card. */
+.tier-card[data-plan-key] { cursor: pointer; }
+.tier-card[data-plan-key]:focus { outline: none; }
+.tier-card.selected {
+  border-color: var(--helppy-green);
+  box-shadow: 0 0 0 3px rgba(90, 122, 79, .35), 0 12px 28px rgba(90, 122, 79, .25);
+  transform: translateY(-2px);
+}
+.tier-card.tier-premium.selected {
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, .40), 0 12px 28px rgba(217, 119, 6, .25);
+}
 
 /* ---------- Bank picker — generous spacing ---------- */
 .bank-picker { padding: var(--helppy-space-4); }
@@ -1101,9 +1438,10 @@ section + section { margin-top: var(--helppy-space-2); }
 .alert-info    { background: #e8f0fe; color: #1e3a8a; }
 .alert-light   { background: #f9fafb; color: var(--helppy-text); }
 
-/* ---------- Footer breathing room ---------- */
-.helppy-footer { margin-top: var(--helppy-space-6) * 2; padding: var(--helppy-space-5) 0; }
-.helppy-footer .container { padding-top: 4px; padding-bottom: 4px; }
+/* ---------- Footer breathing room (compact) ---------- */
+.helppy-footer { padding: 10px 0; }
+.helppy-footer .container { padding-top: 0; padding-bottom: 0; }
+.helppy-footer .py-4 { padding-top: 6px !important; padding-bottom: 6px !important; }
 
 /* ---------- Container side padding on phones ---------- */
 @media (max-width: 575.98px) {
@@ -1111,7 +1449,8 @@ section + section { margin-top: var(--helppy-space-2); }
   .form-card { padding: 18px; }
   .profile-card { padding: 16px; }
   .section-title { margin-top: var(--helppy-space-4); }
-  .btn-lg, .form-control-lg, .form-select-lg { font-size: 15px; }
+  .btn-lg { font-size: 15px; }
+  .form-control-lg, .form-select-lg { font-size: 16px; }   /* iOS no-zoom */
   .tier-price { font-size: 28px; }
   .bank-grid { grid-template-columns: repeat(2, 1fr); }
   .table { font-size: 14px; }
@@ -1122,7 +1461,6 @@ section + section { margin-top: var(--helppy-space-2); }
 
 @media (max-width: 359.98px) {
   .bank-grid { grid-template-columns: 1fr; }
-  .provider-actions .btn { flex: 1 1 100%; }
 }
 
 /* ---------- Subscribe page — tighter on phones ---------- */
@@ -1193,4 +1531,638 @@ section + section { margin-top: var(--helppy-space-2); }
 @media print {
   .helppy-nav, .helppy-footer, .chat-composer, .provider-actions { display: none !important; }
   .profile-card { box-shadow: none; border: 1px solid var(--helppy-border); }
+}
+
+/* ===========================================================
+   Provider profile — compact header + gallery
+   =========================================================== */
+
+/* Compact header: smaller photo, horizontal flex layout, tighter padding */
+.profile-card-compact { padding: clamp(14px, 2.5vw, 18px); }
+.profile-header {
+  display: flex;
+  gap: var(--helppy-space-4);
+  align-items: flex-start;
+}
+.profile-header-photo {
+  flex: 0 0 auto;
+  text-align: center;
+}
+.profile-card-compact .profile-photo {
+  width: 92px;
+  height: 92px;
+  border-width: 3px;
+}
+.profile-header-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.profile-name {
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.profile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.category-chip-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Action bar (Telefono / Rezervo / Bisedo) gets a dashed top divider */
+.profile-card-compact .provider-actions {
+  margin-top: var(--helppy-space-3) !important;
+  padding-top: var(--helppy-space-3);
+  border-top: 1px dashed var(--helppy-border);
+  gap: var(--helppy-space-2);
+}
+
+/* On phones, header stacks vertically (photo above info) */
+@media (max-width: 575.98px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--helppy-space-3);
+  }
+  .profile-header-info { text-align: center; }
+  .profile-name { justify-content: center; }
+  .profile-chips { justify-content: center; }
+  .profile-card-compact .profile-photo { width: 84px; height: 84px; }
+}
+
+/* ---------- Provider portfolio gallery (work photos) ---------- */
+.provider-gallery-card { display: flex; flex-direction: column; }
+.provider-gallery-title { font-size: 18px; font-weight: 700; }
+.provider-gallery-title i { color: var(--helppy-green-dark); margin-right: 4px; }
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--helppy-space-2);
+}
+.gallery-item {
+  display: block;
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--helppy-radius-sm);
+  background: var(--helppy-green-bg);
+  box-shadow: var(--helppy-shadow);
+  transition: transform .12s ease, box-shadow .15s ease;
+}
+.gallery-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .25s ease;
+}
+.gallery-item:hover {
+  box-shadow: var(--helppy-shadow-lg);
+  transform: translateY(-1px);
+}
+.gallery-item:hover img { transform: scale(1.04); }
+.gallery-item .gallery-delete {
+  position: absolute;
+  top: 6px; right: 6px;
+  margin: 0;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.gallery-item:hover .gallery-delete,
+.gallery-item:focus-within .gallery-delete { opacity: 1; }
+
+.gallery-empty {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: var(--helppy-space-5) var(--helppy-space-4);
+  background: linear-gradient(180deg, #fff, var(--helppy-green-bg));
+  border: 1px dashed var(--helppy-border);
+  border-radius: var(--helppy-radius-sm);
+  color: var(--helppy-muted);
+}
+.gallery-empty i { font-size: 36px; color: var(--helppy-green-light); display: block; margin-bottom: 8px; }
+.gallery-empty p a { color: var(--helppy-green-dark); font-weight: 600; }
+
+/* Tighter columns inside the small profile right card */
+.provider-top-row .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+@media (min-width: 1200px) {
+  .provider-top-row .gallery-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 575.98px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .gallery-item .gallery-delete { opacity: 1; }    /* touch devices: always visible */
+}
+@media (max-width: 359.98px) {
+  .gallery-grid,
+  .provider-top-row .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ===========================================================
+   Home: scrollable providers list + uniform card heights
+   =========================================================== */
+.providers-scroller {
+  max-height: clamp(560px, 75vh, 820px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 12px 12px;
+  margin: 0 -12px;        /* let cards align with the page container edges */
+  border-radius: var(--helppy-radius);
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+.providers-scroller > .row { margin-bottom: 0; }
+
+/* Fade hint at the bottom so users see "there's more below". */
+.providers-scroller {
+  background:
+    linear-gradient(180deg, transparent 0%, transparent calc(100% - 30px), rgba(243, 244, 246, .9) 100%) bottom no-repeat;
+  background-size: 100% 30px;
+}
+
+/* Loader + end-of-list */
+.providers-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 8px 8px;
+}
+.providers-end {
+  text-align: center;
+  padding: 8px;
+  color: var(--helppy-muted);
+  font-size: 14px;
+}
+.providers-end i { color: var(--helppy-green); margin-right: 4px; }
+
+/* "Shfaq më shumë" button with helppy logo */
+.load-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--helppy-radius-pill);
+  min-width: 240px;
+  justify-content: center;
+  position: relative;
+}
+.load-more-btn .load-more-logo {
+  width: 22px; height: 22px;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.15));
+  transition: transform .6s ease;
+}
+.load-more-btn:hover .load-more-logo { transform: rotate(-12deg) scale(1.08); }
+.load-more-btn.is-loading .load-more-logo {
+  animation: helppySpin 1s linear infinite;
+  transform: none;
+}
+.load-more-btn .load-more-loading i {
+  animation: helppySpin .9s linear infinite;
+  margin-right: 4px;
+}
+.load-more-btn.is-loading { cursor: progress; opacity: .92; }
+.load-more-btn.is-loading .load-more-label { display: none; }
+.load-more-btn:not(.is-loading) .load-more-loading { display: none !important; }
+
+/* Newly inserted cards fade-in so they don't pop in jarringly */
+.providers-scroller .provider-card-new {
+  animation: cardInUp .35s ease-out both;
+}
+@keyframes cardInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Cards stretch to equal height inside their grid column */
+.providers-scroller .row > [class*='col-'] { display: flex; }
+.providers-scroller .provider-card {
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+}
+.providers-scroller .provider-card .card-bottom {
+  margin-top: auto;   /* keeps the bottom strip glued to the bottom of the card */
+}
+
+/* "Ska numër" muted variant + secondary action button on those cards */
+.provider-card .phone-none { color: var(--helppy-muted); }
+.provider-card .phone-none i { color: #b91c1c; opacity: .65; }
+.provider-card .call-btn.call-btn-muted {
+  background: var(--helppy-chip);
+  color: var(--helppy-text);
+}
+.provider-card .call-btn.call-btn-muted:hover {
+  background: var(--helppy-chip-hover);
+  color: var(--helppy-text);
+}
+
+/* Scrollbar styling */
+.providers-scroller::-webkit-scrollbar { width: 10px; }
+.providers-scroller::-webkit-scrollbar-track { background: transparent; }
+.providers-scroller::-webkit-scrollbar-thumb {
+  background: var(--helppy-chip);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.providers-scroller::-webkit-scrollbar-thumb:hover { background: var(--helppy-green-light); background-clip: padding-box; }
+
+@media (max-width: 575.98px) {
+  .providers-scroller { max-height: 70vh; padding: 6px 8px 10px; margin: 0 -8px; }
+}
+
+/* ===========================================================
+   Side chat panel (Bisedo without leaving the page)
+   =========================================================== */
+.helppy-chat-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 380px;
+  max-width: 100vw;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -16px 0 40px rgba(15, 23, 42, .18);
+  z-index: 1070;
+  transform: translateX(100%);
+  transition: transform .25s cubic-bezier(.2, .8, .2, 1);
+}
+.helppy-chat-panel.is-open { transform: translateX(0); }
+.helppy-chat-panel[hidden] { display: none; }
+
+.helppy-chat-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, var(--helppy-green) 0%, var(--helppy-green-dark) 100%);
+  color: #fff;
+  flex: 0 0 auto;
+}
+.helppy-chat-panel-header .chat-peer-avatar {
+  background: rgba(255, 255, 255, .18);
+  color: #fff;
+  width: 38px; height: 38px;
+}
+.helppy-chat-panel-header .meta { flex: 1; min-width: 0; }
+.helppy-chat-panel-header .name {
+  font-weight: 700;
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.helppy-chat-panel-header .sub {
+  font-size: 11px;
+  opacity: .85;
+}
+.helppy-chat-panel-header .expand,
+.helppy-chat-panel-header .close {
+  background: rgba(255, 255, 255, .15);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, .25);
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .15s;
+}
+.helppy-chat-panel-header .expand:hover,
+.helppy-chat-panel-header .close:hover { background: rgba(255, 255, 255, .28); }
+
+.helppy-chat-panel .chat-thread {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px;
+  background: #f6f7f5;
+}
+.helppy-chat-panel .chat-composer {
+  padding: 10px 12px;
+  border-top: 1px solid var(--helppy-border);
+  background: #fff;
+  flex: 0 0 auto;
+}
+.helppy-chat-panel .chat-composer textarea { font-size: 16px; }
+
+/* Loading + error states inside the panel */
+.helppy-chat-panel .chat-loading {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--helppy-muted);
+  font-size: 14px;
+}
+.helppy-chat-panel .chat-loading i { animation: helppySpin .9s linear infinite; margin-right: 6px; }
+@keyframes helppySpin { to { transform: rotate(360deg); } }
+
+/* Dim background behind the panel on phones */
+.helppy-chat-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .35);
+  z-index: 1060;
+  opacity: 0;
+  transition: opacity .2s;
+  pointer-events: none;
+}
+.helppy-chat-backdrop.is-open { opacity: 1; pointer-events: auto; }
+@media (min-width: 768px) {
+  .helppy-chat-backdrop { display: none; }   /* desktop: keep page interactive next to panel */
+}
+
+@media (max-width: 575.98px) {
+  .helppy-chat-panel { width: 100vw; }
+}
+
+body.helppy-chat-open { overflow: hidden; }
+@media (min-width: 768px) {
+  body.helppy-chat-open { overflow: auto; }  /* desktop: don't lock scroll */
+}
+
+/* ===========================================================
+   Image lightbox (click any gallery thumbnail to open full-size)
+   =========================================================== */
+.helppy-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, .88);
+  z-index: 1080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity .18s ease;
+}
+.helppy-lightbox[hidden] { display: none; }
+.helppy-lightbox.is-open { opacity: 1; }
+body.helppy-lightbox-open { overflow: hidden; }
+
+.helppy-lightbox-figure {
+  position: relative;
+  margin: 0;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.helppy-lightbox-img {
+  display: block;
+  max-width: min(94vw, 1200px);
+  max-height: 80vh;
+  border-radius: var(--helppy-radius-sm);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, .55);
+  background: #000;
+  transform: scale(.96);
+  transition: transform .2s ease;
+}
+.helppy-lightbox.is-open .helppy-lightbox-img { transform: scale(1); }
+
+.helppy-lightbox-caption {
+  color: rgba(255, 255, 255, .92);
+  font-size: 14px;
+  text-align: center;
+  max-width: min(94vw, 900px);
+  background: rgba(0, 0, 0, .35);
+  padding: 6px 14px;
+  border-radius: var(--helppy-radius-pill);
+}
+.helppy-lightbox-counter {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, .8);
+  font-size: 13px;
+  letter-spacing: .5px;
+}
+
+.helppy-lightbox-close,
+.helppy-lightbox-nav {
+  position: absolute;
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, .25);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s, transform .08s;
+  -webkit-tap-highlight-color: transparent;
+}
+.helppy-lightbox-close:hover,
+.helppy-lightbox-nav:hover { background: rgba(255, 255, 255, .25); }
+.helppy-lightbox-close:active,
+.helppy-lightbox-nav:active { transform: scale(.96); }
+.helppy-lightbox-close { top: 16px; right: 16px; font-size: 18px; }
+.helppy-lightbox-prev  { top: 50%; left: 16px;  transform: translateY(-50%); font-size: 22px; }
+.helppy-lightbox-next  { top: 50%; right: 16px; transform: translateY(-50%); font-size: 22px; }
+.helppy-lightbox-prev:active { transform: translateY(-50%) scale(.94); }
+.helppy-lightbox-next:active { transform: translateY(-50%) scale(.94); }
+
+@media (max-width: 575.98px) {
+  .helppy-lightbox { padding: 12px; }
+  .helppy-lightbox-img { max-height: 70vh; }
+  .helppy-lightbox-close { top: 10px; right: 10px; width: 40px; height: 40px; }
+  .helppy-lightbox-prev,
+  .helppy-lightbox-next { width: 40px; height: 40px; }
+  .helppy-lightbox-prev { left: 8px; }
+  .helppy-lightbox-next { right: 8px; }
+}
+
+/* Make gallery images visibly clickable */
+.gallery-item img { cursor: zoom-in; }
+
+/* ---------- Back button (next to the Helppy title) ---------- */
+.helppy-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, .25);
+  border-radius: var(--helppy-radius-pill);
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 10px;     /* gap from the Helppy logo to its left */
+  transition: background .15s ease, transform .08s ease, border-color .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.helppy-back-btn:hover { background: rgba(255, 255, 255, .22); border-color: rgba(255, 255, 255, .4); }
+.helppy-back-btn:active { transform: translateY(1px); }
+.helppy-back-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .35);
+}
+.helppy-back-btn i { font-size: 18px; line-height: 1; }
+@media (max-width: 575.98px) {
+  .helppy-back-btn {
+    width: 38px; height: 38px;
+    padding: 0;
+    border-radius: 50%;
+    margin-left: 8px;
+    margin-right: 0;
+  }
+}
+
+/* ===========================================================
+   iOS / mobile: prevent auto-zoom on input focus
+   ===========================================================
+   iOS Safari zooms in whenever a focused input renders below
+   16px CSS pixels. Force every interactive control to ≥16px
+   on phones. (Desktop keeps the prettier 14-15px sizing.) */
+@media (max-width: 767.98px) {
+  input,
+  select,
+  textarea,
+  .form-control,
+  .form-select,
+  .chat-composer textarea {
+    font-size: 16px !important;
+    line-height: 1.4;
+  }
+}
+
+/* ===========================================================
+   MOBILE + BUTTON SPACING PASS
+   =========================================================== */
+
+/* ---------- Search bar (2+ selects) wraps on phones ----------
+   The homepage has 1 select + 1 button (stays inline).
+   /search and /posts use 2 selects + 1 button which cram on phones — let them stack. */
+@media (max-width: 575.98px) {
+  .helppy-search { flex-wrap: wrap; padding: 8px; gap: 6px; }
+  .helppy-search .location-icon {
+    flex: 0 0 auto;
+    padding: 6px 4px 6px 10px;
+  }
+  .helppy-search .form-select,
+  .helppy-search .form-control {
+    flex: 1 1 100%;
+    min-width: 0;
+    padding: 12px 32px 12px 12px;
+  }
+  .helppy-search .btn-helppy {
+    flex: 1 1 100%;
+    padding: 12px 16px;
+    min-height: var(--helppy-touch);
+  }
+  .helppy-search .helppy-search-divider { display: none; }
+}
+
+/* ---------- Admin/table cell action button spacing ----------
+   Many admin views render <form class="d-inline"> back-to-back inside a <td>.
+   Without spacing they touch each other or sit edge-to-edge. Give a real gap. */
+td > form.d-inline + form.d-inline,
+td > form.d-inline + a.btn,
+td > a.btn + form.d-inline,
+td > a.btn + a.btn,
+td > form.d-inline + button.btn,
+td > button.btn + form.d-inline { margin-left: var(--helppy-space-2); }
+
+td > form.d-inline + form.d-inline > .btn,
+td > form.d-inline > .btn,
+td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical breathing too */
+
+@media (max-width: 575.98px) {
+  td > form.d-inline,
+  td > form.d-inline + form.d-inline,
+  td > a.btn,
+  td > form.d-inline + a.btn,
+  td > a.btn + form.d-inline {
+    display: block;
+    margin-left: 0;
+    margin-top: var(--helppy-space-2);
+  }
+  td > form.d-inline:first-child,
+  td > a.btn:first-child { margin-top: 0; }
+}
+
+/* ---------- Mobile nav: tighter spacing in collapsed menu ---------- */
+@media (max-width: 991.98px) {
+  .helppy-nav .navbar-collapse .nav-item + .nav-item { margin-top: 4px; }
+  .helppy-nav .nav-icon-link { padding: 10px 14px !important; }
+}
+
+/* ---------- Sidebar action card on phones ----------
+   bookings/show + posts/show right-rail "Veprime" cards stack better with breathing room. */
+@media (max-width: 991.98px) {
+  .profile-card + .profile-card { margin-top: var(--helppy-space-3); }
+}
+
+/* ---------- Provider profile + booking sidebar buttons get separation ---------- */
+.profile-card .btn + .btn,
+.profile-card .btn + form,
+.profile-card form + .btn,
+.profile-card form + form { margin-top: var(--helppy-space-2); }
+
+/* ---------- Posts/show "Veprime" link-style buttons get a soft separator ---------- */
+.profile-card .btn-link.text-start { padding: 8px 4px; border-radius: var(--helppy-radius-sm); }
+.profile-card .btn-link.text-start:hover { background: var(--helppy-green-bg); text-decoration: none; }
+
+/* ---------- Hero search padding on phones ---------- */
+@media (max-width: 575.98px) {
+  .hero { padding: 16px 0 4px; }
+  .hero h1 { margin-bottom: 16px; }
+}
+
+/* ---------- Container side padding on extra small phones ---------- */
+@media (max-width: 359.98px) {
+  .container, .container-fluid { padding-left: 12px; padding-right: 12px; }
+  .helppy-search .btn-helppy { padding: 10px 12px; }
+  .provider-card { padding: 10px; }
+  .provider-card .avatar { width: 48px; height: 48px; }
+  .provider-card { grid-template-columns: 48px 1fr; }
+}
+
+/* ---------- Inline action group utility ----------
+   Use on a wrapper around a few inline buttons/forms to space them apart cleanly. */
+.inline-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--helppy-space-2);
+  align-items: center;
+}
+.inline-actions > * { margin: 0 !important; }
+
+/* ---------- Admin dashboard: button row wraps + spaces on every breakpoint ---------- */
+.admin-nav-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--helppy-space-3);
+  margin-top: var(--helppy-space-4);
+}
+.admin-nav-grid .btn { flex: 0 1 auto; }
+@media (max-width: 575.98px) {
+  .admin-nav-grid .btn { flex: 1 1 100%; justify-content: center; }
 }

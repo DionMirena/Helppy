@@ -42,17 +42,19 @@
                 <?php endif; ?>
               </td>
               <td>
-                <?php if ($p['status'] !== 'hidden'): ?>
-                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/posts/<?= (int)$p['id'] ?>/hide" class="d-inline">
+                <div class="inline-actions">
+                  <?php if ($p['status'] !== 'hidden'): ?>
+                    <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/posts/<?= (int)$p['id'] ?>/hide" class="d-inline">
+                      <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+                      <button class="btn btn-sm btn-outline-warning" type="submit"><i class="bi bi-eye-slash"></i> Fsheh</button>
+                    </form>
+                  <?php endif; ?>
+                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/posts/<?= (int)$p['id'] ?>/delete" class="d-inline"
+                        onsubmit="return confirm('Fshi postimin përgjithmonë?');">
                     <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                    <button class="btn btn-sm btn-outline-warning" type="submit">Fsheh</button>
+                    <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Fshi</button>
                   </form>
-                <?php endif; ?>
-                <form method="post" action="<?= e(CONFIG['base_url']) ?>/posts/<?= (int)$p['id'] ?>/delete" class="d-inline"
-                      onsubmit="return confirm('Fshi postimin përgjithmonë?');">
-                  <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                  <button class="btn btn-sm btn-outline-danger" type="submit">Fshi</button>
-                </form>
+                </div>
               </td>
             </tr>
           <?php endforeach; ?>

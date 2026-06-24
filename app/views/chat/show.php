@@ -67,16 +67,29 @@
   }
 
   function appendMessage(m) {
+    // Dedupe: never render the same real id twice.
+    if (m.id && !String(m.id).startsWith('tmp-')) {
+      if (thread.querySelector('[data-msg-id="' + m.id + '"]')) return;
+    }
     var div = document.createElement('div');
     div.className = 'chat-bubble ' + (m.is_mine ? 'is-mine' : 'is-theirs');
+    if (m.pending) div.classList.add('is-pending');
     div.dataset.msgId = m.id;
     div.innerHTML = '<div class="chat-text">' + escapeHTML(m.body).replace(/\n/g, '<br>') + '</div>'
                   + '<div class="chat-meta">' + fmtTime(m.created_at) + '</div>';
     var empty = thread.querySelector('.chat-empty');
     if (empty) empty.remove();
     thread.appendChild(div);
-    lastId = Math.max(lastId, m.id);
+    if (typeof m.id === 'number') lastId = Math.max(lastId, m.id);
     scrollBottom();
+    return div;
+  }
+
+  function nowIsoLocal() {
+    var d = new Date();
+    var pad = function (n) { return n.toString().padStart(2, '0'); };
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
+         + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
   }
 
   function poll() {
@@ -106,7 +119,21 @@
     sending = true;
     if (btn) btn.disabled = true;
 
+    // Optimistic bubble — appears instantly with a temp id and pending style.
+    var tempId = 'tmp-' + Date.now();
+    var optimistic = appendMessage({
+      id: tempId, sender_id: viewerId, is_mine: true,
+      body: body, created_at: nowIsoLocal(), pending: true
+    });
+
+    // Reset composer immediately so the user can keep typing.
+    var sentBody = ta.value;
+    ta.value = '';
+    autoGrow();
+    ta.focus();
+
     var data = new FormData(form);
+    data.set('body', body); // ensure exact body we sent
     fetch(form.action, {
       method: 'POST',
       credentials: 'same-origin',
@@ -119,18 +146,29 @@
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (resp) {
         if (resp && resp.message) {
-          appendMessage(resp.message);
-          ta.value = '';
-          autoGrow();
-          ta.focus();
+          // Swap the optimistic bubble with the real one.
+          var realId = resp.message.id;
+          // If the poll already inserted the real id, just drop the optimistic.
+          if (thread.querySelector('[data-msg-id="' + realId + '"]') && optimistic) {
+            optimistic.remove();
+          } else if (optimistic) {
+            optimistic.dataset.msgId = realId;
+            optimistic.classList.remove('is-pending');
+            var meta = optimistic.querySelector('.chat-meta');
+            if (meta) meta.textContent = fmtTime(resp.message.created_at);
+          }
+          if (typeof realId === 'number') lastId = Math.max(lastId, realId);
         } else {
-          // Server didn't return JSON — fall back to a normal POST.
+          // Server didn't return JSON — restore textarea and submit traditionally.
+          if (optimistic) optimistic.classList.add('chat-bubble-failed');
+          ta.value = sentBody;
           form.submit();
         }
       })
       .catch(function () {
-        // Network failure → fallback
-        form.submit();
+        // Network failure → restore textarea, mark bubble failed.
+        if (optimistic) optimistic.classList.add('chat-bubble-failed');
+        ta.value = sentBody;
       })
       .finally(function () {
         sending = false;

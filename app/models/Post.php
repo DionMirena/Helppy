@@ -51,6 +51,13 @@ final class Post {
         if (!empty($filters['city_id'])) {
             $sql .= " AND p.city_id = ? ";
             $args[] = (int)$filters['city_id'];
+        } elseif (!empty($filters['city_ids']) && is_array($filters['city_ids'])) {
+            $ids = array_values(array_filter(array_map('intval', $filters['city_ids'])));
+            if ($ids) {
+                $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                $sql .= " AND p.city_id IN ($placeholders) ";
+                foreach ($ids as $id) $args[] = $id;
+            }
         }
 
         $sql .= " ORDER BY p.created_at DESC LIMIT $limit";

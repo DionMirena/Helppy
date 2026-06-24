@@ -18,6 +18,9 @@ $phoneRaw = !empty($p['phone']) ? preg_replace('/[^0-9+]/', '', $p['phone']) : '
     <p class="profession">
       <?= e($p['profession']) ?>
       <?php if (!empty($p['city'])): ?> &middot; <?= e($p['city']) ?><?php endif; ?>
+      <?php if (!empty($p['district'])): ?>
+        <span class="district-badge"><i class="bi bi-pin-map"></i> <?= e($p['district']) ?></span>
+      <?php endif; ?>
     </p>
     <p class="stars">
       <?php if ($avg !== null): ?>
@@ -41,12 +44,29 @@ $phoneRaw = !empty($p['phone']) ? preg_replace('/[^0-9+]/', '', $p['phone']) : '
     </p>
   </div>
 
-  <?php if (!empty($p['phone'])): ?>
-    <div class="card-bottom">
-      <span class="phone"><i class="bi bi-telephone-fill"></i> <?= e($p['phone']) ?></span>
-      <a class="call-btn" href="tel:<?= e($phoneRaw) ?>">
-        <i class="bi bi-telephone"></i> Telefono Tani
+  <div class="card-bottom">
+    <div class="card-actions">
+      <?php if (!empty($p['phone'])): ?>
+        <a class="card-action card-action-primary"
+           href="tel:<?= e($phoneRaw) ?>" title="<?= e($p['phone']) ?>">
+          <i class="bi bi-telephone-fill"></i> Telefono
+        </a>
+      <?php else: ?>
+        <span class="card-action card-action-disabled" title="Ska numër">
+          <i class="bi bi-telephone-x"></i> Ska numër
+        </span>
+      <?php endif; ?>
+      <a class="card-action card-action-outline"
+         href="<?= e(CONFIG['base_url']) ?>/provider/<?= (int)$p['id'] ?>">
+        <i class="bi bi-person-lines-fill"></i> Hap profilin
+      </a>
+      <a class="card-action card-action-secondary"
+         href="<?= e(CONFIG['base_url']) ?>/chat/with/<?= (int)$p['id'] ?>"
+         data-helppy-chat
+         data-user-id="<?= (int)$p['id'] ?>"
+         data-user-name="<?= e($p['name']) ?>">
+        <i class="bi bi-chat-dots"></i> Bisedo
       </a>
     </div>
-  <?php endif; ?>
+  </div>
 </div>

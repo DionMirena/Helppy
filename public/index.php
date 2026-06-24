@@ -33,12 +33,14 @@ spl_autoload_register(function (string $class): void {
 // Eager-load Helpers (used by controllers as a static utility).
 require APP_ROOT . '/app/core/Helpers.php';
 require APP_ROOT . '/app/core/Stripe.php';
+require APP_ROOT . '/app/core/BankGateway.php';
 require APP_ROOT . '/app/core/Payments.php';
 
 $router = new Router();
 
 // PUBLIC
 $router->get('/',                          [HomeController::class,    'index']);
+$router->get('/api/providers.json',        [HomeController::class,    'providersJson']);
 $router->get('/search',                    [SearchController::class,  'results']);
 $router->get('/provider/dashboard',        [ProviderController::class,'dashboard']);
 $router->get('/provider/{id}',             [ProviderController::class,'show']);
@@ -66,11 +68,12 @@ $router->post('/notifications/read-all',   [NotificationController::class, 'read
 $router->get('/api/notifications/unread.json', [NotificationController::class, 'unreadJson']);
 
 // CHAT
-$router->get('/chat',                          [ChatController::class, 'index']);
-$router->get('/chat/with/{user_id}',           [ChatController::class, 'start']);
-$router->get('/chat/{id}',                     [ChatController::class, 'show']);
-$router->post('/chat/{id}/message',            [ChatController::class, 'send']);
-$router->get('/api/chat/{id}/messages.json',   [ChatController::class, 'pollMessages']);
+$router->get('/chat',                            [ChatController::class, 'index']);
+$router->get('/chat/with/{user_id}',             [ChatController::class, 'start']);
+$router->get('/api/chat/with/{user_id}.json',    [ChatController::class, 'startJson']);
+$router->get('/chat/{id}',                       [ChatController::class, 'show']);
+$router->post('/chat/{id}/message',              [ChatController::class, 'send']);
+$router->get('/api/chat/{id}/messages.json',     [ChatController::class, 'pollMessages']);
 
 // SUBSCRIPTIONS
 $router->get('/subscribe',                     [SubscriptionController::class, 'index']);
@@ -81,6 +84,12 @@ $router->get('/subscribe/success',             [SubscriptionController::class, '
 $router->post('/subscribe/cancel-current',     [SubscriptionController::class, 'cancelMine']);
 // Stripe webhook — no CSRF (it's signed by Stripe instead).
 $router->post('/subscribe/webhook',            [SubscriptionController::class, 'webhook'], false);
+
+// Bank card gateway — POST to start the 3DS redirect, callback from bank on return.
+$router->post('/subscribe/card-bank',          [SubscriptionController::class, 'cardBank']);
+// Bank callback — no CSRF (bank signs with HMAC).
+$router->post('/subscribe/card-bank/callback', [SubscriptionController::class, 'cardBankCallback'], false);
+$router->get('/subscribe/card-bank/callback',  [SubscriptionController::class, 'cardBankCallback']);
 
 $router->get('/admin/subscriptions',                       [AdminController::class, 'subscriptions']);
 $router->get('/admin/payouts',                             [AdminController::class, 'payouts']);
@@ -119,8 +128,10 @@ $router->post('/provider/{id}/review',     [ReviewController::class,  'store']);
 $router->post('/review/{id}/delete',       [ReviewController::class,  'destroy']);
 
 // PROVIDER
-$router->post('/provider/edit',            [ProviderController::class,'update']);
-$router->post('/provider/photo',           [ProviderController::class,'uploadPhoto']);
+$router->post('/provider/edit',                       [ProviderController::class,'update']);
+$router->post('/provider/photo',                      [ProviderController::class,'uploadPhoto']);
+$router->post('/provider/work-photo',                 [ProviderController::class,'uploadWorkPhoto']);
+$router->post('/provider/work-photo/{id}/delete',     [ProviderController::class,'deleteWorkPhoto']);
 
 // ADMIN
 $router->get('/admin',                     [AdminController::class,   'index']);

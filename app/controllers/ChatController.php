@@ -27,6 +27,43 @@ final class ChatController extends Controller {
         $this->redirect('/chat/' . $convId);
     }
 
+    /**
+     * GET /api/chat/with/{userId}.json — open/create a conversation and return
+     * its id + initial messages as JSON. Used by the in-page side-panel chat
+     * so the user never leaves the provider profile.
+     */
+    public function startJson(array $params = []): void {
+        if (!Auth::check()) { self::jsonError(401, 'auth_required'); return; }
+        $otherId = (int)($params['user_id'] ?? 0);
+        $uid     = (int)Auth::user()['id'];
+        if ($otherId <= 0 || $otherId === $uid) { self::jsonError(400, 'invalid_target'); return; }
+
+        $u = DB::q('SELECT id, name FROM users WHERE id = ? AND is_active = 1', [$otherId])->fetch();
+        if (!$u) { self::jsonError(404, 'not_found'); return; }
+
+        $convId = Conversation::findOrCreate($uid, $otherId);
+        Message::markReadFor($convId, $uid);
+        $msgs = Message::forConversation($convId);
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'ok'         => true,
+            'conv_id'    => $convId,
+            'viewer_id'  => $uid,
+            'other_id'   => (int)$u['id'],
+            'other_name' => (string)$u['name'],
+            'messages'   => array_map(function ($m) use ($uid) {
+                return [
+                    'id'         => (int)$m['id'],
+                    'sender_id'  => (int)$m['sender_id'],
+                    'is_mine'    => (int)$m['sender_id'] === $uid,
+                    'body'       => (string)$m['body'],
+                    'created_at' => (string)$m['created_at'],
+                ];
+            }, $msgs),
+        ]);
+    }
+
     /** GET /chat/{id} — show a conversation thread */
     public function show(array $params = []): void {
         Auth::require();
@@ -73,7 +110,24 @@ final class ChatController extends Controller {
 
         $msgId = Message::send($id, $uid, $body);
 
-        // Notify the other participant
+        // For AJAX clients: ship the JSON response IMMEDIATELY so the bubble
+        // appears in their thread; do the slow side-effects (notification +
+        // email) after the connection to the sender is closed.
+        if ($isAjax) {
+            $row = DB::q('SELECT id, sender_id, body, created_at FROM messages WHERE id=?', [$msgId])->fetch();
+            $json = json_encode([
+                'ok'      => true,
+                'message' => [
+                    'id'         => (int)$row['id'],
+                    'sender_id'  => (int)$row['sender_id'],
+                    'is_mine'    => true,
+                    'body'       => (string)$row['body'],
+                    'created_at' => (string)$row['created_at'],
+                ],
+            ]);
+            self::shipJsonAndContinue($json);
+        }
+
         $conv = Conversation::find($id);
         if ($conv) {
             $otherId    = Conversation::otherUserId($conv, $uid);
@@ -96,23 +150,29 @@ final class ChatController extends Controller {
             }
         }
 
-        if ($isAjax) {
-            $row = DB::q('SELECT id, sender_id, body, created_at FROM messages WHERE id=?', [$msgId])->fetch();
-            header('Content-Type: application/json');
-            echo json_encode([
-                'ok'      => true,
-                'message' => [
-                    'id'         => (int)$row['id'],
-                    'sender_id'  => (int)$row['sender_id'],
-                    'is_mine'    => true,
-                    'body'       => (string)$row['body'],
-                    'created_at' => (string)$row['created_at'],
-                ],
-            ]);
-            return;
+        if (!$isAjax) {
+            $this->redirect('/chat/' . $id);
         }
+    }
 
-        $this->redirect('/chat/' . $id);
+    /**
+     * Ship a JSON payload to the client and close the connection so that
+     * any subsequent PHP work (slow SMTP, etc.) doesn't keep the sender
+     * waiting. Works under both PHP-FPM and mod_php fallback.
+     */
+    private static function shipJsonAndContinue(string $json): void {
+        ignore_user_abort(true);
+        header('Content-Type: application/json; charset=utf-8');
+        header('Content-Length: ' . strlen($json));
+        header('Connection: close');
+        echo $json;
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } else {
+            // mod_php: best-effort flush.
+            while (ob_get_level() > 0) { @ob_end_flush(); }
+            @flush();
+        }
     }
 
     /** True when the client asked for JSON (fetch/XHR). */

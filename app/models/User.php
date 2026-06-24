@@ -14,9 +14,18 @@ final class User {
         return (bool)DB::q('SELECT 1 FROM users WHERE email=? LIMIT 1', [$email])->fetch();
     }
     public static function create(string $name, string $email, string $passwordHash, ?string $phone, string $role, ?int $cityId): int {
-        DB::q('INSERT INTO users (name, email, password_hash, phone, role, city_id) VALUES (?, ?, ?, ?, ?, ?)',
-              [$name, $email, $passwordHash, $phone, $role, $cityId]);
+        $district = self::districtForCity($cityId);
+        DB::q('INSERT INTO users (name, email, password_hash, phone, role, city_id, district) VALUES (?, ?, ?, ?, ?, ?, ?)',
+              [$name, $email, $passwordHash, $phone, $role, $cityId, $district]);
         return (int)DB::pdo()->lastInsertId();
+    }
+
+    /** Look up the district name for a city id, or null. */
+    public static function districtForCity(?int $cityId): ?string {
+        if ($cityId === null) return null;
+        $row = DB::q('SELECT name FROM cities WHERE id = ?', [$cityId])->fetch();
+        if (!$row) return null;
+        return Geography::districtOfCityName((string)$row['name']);
     }
     public static function toggleActive(int $id): void {
         DB::q('UPDATE users SET is_active = 1 - is_active WHERE id=?', [$id]);

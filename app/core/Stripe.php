@@ -34,11 +34,12 @@ final class Stripe {
      * Create a one-time Checkout session for a subscription activation.
      * Returns ['id' => ..., 'url' => ...] (url is the hosted page to redirect to).
      */
-    public static function createCheckoutSession(string $tier, float $amountEur, string $customerEmail, string $successUrl, string $cancelUrl, array $metadata = []): array {
+    public static function createCheckoutSession(string $tier, float $amountEur, string $customerEmail, string $successUrl, string $cancelUrl, array $metadata = [], string $productLabel = ''): array {
         if (!self::isConfigured()) {
             throw new RuntimeException('Stripe not configured (config/config.php → stripe.secret_key).');
         }
 
+        $name = $productLabel !== '' ? $productLabel : ucfirst($tier);
         $params = [
             'mode'                       => 'payment',
             'payment_method_types[]'     => 'card',
@@ -48,7 +49,7 @@ final class Stripe {
             'line_items[0][quantity]'    => 1,
             'line_items[0][price_data][currency]'     => 'eur',
             'line_items[0][price_data][unit_amount]'  => (int)round($amountEur * 100),
-            'line_items[0][price_data][product_data][name]' => 'Helppy — ' . ucfirst($tier) . ' (30 dite)',
+            'line_items[0][price_data][product_data][name]' => 'Helppy — ' . $name,
         ];
         foreach ($metadata as $k => $v) {
             $params['metadata[' . $k . ']'] = (string)$v;

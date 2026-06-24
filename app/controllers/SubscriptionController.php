@@ -16,13 +16,12 @@ final class SubscriptionController extends Controller {
         $latest  = Subscription::latestFor($uid);
 
         $this->render('subscriptions/index', [
-            'title'             => 'Abonohu',
-            'current'           => $current,
-            'latest'            => $latest,
-            'stripe_enabled'    => Stripe::isConfigured(),
-            'price_standard'    => Subscription::PRICE_STANDARD,
-            'price_premium'     => Subscription::PRICE_PREMIUM,
-            'period_days'       => Subscription::PERIOD_DAYS,
+            'title'                => 'Abonohu',
+            'current'              => $current,
+            'latest'               => $latest,
+            'stripe_enabled'       => Stripe::isConfigured(),
+            'enabled_banks'        => BankGateway::enabledBanks(),
+            'plans'                => Subscription::PLANS,
         ]);
     }
 
@@ -32,10 +31,10 @@ final class SubscriptionController extends Controller {
         if (Auth::role() !== 'provider' && Auth::role() !== 'admin') {
             http_response_code(403); View::render('errors/403', []); return;
         }
-        $uid  = (int)Auth::user()['id'];
-        $tier = (string)Request::post('tier', '');
-        if (!in_array($tier, [Subscription::TIER_STANDARD, Subscription::TIER_PREMIUM], true)) {
-            $this->flash('danger', 'Tier i pavlefshëm.');
+        $uid     = (int)Auth::user()['id'];
+        $planKey = (string)Request::post('plan', '');
+        if (!Subscription::isValidPlan($planKey)) {
+            $this->flash('danger', 'Plan i pavlefshëm.');
             $this->redirect('/subscribe');
             return;
         }
@@ -45,16 +44,19 @@ final class SubscriptionController extends Controller {
             return;
         }
 
-        $subId = Subscription::createPending($uid, $tier, 'stripe');
+        $subId = Subscription::createPending($uid, $planKey, 'stripe');
+        $tier  = Subscription::tierForPlan($planKey);
+        $plan  = Subscription::planFor($planKey);
 
         try {
             $session = Stripe::createCheckoutSession(
                 $tier,
-                Subscription::priceFor($tier),
+                Subscription::priceForPlan($planKey),
                 (string)Auth::user()['email'],
                 CONFIG['base_url'] . '/subscribe/success?sub=' . $subId . '&session={CHECKOUT_SESSION_ID}',
                 CONFIG['base_url'] . '/subscribe?cancelled=1',
-                ['subscription_id' => $subId, 'provider_id' => $uid, 'tier' => $tier]
+                ['subscription_id' => $subId, 'provider_id' => $uid, 'tier' => $tier, 'plan' => $planKey],
+                (string)($plan['name'] ?? ucfirst($tier))
             );
         } catch (Throwable $e) {
             error_log('[SubscriptionController::checkout] ' . $e->getMessage());
@@ -108,10 +110,10 @@ final class SubscriptionController extends Controller {
             http_response_code(403); View::render('errors/403', []); return;
         }
         $uid     = (int)Auth::user()['id'];
-        $tier    = (string)Request::post('tier', '');
+        $planKey = (string)Request::post('plan', '');
         $bankKey = (string)Request::post('bank', '');
-        if (!in_array($tier, [Subscription::TIER_STANDARD, Subscription::TIER_PREMIUM], true)) {
-            $this->flash('danger', 'Tier i pavlefshëm.');
+        if (!Subscription::isValidPlan($planKey)) {
+            $this->flash('danger', 'Plan i pavlefshëm.');
             $this->redirect('/subscribe');
             return;
         }
@@ -121,15 +123,17 @@ final class SubscriptionController extends Controller {
             $this->redirect('/subscribe');
             return;
         }
+        $plan  = Subscription::planFor($planKey);
         $ref   = Subscription::generateBankRef($uid);
-        $subId = Subscription::createPending($uid, $tier, 'bank', $ref);
+        $subId = Subscription::createPending($uid, $planKey, 'bank', $ref);
         DB::q('UPDATE subscriptions SET bank_chosen = ? WHERE id = ?', [$bank['key'], $subId]);
 
         // Notify every admin so they don't miss the inbound transfer.
         $providerName = Auth::user()['name'];
-        $amount = Subscription::priceFor($tier);
+        $amount = (float)$plan['price'];
+        $planName = (string)$plan['name'];
         $title  = "Pagesë e re në pritje (" . $bank['short'] . ")";
-        $body   = "{$providerName} ka nisur një transfer për tier {$tier} (€{$amount}).\n"
+        $body   = "{$providerName} ka nisur një transfer për planin {$planName} (€{$amount}).\n"
                 . "Kodi i referencës: {$ref}\n"
                 . "Banka: {$bank['name']}\n\n"
                 . "Kontrollo llogarinë bankare dhe aktivizo te /admin/subscriptions sapo paratë të mbërrijnë.";
@@ -144,6 +148,84 @@ final class SubscriptionController extends Controller {
         }
 
         $this->redirect('/subscribe/bank/' . $subId);
+    }
+
+    /**
+     * POST /subscribe/card-bank — start the picked bank's 3D Secure card flow.
+     * Requires both plan and bank keys. Creates a pending subscription stamped
+     * with bank_chosen, then auto-submits to that bank's hosted page.
+     */
+    public function cardBank(array $params = []): void {
+        Auth::require();
+        if (Auth::role() !== 'provider' && Auth::role() !== 'admin') {
+            http_response_code(403); View::render('errors/403', []); return;
+        }
+        $uid     = (int)Auth::user()['id'];
+        $planKey = (string)Request::post('plan', '');
+        $bankKey = (string)Request::post('bank', '');
+
+        if (!Subscription::isValidPlan($planKey)) {
+            $this->flash('danger', 'Plan i pavlefshëm.');
+            $this->redirect('/subscribe');
+            return;
+        }
+        if (!BankGateway::isConfigured($bankKey)) {
+            $this->flash('danger', 'Banka e zgjedhur nuk është konfiguruar për pagesë me kartë.');
+            $this->redirect('/subscribe');
+            return;
+        }
+
+        $subId = Subscription::createPending($uid, $planKey, 'bank', null);
+        DB::q('UPDATE subscriptions SET bank_chosen = ? WHERE id = ?', [$bankKey, $subId]);
+
+        $plan   = Subscription::planFor($planKey);
+        $shared = (array)(CONFIG['payments']['bank_gateway'] ?? []);
+
+        $successUrl = CONFIG['base_url'] . (string)($shared['callback_path'] ?? '/subscribe/card-bank/callback');
+        $failUrl    = CONFIG['base_url'] . (string)($shared['fail_path']     ?? '/subscribe?cardbank=fail');
+
+        $fields = BankGateway::buildAuthRequest(
+            $bankKey,
+            (string)$subId,
+            (float)$plan['price'],
+            $successUrl,
+            $failUrl,
+            (string)Auth::user()['email']
+        );
+
+        $this->render('subscriptions/bank-redirect', [
+            'title'   => 'Po të dërgojmë te banka…',
+            'action'  => BankGateway::apiUrl($bankKey),
+            'fields'  => $fields,
+        ]);
+    }
+
+    /**
+     * POST/GET /subscribe/card-bank/callback — bank returns here after payment.
+     * Find the sub by oid, use its bank_chosen to pick the right store_key,
+     * verify HMAC, activate on approval.
+     */
+    public function cardBankCallback(array $params = []): void {
+        $post = $_POST ?: $_GET;
+        $subId = (int)($post['oid'] ?? 0);
+        $sub   = $subId ? Subscription::find($subId) : null;
+        if (!$sub) { $this->notFound(); return; }
+
+        $bankKey = (string)($sub['bank_chosen'] ?? '');
+        $result  = BankGateway::verifyCallback($bankKey, $post);
+
+        if ($result['ok']) {
+            if ($sub['status'] !== 'active') {
+                Subscription::activate($subId, (string)($post['TransId'] ?? $post['AuthCode'] ?? '') ?: null);
+            }
+            $this->redirect('/subscribe/success?sub=' . $subId);
+            return;
+        }
+
+        error_log('[BankGateway callback] declined: ' . $result['reason'] . ' for sub=' . $subId . ' bank=' . $bankKey);
+        Subscription::cancel($subId);
+        $this->flash('danger', 'Pagesa nuk u aprovua: ' . $result['reason']);
+        $this->redirect('/subscribe');
     }
 
     /** GET /subscribe/bank/{id} — show bank-transfer instructions for a pending row */

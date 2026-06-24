@@ -5,8 +5,9 @@ final class Provider {
     /** Find a provider with joined user + city info. */
     public static function find(int $userId): ?array {
         $sql = "SELECT u.id, u.name, u.email, u.phone, u.is_active, u.email_verified, u.created_at,
-                       c.name AS city,
+                       c.name AS city, u.district,
                        p.profession, p.bio, p.skills_services, p.hourly_rate, p.photo, p.is_company, p.company_name,
+                       p.latitude, p.longitude,
                        p.is_premium, p.views
                 FROM providers p
                 JOIN users u ON u.id = p.user_id
@@ -22,7 +23,16 @@ final class Provider {
 
     /** Search by city_id and category_id (either may be null). */
     public static function search(?int $cityId, ?int $categoryId): array {
-        $sql = "SELECT u.id, u.name, u.phone, c.name AS city,
+        $cityIds = $cityId === null ? [] : [$cityId];
+        return self::searchInCities($cityIds, $categoryId);
+    }
+
+    /**
+     * Search restricted to a set of city IDs (used by the district fallback).
+     * Empty $cityIds means "any city".
+     */
+    public static function searchInCities(array $cityIds, ?int $categoryId): array {
+        $sql = "SELECT u.id, u.name, u.phone, u.city_id, c.name AS city, u.district,
                        p.profession, p.photo, p.is_company, p.company_name,
                        p.is_premium, p.hourly_rate,
                        (SELECT AVG(rating) FROM reviews WHERE provider_id = p.user_id) AS avg_rating,
@@ -32,8 +42,15 @@ final class Provider {
                 LEFT JOIN cities c ON c.id = u.city_id
                 WHERE 1=1 ";
         $args = [];
-        if ($cityId !== null)     { $sql .= " AND u.city_id = ?";  $args[] = $cityId; }
-        if ($categoryId !== null) { $sql .= " AND EXISTS (SELECT 1 FROM provider_categories pc WHERE pc.provider_id = p.user_id AND pc.category_id = ?)"; $args[] = $categoryId; }
+        if (!empty($cityIds)) {
+            $placeholders = implode(',', array_fill(0, count($cityIds), '?'));
+            $sql .= " AND u.city_id IN ($placeholders)";
+            foreach ($cityIds as $id) $args[] = (int)$id;
+        }
+        if ($categoryId !== null) {
+            $sql .= " AND EXISTS (SELECT 1 FROM provider_categories pc WHERE pc.provider_id = p.user_id AND pc.category_id = ?)";
+            $args[] = $categoryId;
+        }
         $sql .= " ORDER BY p.is_premium DESC, u.created_at DESC";
         return DB::q($sql, $args)->fetchAll();
     }
@@ -50,6 +67,31 @@ final class Provider {
                 ORDER BY p.is_premium DESC, RAND()
                 LIMIT $limit";
         return DB::q($sql)->fetchAll();
+    }
+
+    /**
+     * Stable, paginated provider list for the home page (premium first, then
+     * newest). Used by the "load more on scroll" behaviour.
+     */
+    public static function listPaged(int $offset, int $limit): array {
+        $offset = max(0, $offset);
+        $limit  = max(1, min(50, $limit));
+        $sql = "SELECT u.id, u.name, u.phone, c.name AS city,
+                       p.profession, p.photo, p.is_company, p.is_premium, p.hourly_rate,
+                       (SELECT AVG(rating) FROM reviews WHERE provider_id = p.user_id) AS avg_rating
+                FROM providers p
+                JOIN users u ON u.id = p.user_id AND u.is_active = 1 AND u.email_verified = 1
+                LEFT JOIN cities c ON c.id = u.city_id
+                ORDER BY p.is_premium DESC, u.id DESC
+                LIMIT $limit OFFSET $offset";
+        return DB::q($sql)->fetchAll();
+    }
+
+    public static function listCount(): int {
+        return (int)DB::q(
+            "SELECT COUNT(*) FROM providers p
+             JOIN users u ON u.id = p.user_id AND u.is_active = 1 AND u.email_verified = 1"
+        )->fetchColumn();
     }
 
     public static function categories(int $userId): array {
@@ -81,7 +123,7 @@ final class Provider {
     }
 
     public static function update(int $userId, array $fields): void {
-        $allowed = ['profession','bio','company_name','skills_services','hourly_rate'];
+        $allowed = ['profession','bio','company_name','skills_services','hourly_rate','latitude','longitude'];
         $sets = []; $args = [];
         foreach ($fields as $k => $v) {
             if (in_array($k, $allowed, true)) { $sets[] = "$k = ?"; $args[] = $v; }

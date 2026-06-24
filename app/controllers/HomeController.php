@@ -2,12 +2,49 @@
 declare(strict_types=1);
 
 final class HomeController extends Controller {
+    public const PAGE_SIZE = 10;
+
     public function index(array $params = []): void {
+        $first = Provider::listPaged(0, self::PAGE_SIZE);
+        $total = Provider::listCount();
         $this->render('home/index', [
             'title'      => 'Helppy.com',
             'cities'     => City::all(),
             'categories' => Category::all(),
-            'featured'   => Provider::featured(8),
+            'featured'   => $first,
+            'totalCount' => $total,
+            'pageSize'   => self::PAGE_SIZE,
+        ]);
+    }
+
+    /**
+     * GET /api/providers.json?offset=N
+     * Returns the next $pageSize providers as ready-rendered card HTML so
+     * the home page can append them without re-implementing the partial.
+     */
+    public function providersJson(array $params = []): void {
+        $offset = (int)Request::get('offset', 0);
+        $limit  = self::PAGE_SIZE;
+        $rows   = Provider::listPaged($offset, $limit);
+        $total  = Provider::listCount();
+        $hasMore = ($offset + count($rows)) < $total;
+
+        ob_start();
+        foreach ($rows as $p) {
+            echo '<div class="col-12 col-sm-6 col-lg-4">';
+            View::partial('provider-card', ['p' => $p]);
+            echo '</div>';
+        }
+        $html = ob_get_clean();
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'ok'        => true,
+            'html'      => $html,
+            'next'      => $offset + count($rows),
+            'has_more'  => $hasMore,
+            'returned'  => count($rows),
+            'total'     => $total,
         ]);
     }
 }
