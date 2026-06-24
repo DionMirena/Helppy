@@ -63,6 +63,15 @@ final class ProviderController extends Controller {
         $companyName    = trim((string)Request::post('company_name', ''));
         $categoryIds    = array_map('intval', (array)Request::post('categories', []));
 
+        // Optional: provider typed a profession that isn't in the dropdown — create it.
+        $newCategoryName = trim((string)Request::post('new_category', ''));
+        if ($newCategoryName !== '') {
+            $newId = Category::findOrCreateByName($newCategoryName);
+            if ($newId > 0 && !in_array($newId, $categoryIds, true)) {
+                $categoryIds[] = $newId;
+            }
+        }
+
         // Optional pin from the map picker. Empty = clear the pin.
         $latRaw = Request::post('latitude');
         $lngRaw = Request::post('longitude');

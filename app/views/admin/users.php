@@ -53,37 +53,54 @@ $me = (int)Auth::user()['id'];
             <td><?= $activeBadge((int)$u['is_active'], (int)$u['email_verified']) ?></td>
             <td><small><?= e(date('d M Y', strtotime((string)$u['created_at']))) ?></small></td>
             <td>
-              <div class="d-flex flex-wrap gap-1">
-                <?php if (!$isMe): ?>
-                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/users/<?= $uid ?>/active" class="d-inline">
+              <?php if (!$isMe): ?>
+                <div class="user-actions">
+                  <?php $activeLabel = (int)$u['is_active'] === 1 ? 'Çaktivizo' : 'Aktivizo';
+                        $activeIcon  = (int)$u['is_active'] === 1 ? 'bi-toggle-on' : 'bi-toggle-off'; ?>
+                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/users/<?= $uid ?>/active">
                     <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                    <button class="btn btn-sm btn-outline-secondary" type="submit" title="Aktivizo/Çaktivizo">
-                      <i class="bi bi-toggle-on"></i>
+                    <button class="btn btn-sm btn-outline-secondary user-action-btn" type="submit" title="<?= e($activeLabel) ?>">
+                      <i class="bi <?= e($activeIcon) ?>"></i> <span><?= e($activeLabel) ?></span>
                     </button>
                   </form>
 
-                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/users/<?= $uid ?>/role" class="d-inline">
-                    <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                    <select name="role" class="form-select form-select-sm d-inline-block" style="width:auto;"
-                            onchange="if(confirm('Ndrysho rolin në '+this.value+'?')) this.form.submit();">
-                      <option disabled selected>Ndrysho rolin...</option>
-                      <?php foreach (['client','provider','admin'] as $r): if ($r === $u['role']) continue; ?>
-                        <option value="<?= $r ?>"><?= e($r) ?></option>
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-primary user-action-btn dropdown-toggle"
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-person-fill-gear"></i> <span>Ndrysho rolin</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <?php
+                        $roleLabels = ['client' => 'Klient', 'provider' => 'Punëtor', 'admin' => 'Admin'];
+                        $roleIcons  = ['client' => 'bi-person', 'provider' => 'bi-tools', 'admin' => 'bi-shield-fill-check'];
+                        foreach ($roleLabels as $r => $label):
+                          if ($r === $u['role']) continue;
+                      ?>
+                        <li>
+                          <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/users/<?= $uid ?>/role"
+                                onsubmit="return confirm('Ndrysho rolin e <?= e(addslashes((string)$u['name'])) ?> në <?= e($label) ?>?');">
+                            <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+                            <input type="hidden" name="role" value="<?= e($r) ?>">
+                            <button class="dropdown-item" type="submit">
+                              <i class="bi <?= e($roleIcons[$r]) ?>"></i> <?= e($label) ?>
+                            </button>
+                          </form>
+                        </li>
                       <?php endforeach; ?>
-                    </select>
-                  </form>
+                    </ul>
+                  </div>
 
-                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/users/<?= $uid ?>/delete" class="d-inline"
+                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/users/<?= $uid ?>/delete"
                         onsubmit="return confirm('FSHI përdoruesin <?= e(addslashes((string)$u['name'])) ?> përgjithmonë?\nTë gjitha postimet, fotot, rezervimet dhe bisedat e tij/saj do të fshihen.');">
                     <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                    <button class="btn btn-sm btn-outline-danger" type="submit" title="Fshi përgjithmonë">
-                      <i class="bi bi-trash"></i> Fshi
+                    <button class="btn btn-sm btn-outline-danger user-action-btn" type="submit" title="Fshi përgjithmonë">
+                      <i class="bi bi-trash"></i> <span>Fshi</span>
                     </button>
                   </form>
-                <?php else: ?>
-                  <span class="text-muted small">—</span>
-                <?php endif; ?>
-              </div>
+                </div>
+              <?php else: ?>
+                <span class="text-muted small">—</span>
+              <?php endif; ?>
             </td>
           </tr>
         <?php endforeach; ?>

@@ -103,6 +103,15 @@ $selectedCats = array_column($p['categories'], 'id');
                 </label>
               <?php endforeach; ?>
             </div>
+
+            <div class="input-group input-group-sm mt-2 new-category-input">
+              <span class="input-group-text"><i class="bi bi-plus-circle"></i></span>
+              <input class="form-control" name="new_category" type="text" maxlength="80"
+                     placeholder="Nuk po e gjeni? Shtoni kategori të re (p.sh. Saldator)">
+            </div>
+            <small class="text-muted d-block mt-1">
+              Kategoria e re shtohet kur ruani profilin dhe bëhet e disponueshme për të gjithë.
+            </small>
           </div>
           <small class="text-muted d-block mt-2">
             Tarifa është opsionale. Lëre bosh për <em>“Çmimi sipas marrëveshjes”</em>.
