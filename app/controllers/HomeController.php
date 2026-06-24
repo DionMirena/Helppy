@@ -5,8 +5,9 @@ final class HomeController extends Controller {
     public const PAGE_SIZE = 10;
 
     public function index(array $params = []): void {
-        $first = Provider::listPaged(0, self::PAGE_SIZE);
-        $total = Provider::listCount();
+        $type = self::normalizeType((string)Request::get('type', ''));
+        $first = Provider::listPaged(0, self::PAGE_SIZE, $type);
+        $total = Provider::listCount($type);
         $this->render('home/index', [
             'title'      => 'Helppy.com',
             'cities'     => City::all(),
@@ -14,19 +15,21 @@ final class HomeController extends Controller {
             'featured'   => $first,
             'totalCount' => $total,
             'pageSize'   => self::PAGE_SIZE,
+            'activeType' => $type,
         ]);
     }
 
     /**
-     * GET /api/providers.json?offset=N
+     * GET /api/providers.json?offset=N&type=person|company
      * Returns the next $pageSize providers as ready-rendered card HTML so
      * the home page can append them without re-implementing the partial.
      */
     public function providersJson(array $params = []): void {
         $offset = (int)Request::get('offset', 0);
+        $type   = self::normalizeType((string)Request::get('type', ''));
         $limit  = self::PAGE_SIZE;
-        $rows   = Provider::listPaged($offset, $limit);
-        $total  = Provider::listCount();
+        $rows   = Provider::listPaged($offset, $limit, $type);
+        $total  = Provider::listCount($type);
         $hasMore = ($offset + count($rows)) < $total;
 
         ob_start();
@@ -46,5 +49,10 @@ final class HomeController extends Controller {
             'returned'  => count($rows),
             'total'     => $total,
         ]);
+    }
+
+    /** Only 'person'/'company' are valid; anything else means "all". */
+    private static function normalizeType(string $t): string {
+        return in_array($t, ['person', 'company'], true) ? $t : '';
     }
 }

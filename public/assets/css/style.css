@@ -123,6 +123,20 @@ a:hover { color: var(--helppy-green-darker); }
   background: var(--helppy-border);
   margin: 8px 2px;
 }
+/* Small tile preview used in the categories list (Ikona column) */
+.category-icon-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(90, 122, 79, .10);
+  color: var(--helppy-green-dark);
+  font-size: 16px;
+  vertical-align: middle;
+}
+
 /* ---------- Bootstrap-Icons picker (admin categories) ---------- */
 .icon-picker { position: relative; }
 .icon-picker-toggle {
@@ -276,6 +290,91 @@ a:hover { color: var(--helppy-green-darker); }
   .user-action-btn span { display: none; }
   .user-action-btn { padding: 4px 8px; }
   .user-actions .dropdown-toggle::after { display: none; }
+}
+
+/* ---------- Bordered "shell" around result grids on /search and /posts ---------- */
+.cards-shell {
+  background: #fff;
+  border: 2px solid var(--helppy-green-light);
+  border-radius: var(--helppy-radius);
+  box-shadow: 0 6px 20px rgba(90, 122, 79, .12);
+  padding: var(--helppy-space-3);
+  margin-bottom: var(--helppy-space-3);
+  max-height: 78vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  position: relative;
+}
+/* Subtle fade at the bottom so users can see the list continues below. */
+.cards-shell::after {
+  content: "";
+  position: sticky;
+  bottom: 0;
+  display: block;
+  height: 24px;
+  margin: 0 calc(-1 * var(--helppy-space-3)) calc(-1 * var(--helppy-space-3));
+  background: linear-gradient(to bottom, rgba(255,255,255,0), #fff);
+  pointer-events: none;
+}
+.cards-shell::-webkit-scrollbar { width: 10px; }
+.cards-shell::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 5px;
+  border: 2px solid #fff;
+}
+.cards-shell::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+@media (max-width: 575.98px) {
+  .cards-shell { padding: var(--helppy-space-2); max-height: 72vh; }
+}
+
+/* ---------- Provider type toggle (Të gjithë / Punëtor / Kompani) ---------- */
+.provider-type-toggle {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid var(--helppy-border);
+  border-radius: 999px;
+  box-shadow: var(--helppy-shadow);
+  margin-bottom: var(--helppy-space-3);
+}
+.provider-type-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--helppy-text);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .12s, color .12s, border-color .12s;
+  line-height: 1.2;
+  min-height: 38px;
+}
+.provider-type-btn i { font-size: 16px; }
+.provider-type-btn:hover {
+  background: rgba(90, 122, 79, .08);
+  color: var(--helppy-green-dark);
+  text-decoration: none;
+}
+.provider-type-btn.is-active {
+  background: var(--helppy-green);
+  color: #fff;
+  border-color: var(--helppy-green-dark);
+  box-shadow: 0 4px 12px rgba(90, 122, 79, .25);
+}
+.provider-type-btn.is-active:hover {
+  background: var(--helppy-green-dark);
+  color: #fff;
+}
+@media (max-width: 575.98px) {
+  .provider-type-toggle { width: 100%; justify-content: center; }
+  .provider-type-btn { flex: 1; justify-content: center; padding: 8px 10px; font-size: 13px; }
 }
 
 /* ---------- District badge on cards & profile ---------- */

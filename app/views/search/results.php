@@ -107,10 +107,12 @@
 
   <?php if ($hasExact): ?>
     <!-- Exact-city results only. No nearby pollution. -->
-    <div class="row g-3">
-      <?php foreach ($providers as $p): ?>
-        <div class="col-12 col-sm-6"><?php View::partial('provider-card', ['p' => $p]); ?></div>
-      <?php endforeach; ?>
+    <div class="cards-shell">
+      <div class="row g-3">
+        <?php foreach ($providers as $p): ?>
+          <div class="col-12 col-sm-6"><?php View::partial('provider-card', ['p' => $p]); ?></div>
+        <?php endforeach; ?>
+      </div>
     </div>
 
   <?php elseif ($hasNearby): ?>
@@ -140,10 +142,12 @@
       <i class="bi bi-pin-map"></i> Punëtorë afër
       <small class="text-muted fw-normal" style="font-size: 14px;">(<?= count($nearby_providers) ?>)</small>
     </h3>
-    <div class="row g-3">
-      <?php foreach ($nearby_providers as $p): ?>
-        <div class="col-12 col-sm-6"><?php View::partial('provider-card', ['p' => $p]); ?></div>
-      <?php endforeach; ?>
+    <div class="cards-shell">
+      <div class="row g-3">
+        <?php foreach ($nearby_providers as $p): ?>
+          <div class="col-12 col-sm-6"><?php View::partial('provider-card', ['p' => $p]); ?></div>
+        <?php endforeach; ?>
+      </div>
     </div>
 
   <?php else: ?>

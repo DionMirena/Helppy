@@ -65,8 +65,36 @@
 
 <section class="container py-3">
   <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-    <h2 class="section-title mb-0">Punonjesit me te afert</h2>
+    <h2 class="section-title mb-0">
+      <?php if ($activeType === 'company'): ?>Kompanitë
+      <?php elseif ($activeType === 'person'): ?>Punëtorët
+      <?php else: ?>Punonjesit me te afert<?php endif; ?>
+    </h2>
     <span class="text-muted small">Po shfaqen <span data-providers-shown><?= count($featured) ?></span> / <?= (int)$totalCount ?></span>
+  </div>
+
+  <?php
+    $baseUrl = e(CONFIG['base_url']);
+    $isAll     = $activeType === '';
+    $isPerson  = $activeType === 'person';
+    $isCompany = $activeType === 'company';
+  ?>
+  <div class="provider-type-toggle" role="tablist" aria-label="Filtro sipas llojit">
+    <a class="provider-type-btn<?= $isAll     ? ' is-active' : '' ?>" role="tab"
+       aria-selected="<?= $isAll ? 'true' : 'false' ?>"
+       href="<?= $baseUrl ?>/">
+      <i class="bi bi-grid-fill"></i> Të gjithë
+    </a>
+    <a class="provider-type-btn<?= $isPerson  ? ' is-active' : '' ?>" role="tab"
+       aria-selected="<?= $isPerson ? 'true' : 'false' ?>"
+       href="<?= $baseUrl ?>/?type=person">
+      <i class="bi bi-person-fill"></i> Punëtor
+    </a>
+    <a class="provider-type-btn<?= $isCompany ? ' is-active' : '' ?>" role="tab"
+       aria-selected="<?= $isCompany ? 'true' : 'false' ?>"
+       href="<?= $baseUrl ?>/?type=company">
+      <i class="bi bi-building-fill"></i> Kompani
+    </a>
   </div>
 
   <?php if (!$featured): ?>
@@ -75,7 +103,8 @@
     <div class="providers-scroller"
          data-providers-scroller
          data-next-offset="<?= (int)$pageSize ?>"
-         data-total="<?= (int)$totalCount ?>">
+         data-total="<?= (int)$totalCount ?>"
+         data-type="<?= e($activeType) ?>">
       <div class="row g-3" data-providers-grid>
         <?php foreach ($featured as $p): ?>
           <div class="col-12 col-sm-6 col-lg-4">

@@ -80,25 +80,40 @@ final class Provider {
      * Stable, paginated provider list for the home page (premium first, then
      * newest). Used by the "load more on scroll" behaviour.
      */
-    public static function listPaged(int $offset, int $limit): array {
+    /**
+     * $type is 'person', 'company', or '' (any). Filters by providers.is_company.
+     */
+    public static function listPaged(int $offset, int $limit, string $type = ''): array {
         $offset = max(0, $offset);
         $limit  = max(1, min(50, $limit));
-        $sql = "SELECT u.id, u.name, u.phone, c.name AS city,
-                       p.profession, p.photo, p.is_company, p.is_premium, p.hourly_rate,
+        $where  = self::typeWhere($type);
+        $sql = "SELECT u.id, u.name, u.phone, c.name AS city, u.district,
+                       p.profession, p.photo, p.is_company, p.company_name,
+                       p.is_premium, p.hourly_rate,
                        (SELECT AVG(rating) FROM reviews WHERE provider_id = p.user_id) AS avg_rating
                 FROM providers p
                 JOIN users u ON u.id = p.user_id AND u.is_active = 1 AND u.email_verified = 1
                 LEFT JOIN cities c ON c.id = u.city_id
+                WHERE 1=1 $where
                 ORDER BY p.is_premium DESC, u.id DESC
                 LIMIT $limit OFFSET $offset";
         return DB::q($sql)->fetchAll();
     }
 
-    public static function listCount(): int {
+    public static function listCount(string $type = ''): int {
+        $where = self::typeWhere($type);
         return (int)DB::q(
             "SELECT COUNT(*) FROM providers p
-             JOIN users u ON u.id = p.user_id AND u.is_active = 1 AND u.email_verified = 1"
+             JOIN users u ON u.id = p.user_id AND u.is_active = 1 AND u.email_verified = 1
+             WHERE 1=1 $where"
         )->fetchColumn();
+    }
+
+    /** Inline SQL fragment for the is_company filter — safe (hardcoded values). */
+    private static function typeWhere(string $type): string {
+        if ($type === 'person')  return ' AND p.is_company = 0 ';
+        if ($type === 'company') return ' AND p.is_company = 1 ';
+        return '';
     }
 
     public static function categories(int $userId): array {

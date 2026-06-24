@@ -74,7 +74,13 @@
               <td><?= (int)$c['id'] ?></td>
               <td><?= e($c['name']) ?></td>
               <td><code><?= e($c['slug']) ?></code></td>
-              <td><i class="<?= e($c['icon'] ?? '') ?>"></i> <small class="text-muted"><?= e($c['icon'] ?? '') ?></small></td>
+              <td>
+                <?php $iconClass = trim((string)($c['icon'] ?? '')); ?>
+                <?php if ($iconClass !== ''): ?>
+                  <i class="bi <?= e($iconClass) ?> category-icon-preview"></i>
+                <?php endif; ?>
+                <small class="text-muted ms-1"><?= e($iconClass) ?></small>
+              </td>
               <td>
                 <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/categories/<?= (int)$c['id'] ?>/delete" class="d-inline"
                       onsubmit="return confirm('Fshi kete kategori?');">
@@ -130,7 +136,7 @@
                         <button type="button" class="icon-picker-item"
                                 data-icon-name="<?= e($name) ?>"
                                 title="<?= e($name) ?>">
-                          <i class="bi <?= e(substr($name, 3)) ?>"></i>
+                          <i class="bi <?= e($name) ?>"></i>
                         </button>
                       <?php endforeach; ?>
                     </div>

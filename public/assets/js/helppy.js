@@ -89,6 +89,7 @@
 
     var nextOffset = parseInt(scroller.getAttribute('data-next-offset'), 10) || 0;
     var total      = parseInt(scroller.getAttribute('data-total'), 10) || 0;
+    var filterType = scroller.getAttribute('data-type') || '';
     var loading    = false;
     var done       = nextOffset >= total;
 
@@ -109,7 +110,8 @@
 
       // Fetch + 1s timer in parallel — only swap the UI once BOTH resolve,
       // so the loading state stays visible at least a second.
-      var fetched = fetch((window.HELPPY_BASE || '') + '/api/providers.json?offset=' + nextOffset, {
+      var typeQs  = filterType ? '&type=' + encodeURIComponent(filterType) : '';
+      var fetched = fetch((window.HELPPY_BASE || '') + '/api/providers.json?offset=' + nextOffset + typeQs, {
         credentials: 'same-origin',
         headers: { 'Accept': 'application/json' }
       }).then(function (r) { return r.ok ? r.json() : null; });

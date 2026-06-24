@@ -132,12 +132,14 @@ $qsBase = function(array $override) use ($activeType, $activeCategory, $activeCi
 
   <?php if ($hasExactPosts): ?>
     <!-- Exact-city results only. -->
-    <div class="row g-3">
-      <?php foreach ($posts as $p): ?>
-        <div class="col-12 col-sm-6 col-lg-4">
-          <?php View::partial('post-card', ['p' => $p]); ?>
-        </div>
-      <?php endforeach; ?>
+    <div class="cards-shell">
+      <div class="row g-3">
+        <?php foreach ($posts as $p): ?>
+          <div class="col-12 col-sm-6 col-lg-4">
+            <?php View::partial('post-card', ['p' => $p]); ?>
+          </div>
+        <?php endforeach; ?>
+      </div>
     </div>
 
   <?php elseif ($hasNearbyPosts): ?>
@@ -166,12 +168,14 @@ $qsBase = function(array $override) use ($activeType, $activeCategory, $activeCi
       <i class="bi bi-pin-map"></i> Postime afër
       <small class="text-muted fw-normal" style="font-size: 14px;">(<?= count($nearby_posts) ?>)</small>
     </h3>
-    <div class="row g-3">
-      <?php foreach ($nearby_posts as $p): ?>
-        <div class="col-12 col-sm-6 col-lg-4">
-          <?php View::partial('post-card', ['p' => $p]); ?>
-        </div>
-      <?php endforeach; ?>
+    <div class="cards-shell">
+      <div class="row g-3">
+        <?php foreach ($nearby_posts as $p): ?>
+          <div class="col-12 col-sm-6 col-lg-4">
+            <?php View::partial('post-card', ['p' => $p]); ?>
+          </div>
+        <?php endforeach; ?>
+      </div>
     </div>
 
   <?php else: ?>
