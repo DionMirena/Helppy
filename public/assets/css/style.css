@@ -2015,8 +2015,12 @@ section + section { margin-top: var(--helppy-space-2); }
   max-height: clamp(560px, 75vh, 820px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 8px 12px 12px;
-  margin: 0 -12px;        /* let cards align with the page container edges */
+  padding: var(--helppy-space-3);
+  margin: 0 0 var(--helppy-space-3);
+  background: #fff;
+  border: 2px solid var(--helppy-green-light);
+  border-radius: var(--helppy-radius);
+  box-shadow: 0 6px 20px rgba(90, 122, 79, .12);
   border-radius: var(--helppy-radius);
   scrollbar-gutter: stable;
   scroll-behavior: smooth;
@@ -2121,7 +2125,7 @@ section + section { margin-top: var(--helppy-space-2); }
 .providers-scroller::-webkit-scrollbar-thumb:hover { background: var(--helppy-green-light); background-clip: padding-box; }
 
 @media (max-width: 575.98px) {
-  .providers-scroller { max-height: 70vh; padding: 6px 8px 10px; margin: 0 -8px; }
+  .providers-scroller { max-height: 70vh; padding: var(--helppy-space-2); margin: 0 0 var(--helppy-space-3); }
 }
 
 /* ===========================================================
