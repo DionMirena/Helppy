@@ -24,6 +24,13 @@ $__isHome      = $__currentPath === '';
         <li class="nav-item">
           <a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/posts">Postimet</a>
         </li>
+        <li class="nav-item">
+          <button type="button" class="nav-link text-white nav-icon-link theme-toggle-btn"
+                  data-theme-toggle title="Ndrysho temë (e errët / e ndritshme)"
+                  aria-label="Ndrysho temë">
+            <i class="bi bi-moon-stars-fill" data-theme-icon></i>
+          </button>
+        </li>
         <?php if (Auth::check()): ?>
           <?php $u = Auth::user(); ?>
 

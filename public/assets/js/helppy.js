@@ -581,6 +581,25 @@
     });
   }
 
+  function wireThemeToggle() {
+    var btn = document.querySelector('[data-theme-toggle]');
+    if (!btn) return;
+    var icon = btn.querySelector('[data-theme-icon]');
+    function syncIcon() {
+      if (!icon) return;
+      var t = document.documentElement.getAttribute('data-theme') || 'light';
+      icon.className = 'bi ' + (t === 'dark' ? 'bi-sun-fill' : 'bi-moon-stars-fill');
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var current = document.documentElement.getAttribute('data-theme') || 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('helppy-theme', next); } catch (e) {}
+      syncIcon();
+    });
+  }
+
   function wireShareButtons() {
     var btns = document.querySelectorAll('[data-helppy-share]');
     if (!btns.length) return;
@@ -734,6 +753,7 @@
     wireProvidersScroller();
     wireCityPickers();
     wireShareButtons();
+    wireThemeToggle();
     if (!window.HELPPY_BASE) return;
     refreshBadges();
     setInterval(refreshBadges, 25000);

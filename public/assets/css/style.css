@@ -8,6 +8,7 @@
   --helppy-green-bg:     #eef2eb;
   --helppy-bg:           #f3f4f6;
   --helppy-card:         #ffffff;
+  --helppy-surface-2:    #fafaf7;   /* slightly off-white for panels */
   --helppy-text:         #111827;
   --helppy-muted:        #6b7280;
   --helppy-border:       #e5e7eb;
@@ -28,6 +29,250 @@
   --helppy-space-5:      24px;
   --helppy-space-6:      32px;
 }
+
+/* Dark theme: only colors are overridden; spacing/radii stay the same. */
+[data-theme="dark"] {
+  --helppy-green:        #8fae82;   /* brighten the brand so it pops on dark */
+  --helppy-green-dark:   #6f8c63;
+  --helppy-green-darker: #506946;
+  --helppy-green-light:  #a3c098;
+  --helppy-green-bg:     #1c2a18;
+  --helppy-bg:           #0f1419;
+  --helppy-card:         #1a1f25;
+  --helppy-surface-2:    #232831;
+  --helppy-text:         #e5e7eb;
+  --helppy-muted:        #9ca3af;
+  --helppy-border:       #2d3239;
+  --helppy-chip:         #2d3239;
+  --helppy-chip-hover:   #3a4047;
+  --helppy-shadow:       0 2px 8px rgba(0, 0, 0, .35);
+  --helppy-shadow-lg:    0 10px 30px rgba(0, 0, 0, .50);
+  --helppy-shadow-ring:  0 0 0 .2rem rgba(143, 174, 130, .30);
+  color-scheme: dark;
+}
+
+/* -------- Dark-mode overrides for hardcoded white backgrounds and Bootstrap defaults -------- */
+[data-theme="dark"] body { background: var(--helppy-bg); color: var(--helppy-text); }
+
+[data-theme="dark"] .cards-shell,
+[data-theme="dark"] .providers-scroller,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .form-card,
+[data-theme="dark"] .review-card,
+[data-theme="dark"] .empty-state,
+[data-theme="dark"] .helppy-search,
+[data-theme="dark"] .table-responsive,
+[data-theme="dark"] .icon-picker-toggle,
+[data-theme="dark"] .icon-picker-panel,
+[data-theme="dark"] .helppy-citypicker-panel,
+[data-theme="dark"] .helppy-citypicker-toggle,
+[data-theme="dark"] .provider-mini-map-close,
+[data-theme="dark"] .bank-picker,
+[data-theme="dark"] .gallery-empty,
+[data-theme="dark"] .alert.alert-light {
+  background-color: var(--helppy-card) !important;
+  color: var(--helppy-text);
+  border-color: var(--helppy-border);
+}
+
+[data-theme="dark"] .icon-picker-search,
+[data-theme="dark"] .helppy-citypicker-search,
+[data-theme="dark"] .icon-picker-footer {
+  background-color: var(--helppy-surface-2) !important;
+  border-color: var(--helppy-border);
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .input-group-text,
+[data-theme="dark"] textarea.form-control {
+  background-color: var(--helppy-card);
+  color: var(--helppy-text);
+  border-color: var(--helppy-border);
+}
+[data-theme="dark"] .form-control::placeholder { color: var(--helppy-muted); }
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background-color: var(--helppy-card);
+  color: var(--helppy-text);
+  border-color: var(--helppy-green);
+}
+
+/* Bootstrap dropdown menus (Ndrysho rolin, user profile, theme toggle…). */
+[data-theme="dark"] .dropdown-menu {
+  background-color: var(--helppy-card);
+  border-color: var(--helppy-border);
+}
+[data-theme="dark"] .dropdown-item { color: var(--helppy-text); }
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus { background-color: var(--helppy-surface-2); color: var(--helppy-text); }
+[data-theme="dark"] .dropdown-divider { border-color: var(--helppy-border); }
+
+/* Tables (admin views). */
+[data-theme="dark"] .table { color: var(--helppy-text); border-color: var(--helppy-border); --bs-table-bg: transparent; }
+[data-theme="dark"] .table > :not(caption) > * > * { border-color: var(--helppy-border); background-color: transparent; }
+[data-theme="dark"] .table-hover > tbody > tr:hover > * { background-color: var(--helppy-surface-2); }
+
+/* Soft Bootstrap utility colors that don't auto-adapt. */
+[data-theme="dark"] .text-muted { color: var(--helppy-muted) !important; }
+[data-theme="dark"] code { background: var(--helppy-surface-2); color: var(--helppy-green-light); }
+[data-theme="dark"] .alert-light { background: var(--helppy-card); color: var(--helppy-text); border-color: var(--helppy-border); }
+[data-theme="dark"] .alert-info  { background: #16323f; color: #a8d7e8; border-color: #2a5870; }
+[data-theme="dark"] .alert-warning { background: #3a2f10; color: #f0d189; border-color: #6b5722; }
+[data-theme="dark"] .alert-success { background: #173324; color: #a0d8b6; border-color: #2a5f3f; }
+[data-theme="dark"] .alert-danger  { background: #3a1c1c; color: #f0a3a3; border-color: #6b3030; }
+
+/* -------- Dark mode: text colors that were hardcoded in light-only contexts -------- */
+[data-theme="dark"] .hero h1,
+[data-theme="dark"] h1, [data-theme="dark"] h2,
+[data-theme="dark"] h3, [data-theme="dark"] h4,
+[data-theme="dark"] h5, [data-theme="dark"] h6 {
+  color: var(--helppy-text);
+}
+[data-theme="dark"] .section-title { color: var(--helppy-text); }
+[data-theme="dark"] .form-label { color: var(--helppy-text); }
+[data-theme="dark"] .form-card-title { color: var(--helppy-green-light); border-bottom-color: var(--helppy-border); }
+[data-theme="dark"] .text-soft-wrap { color: var(--helppy-muted); }
+[data-theme="dark"] small { color: inherit; }
+[data-theme="dark"] a { color: var(--helppy-green-light); }
+[data-theme="dark"] a:hover { color: var(--helppy-green); }
+[data-theme="dark"] .profile-name,
+[data-theme="dark"] .provider-card .name,
+[data-theme="dark"] .profile-card h3,
+[data-theme="dark"] .profile-card h5 {
+  color: var(--helppy-text);
+}
+[data-theme="dark"] .provider-card .profession { color: var(--helppy-muted); }
+[data-theme="dark"] .provider-card .rate { color: var(--helppy-text); }
+[data-theme="dark"] .provider-card { background: var(--helppy-card); color: var(--helppy-text); border-color: var(--helppy-border); }
+[data-theme="dark"] .post-card { background: var(--helppy-card); color: var(--helppy-text); border-color: var(--helppy-border); }
+
+/* -------- Dark mode: search bar pill + city/category pickers -------- */
+[data-theme="dark"] .helppy-search,
+[data-theme="dark"] .helppy-search .form-control,
+[data-theme="dark"] .helppy-search .form-select,
+[data-theme="dark"] .helppy-search .helppy-search-q,
+[data-theme="dark"] .helppy-search-divider {
+  background-color: var(--helppy-card);
+  color: var(--helppy-text);
+}
+[data-theme="dark"] .helppy-search .helppy-search-q::placeholder,
+[data-theme="dark"] .helppy-citypicker-search input::placeholder,
+[data-theme="dark"] .icon-picker-search input::placeholder { color: var(--helppy-muted); }
+[data-theme="dark"] .helppy-search .location-icon { color: var(--helppy-green-light); }
+[data-theme="dark"] .helppy-citypicker-label { color: var(--helppy-text); }
+[data-theme="dark"] .helppy-citypicker-toggle:hover { background: var(--helppy-surface-2); }
+[data-theme="dark"] .helppy-citypicker-item:hover,
+[data-theme="dark"] .helppy-citypicker-item.is-active {
+  background: var(--helppy-surface-2);
+  color: var(--helppy-green-light);
+}
+
+/* -------- Dark mode: icon picker + bank picker + work gallery -------- */
+[data-theme="dark"] .icon-picker-item { background: var(--helppy-card); color: var(--helppy-text); }
+[data-theme="dark"] .icon-picker-item:hover { background: var(--helppy-surface-2); color: var(--helppy-green-light); }
+[data-theme="dark"] .icon-picker-toggle:hover { border-color: var(--helppy-green); }
+[data-theme="dark"] .category-icon-preview { background: rgba(143, 174, 130, .14); color: var(--helppy-green-light); }
+[data-theme="dark"] .bank-chip { background: var(--helppy-card); color: var(--helppy-text); border-color: var(--helppy-border); }
+
+/* -------- Dark mode: Bootstrap outline buttons stay readable -------- */
+[data-theme="dark"] .btn-helppy-outline {
+  color: var(--helppy-green-light);
+  border-color: var(--helppy-green-light);
+  background: transparent;
+}
+[data-theme="dark"] .btn-helppy-outline:hover {
+  background: var(--helppy-green);
+  color: #fff;
+  border-color: var(--helppy-green);
+}
+[data-theme="dark"] .btn-outline-secondary {
+  color: var(--helppy-text);
+  border-color: var(--helppy-border);
+  background: transparent;
+}
+[data-theme="dark"] .btn-outline-secondary:hover {
+  background: var(--helppy-surface-2);
+  color: var(--helppy-text);
+  border-color: var(--helppy-green-light);
+}
+[data-theme="dark"] .btn-outline-primary {
+  color: var(--helppy-green-light);
+  border-color: var(--helppy-green-light);
+}
+[data-theme="dark"] .btn-outline-primary:hover {
+  background: var(--helppy-green);
+  color: #fff;
+}
+[data-theme="dark"] .btn-outline-danger { color: #f0a3a3; border-color: #f0a3a3; }
+[data-theme="dark"] .btn-outline-danger:hover { background: #6b3030; color: #fff; border-color: #6b3030; }
+[data-theme="dark"] .btn-link { color: var(--helppy-green-light); }
+[data-theme="dark"] .btn-link:hover { color: var(--helppy-green); }
+[data-theme="dark"] .btn-light {
+  background: var(--helppy-surface-2);
+  color: var(--helppy-text);
+  border-color: var(--helppy-border);
+}
+[data-theme="dark"] .btn-success { background: #2a5f3f; color: #fff; border-color: #2a5f3f; }
+[data-theme="dark"] .btn-secondary { background: var(--helppy-surface-2); color: var(--helppy-text); border-color: var(--helppy-border); }
+
+/* -------- Dark mode: misc UI elements -------- */
+[data-theme="dark"] .helppy-back-btn { background: var(--helppy-card); color: var(--helppy-text); border-color: var(--helppy-border); }
+[data-theme="dark"] .helppy-back-btn:hover { background: var(--helppy-surface-2); }
+[data-theme="dark"] .nearby-banner { background: #16323f; color: #a8d7e8; border-color: #2a5870; }
+[data-theme="dark"] .nearby-banner i.bi-info-circle-fill { color: #69b9d8; }
+[data-theme="dark"] .district-badge { background: rgba(143, 174, 130, .16); color: var(--helppy-green-light); }
+[data-theme="dark"] .category-chip {
+  background: var(--helppy-surface-2);
+  color: var(--helppy-text);
+  border-color: var(--helppy-border);
+}
+[data-theme="dark"] .category-chip:hover, [data-theme="dark"] .category-chip.is-active {
+  background: var(--helppy-green);
+  color: #fff;
+  border-color: var(--helppy-green);
+}
+[data-theme="dark"] .category-check {
+  background: var(--helppy-surface-2);
+  color: var(--helppy-text);
+  border-color: var(--helppy-border);
+}
+[data-theme="dark"] .provider-type-toggle { background: var(--helppy-card); border-color: var(--helppy-border); }
+[data-theme="dark"] .provider-type-btn { color: var(--helppy-text); }
+[data-theme="dark"] .provider-type-btn:hover { background: var(--helppy-surface-2); color: var(--helppy-green-light); }
+[data-theme="dark"] .premium-badge { color: #fff; }
+[data-theme="dark"] .rate-badge { color: var(--helppy-text); }
+[data-theme="dark"] .rate-badge-muted { color: var(--helppy-muted); }
+[data-theme="dark"] .status-badge { color: var(--helppy-text); }
+
+/* Bottom fades in containers shouldn't fade to white in dark mode. */
+[data-theme="dark"] .cards-shell::after {
+  background: linear-gradient(to bottom, rgba(26, 31, 37, 0), var(--helppy-card));
+}
+[data-theme="dark"] .providers-scroller {
+  background: var(--helppy-card);
+  background-image: linear-gradient(180deg, transparent 0%, transparent calc(100% - 30px), rgba(26, 31, 37, .9) 100%);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 100% 30px;
+}
+
+/* Theme toggle button look — it lives in the (still green) navbar. */
+.theme-toggle-btn {
+  background: transparent;
+  border: 0;
+  font-size: 18px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: var(--helppy-radius-sm);
+  color: #fff;
+  transition: background .15s;
+}
+.theme-toggle-btn:hover { background: rgba(255, 255, 255, .12); }
+.theme-toggle-btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(255, 255, 255, .25); }
 
 * { -webkit-tap-highlight-color: transparent; }
 *, *::before, *::after { box-sizing: border-box; }
