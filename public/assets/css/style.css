@@ -201,9 +201,81 @@ a:hover { color: var(--helppy-green-darker); }
   border: 1px solid var(--helppy-border);
   overflow: hidden;
 }
+
+/* Compact read-only map shown on the public profile. */
+.provider-mini-map {
+  height: 220px;
+  border-radius: var(--helppy-radius);
+  border: 1px solid var(--helppy-border);
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+}
+.profile-map-card { position: relative; }
+.provider-mini-map-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  z-index: 10010;
+  background: #fff;
+  color: var(--helppy-text);
+  border: 1px solid var(--helppy-border);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(17, 24, 39, .18);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.provider-mini-map-close:hover { background: #f8f8f5; }
+
+/* Fullscreen: card escapes its container and covers the viewport. */
+.profile-map-card.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+}
+.profile-map-card.is-fullscreen > :not(.provider-mini-map):not(.provider-mini-map-close) {
+  display: none;
+}
+.profile-map-card.is-fullscreen .provider-mini-map {
+  flex: 1 1 auto;
+  height: 100%;
+  border-radius: 0;
+  border: none;
+}
+body.helppy-no-scroll { overflow: hidden; }
+
+@media (max-width: 575.98px) {
+  .provider-mini-map { height: 180px; }
+}
 .provider-map:focus { outline: 2px solid var(--helppy-green); outline-offset: 2px; }
 @media (max-width: 575.98px) {
   .provider-map { height: 260px; }
+}
+
+/* Name search input inside the white pill — sits before city/category. */
+.helppy-search .helppy-search-q {
+  flex: 1.2;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  padding: 10px 8px;
+  min-height: var(--helppy-touch);
+  box-shadow: none;
+}
+.helppy-search .helppy-search-q:focus { outline: none; background: rgba(90, 122, 79, .06); border-radius: var(--helppy-radius-sm); }
+.helppy-search .helppy-search-q::placeholder { color: #9ca3af; }
+@media (max-width: 575.98px) {
+  .helppy-search .helppy-search-q { font-size: 16px; padding: 10px 6px; }
 }
 
 /* ---------- Custom city picker (replaces native <select>) ---------- */

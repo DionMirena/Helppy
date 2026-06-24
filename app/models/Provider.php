@@ -21,17 +21,18 @@ final class Provider {
         return $r;
     }
 
-    /** Search by city_id and category_id (either may be null). */
-    public static function search(?int $cityId, ?int $categoryId): array {
+    /** Search by city_id, category_id, and optional name/company query. */
+    public static function search(?int $cityId, ?int $categoryId, ?string $query = null): array {
         $cityIds = $cityId === null ? [] : [$cityId];
-        return self::searchInCities($cityIds, $categoryId);
+        return self::searchInCities($cityIds, $categoryId, $query);
     }
 
     /**
      * Search restricted to a set of city IDs (used by the district fallback).
-     * Empty $cityIds means "any city".
+     * Empty $cityIds means "any city". $query matches against the user's name,
+     * the company name, and the profession (case-insensitive LIKE).
      */
-    public static function searchInCities(array $cityIds, ?int $categoryId): array {
+    public static function searchInCities(array $cityIds, ?int $categoryId, ?string $query = null): array {
         $sql = "SELECT u.id, u.name, u.phone, u.city_id, c.name AS city, u.district,
                        p.profession, p.photo, p.is_company, p.company_name,
                        p.is_premium, p.hourly_rate,
@@ -50,6 +51,12 @@ final class Provider {
         if ($categoryId !== null) {
             $sql .= " AND EXISTS (SELECT 1 FROM provider_categories pc WHERE pc.provider_id = p.user_id AND pc.category_id = ?)";
             $args[] = $categoryId;
+        }
+        $q = $query !== null ? trim($query) : '';
+        if ($q !== '') {
+            $like = '%' . $q . '%';
+            $sql .= " AND (u.name LIKE ? OR p.company_name LIKE ? OR p.profession LIKE ?)";
+            $args[] = $like; $args[] = $like; $args[] = $like;
         }
         $sql .= " ORDER BY p.is_premium DESC, u.created_at DESC";
         return DB::q($sql, $args)->fetchAll();

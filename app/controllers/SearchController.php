@@ -7,8 +7,10 @@ final class SearchController extends Controller {
         $categoryId = Request::get('category');
         $cityId     = is_numeric($cityId) ? (int)$cityId : null;
         $categoryId = is_numeric($categoryId) ? (int)$categoryId : null;
+        $query      = trim((string)Request::get('q', ''));
+        $queryArg   = $query !== '' ? $query : null;
 
-        $providers = Provider::search($cityId, $categoryId);
+        $providers = Provider::search($cityId, $categoryId, $queryArg);
         $city      = $cityId     ? City::find($cityId)         : null;
         $category  = $categoryId ? Category::find($categoryId) : null;
 
@@ -20,7 +22,7 @@ final class SearchController extends Controller {
         if ($city && !$providers) {
             $siblingIds = Geography::siblingCityIds((int)$city['id']);
             if ($siblingIds) {
-                $nearbyProviders = Provider::searchInCities($siblingIds, $categoryId);
+                $nearbyProviders = Provider::searchInCities($siblingIds, $categoryId, $queryArg);
                 $nearbyDistrict  = Geography::districtOfCityName((string)$city['name']);
             }
         }
@@ -30,6 +32,7 @@ final class SearchController extends Controller {
             'providers'        => $providers,
             'city'             => $city,
             'category'         => $category,
+            'query'            => $query,
             'cities'           => City::all(),
             'categories'       => Category::all(),
             'nearby_providers' => $nearbyProviders,

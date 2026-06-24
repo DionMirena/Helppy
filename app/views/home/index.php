@@ -3,6 +3,12 @@
     <h1>Keni nevoje per nje punetor per problemin ne shtepi?</h1>
 
     <form method="get" action="<?= e(CONFIG['base_url']) ?>/search" class="helppy-search">
+      <span class="location-icon"><i class="bi bi-search"></i></span>
+      <input type="text" name="q" class="form-control helppy-search-q"
+             placeholder="Kërko emrin e punëtorit…" autocomplete="off"
+             aria-label="Kërko sipas emrit">
+      <div class="helppy-search-divider d-none d-sm-block"></div>
+
       <span class="location-icon"><i class="bi bi-geo-alt-fill"></i></span>
 
       <div class="helppy-citypicker" data-citypicker>

@@ -73,16 +73,6 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
               <i class="bi bi-telephone-fill"></i> Telefono
             </a>
           <?php endif; ?>
-          <?php if (!empty($p['latitude']) && !empty($p['longitude'])):
-            $lat = number_format((float)$p['latitude'], 7, '.', '');
-            $lng = number_format((float)$p['longitude'], 7, '.', '');
-            $mapsUrl = 'https://www.google.com/maps?q=' . $lat . ',' . $lng;
-          ?>
-            <a class="btn btn-helppy-outline" target="_blank" rel="noopener"
-               href="<?= e($mapsUrl) ?>">
-              <i class="bi bi-geo-alt-fill"></i> Hape në Google Maps
-            </a>
-          <?php endif; ?>
           <?php if (!$isViewerSelf): ?>
             <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/provider/<?= (int)$p['id'] ?>/book">
               <i class="bi bi-calendar-check"></i> Rezervo Tani
@@ -149,6 +139,38 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
     </div>
   </div>
 
+  <?php if (!empty($p['latitude']) && !empty($p['longitude'])):
+    $lat = number_format((float)$p['latitude'], 7, '.', '');
+    $lng = number_format((float)$p['longitude'], 7, '.', '');
+    $mapsUrl = 'https://www.google.com/maps?q=' . $lat . ',' . $lng;
+    $gmapsEnabled = !empty(CONFIG['google_maps']['enabled']) && !empty(CONFIG['google_maps']['api_key']);
+  ?>
+    <div class="profile-card mb-4 profile-map-card" id="provider-mini-map-card">
+      <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <h5 class="mb-0">
+          <i class="bi bi-geo-alt-fill"></i> Lokacioni
+          <?php if (!empty($p['city'])): ?>
+            <span class="text-muted fw-normal small">· <?= e($p['city']) ?></span>
+          <?php endif; ?>
+        </h5>
+        <div class="d-flex gap-2">
+          <a class="btn btn-sm btn-helppy-outline" target="_blank" rel="noopener" href="<?= e($mapsUrl) ?>">
+            <i class="bi bi-box-arrow-up-right"></i> Hape në Google Maps
+          </a>
+          <button type="button" class="btn btn-sm btn-helppy" data-mini-map-fullscreen>
+            <i class="bi bi-arrows-fullscreen"></i> Plot ekran
+          </button>
+        </div>
+      </div>
+      <div id="provider-mini-map" class="provider-mini-map"
+           data-provider="<?= $gmapsEnabled ? 'gmaps' : 'leaflet' ?>"
+           data-lat="<?= e($lat) ?>" data-lng="<?= e($lng) ?>"></div>
+      <button type="button" class="provider-mini-map-close" data-mini-map-close hidden>
+        <i class="bi bi-x-lg"></i> Mbyll
+      </button>
+    </div>
+  <?php endif; ?>
+
   <?php if (!empty($p['bio']) || !empty($p['skills_services'])): ?>
     <div class="row g-3 mb-4">
       <?php if (!empty($p['bio'])): ?>
@@ -205,3 +227,100 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
     <p class="text-muted">Asnje vleresim ende.</p>
   <?php endif; ?>
 </div>
+
+<?php if (!empty($p['latitude']) && !empty($p['longitude'])):
+  $gmapsEnabled = !empty(CONFIG['google_maps']['enabled']) && !empty(CONFIG['google_maps']['api_key']);
+?>
+<!-- Read-only location preview map (Google Maps if key configured, else Leaflet). -->
+<?php if ($gmapsEnabled): ?>
+  <script>
+  (function () {
+    var el = document.getElementById('provider-mini-map');
+    if (!el) return;
+    var lat = parseFloat(el.getAttribute('data-lat'));
+    var lng = parseFloat(el.getAttribute('data-lng'));
+    if (isNaN(lat) || isNaN(lng)) return;
+    window.__helppyInitMiniGMap = function () {
+      var map = new google.maps.Map(el, {
+        center: { lat: lat, lng: lng },
+        zoom: 16,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        gestureHandling: 'cooperative',
+      });
+      new google.maps.Marker({ map: map, position: { lat: lat, lng: lng } });
+      // Re-center after the container is resized (fullscreen toggle).
+      el.__helppyMap = map;
+    };
+  })();
+  </script>
+  <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=<?= e(CONFIG['google_maps']['api_key']) ?>&loading=async&callback=__helppyInitMiniGMap"></script>
+<?php else: ?>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+  (function () {
+    var el = document.getElementById('provider-mini-map');
+    if (!el || typeof L === 'undefined') return;
+    var lat = parseFloat(el.getAttribute('data-lat'));
+    var lng = parseFloat(el.getAttribute('data-lng'));
+    if (isNaN(lat) || isNaN(lng)) return;
+    var map = L.map(el, { scrollWheelZoom: false, zoomControl: true }).setView([lat, lng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap', maxZoom: 19,
+    }).addTo(map);
+    L.marker([lat, lng]).addTo(map);
+    map.on('focus', function () { map.scrollWheelZoom.enable(); });
+    map.on('blur',  function () { map.scrollWheelZoom.disable(); });
+    el.__helppyMap = map;
+  })();
+  </script>
+<?php endif; ?>
+
+<script>
+(function () {
+  var card     = document.getElementById('provider-mini-map-card');
+  var openBtn  = document.querySelector('[data-mini-map-fullscreen]');
+  var closeBtn = document.querySelector('[data-mini-map-close]');
+  var mapEl    = document.getElementById('provider-mini-map');
+  if (!card || !openBtn || !closeBtn || !mapEl) return;
+
+  function resizeMap() {
+    var m = mapEl.__helppyMap;
+    if (!m) return;
+    // Both Leaflet and Google Maps need a nudge after the container resizes.
+    setTimeout(function () {
+      if (typeof m.invalidateSize === 'function') {
+        m.invalidateSize();                          // Leaflet
+      } else if (typeof google !== 'undefined' && google.maps && google.maps.event) {
+        google.maps.event.trigger(m, 'resize');      // Google Maps
+        var lat = parseFloat(mapEl.getAttribute('data-lat'));
+        var lng = parseFloat(mapEl.getAttribute('data-lng'));
+        m.setCenter({ lat: lat, lng: lng });
+      }
+    }, 60);
+  }
+  function enterFull() {
+    card.classList.add('is-fullscreen');
+    closeBtn.hidden = false;
+    document.body.classList.add('helppy-no-scroll');
+    resizeMap();
+  }
+  function exitFull() {
+    card.classList.remove('is-fullscreen');
+    closeBtn.hidden = true;
+    document.body.classList.remove('helppy-no-scroll');
+    resizeMap();
+  }
+  openBtn.addEventListener('click', enterFull);
+  closeBtn.addEventListener('click', exitFull);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && card.classList.contains('is-fullscreen')) exitFull();
+  });
+})();
+</script>
+<?php endif; ?>
