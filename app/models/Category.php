@@ -2,11 +2,48 @@
 declare(strict_types=1);
 
 final class Category {
+    /** Full list including children — used by admin and search filters. */
     public static function all(): array {
-        return DB::q('SELECT id, name, slug, icon FROM categories ORDER BY name')->fetchAll();
+        return DB::q('SELECT id, parent_id, name, slug, icon FROM categories ORDER BY name')->fetchAll();
+    }
+    /** Newest first — used by the admin categories table so a fresh add lands on top. */
+    public static function allNewestFirst(): array {
+        return DB::q('SELECT id, parent_id, name, slug, icon FROM categories ORDER BY id DESC')->fetchAll();
+    }
+    /** Top-level only — used for the home/posts chip strip. */
+    public static function topLevel(): array {
+        return DB::q('SELECT id, parent_id, name, slug, icon FROM categories WHERE parent_id IS NULL ORDER BY name')->fetchAll();
+    }
+
+    /**
+     * Top-level categories that actually have at least one child. Used on the
+     * home page so the chip strip shows only "umbrella" families that drill
+     * down — everything else is still findable via Kërko kategori.
+     */
+    public static function topLevelWithChildren(): array {
+        return DB::q(
+            'SELECT p.id, p.parent_id, p.name, p.slug, p.icon
+             FROM categories p
+             WHERE p.parent_id IS NULL
+               AND EXISTS (SELECT 1 FROM categories c WHERE c.parent_id = p.id)
+             ORDER BY p.name'
+        )->fetchAll();
+    }
+    /** Children of a given parent id. */
+    public static function children(int $parentId): array {
+        return DB::q('SELECT id, parent_id, name, slug, icon FROM categories WHERE parent_id = ? ORDER BY name', [$parentId])->fetchAll();
+    }
+
+    /** Category id + all its direct child ids — used to widen "filter by umbrella". */
+    public static function idsForFilter(int $categoryId): array {
+        $ids = [$categoryId];
+        foreach (DB::q('SELECT id FROM categories WHERE parent_id = ?', [$categoryId])->fetchAll() as $r) {
+            $ids[] = (int)$r['id'];
+        }
+        return $ids;
     }
     public static function find(int $id): ?array {
-        $r = DB::q('SELECT id, name, slug, icon FROM categories WHERE id=?', [$id])->fetch();
+        $r = DB::q('SELECT id, parent_id, name, slug, icon FROM categories WHERE id=?', [$id])->fetch();
         return $r ?: null;
     }
     public static function findBySlug(string $slug): ?array {

@@ -4,9 +4,14 @@ $photoUrl = !empty($p['photo'])
     : CONFIG['base_url'] . '/assets/img/default-avatar.svg';
 $avg = isset($p['avg_rating']) && $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
 $phoneRaw = !empty($p['phone']) ? preg_replace('/[^0-9+]/', '', $p['phone']) : '';
+$isOnline = Presence::isOnline($p['last_seen_at'] ?? null);
 ?>
-<div class="provider-card">
-  <img class="avatar" src="<?= e($photoUrl) ?>" alt="<?= e($p['name']) ?>">
+<div class="provider-card<?= $isOnline ? ' is-online' : '' ?>">
+  <div class="avatar-wrap">
+    <img class="avatar" src="<?= e($photoUrl) ?>" alt="<?= e($p['name']) ?>">
+    <span class="presence-dot <?= $isOnline ? 'is-online' : 'is-offline' ?>"
+          title="<?= $isOnline ? 'Online tani' : 'Offline' ?>"></span>
+  </div>
 
   <div class="info">
     <p class="name">

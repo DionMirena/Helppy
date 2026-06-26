@@ -2,12 +2,30 @@
   <div class="chat-shell">
     <div class="chat-header">
       <a class="chat-back" href="<?= e(CONFIG['base_url']) ?>/chat" title="Mbrapa"><i class="bi bi-arrow-left"></i></a>
-      <div class="chat-peer-avatar"><i class="bi bi-person-circle"></i></div>
+      <?php
+        $peerOnline = Presence::isOnline($otherLastSeen ?? null);
+        $peerSeen   = Presence::lastSeenLabel($otherLastSeen ?? null);
+      ?>
+      <div class="avatar-wrap chat-peer-avatar">
+        <i class="bi bi-person-circle"></i>
+        <span class="presence-dot <?= $peerOnline ? 'is-online' : 'is-offline' ?>"
+              title="<?= $peerOnline ? 'Online tani' : 'Offline' ?>"></span>
+      </div>
       <div class="chat-peer-meta">
         <a href="<?= e(CONFIG['base_url']) ?>/provider/<?= (int)$otherId ?>" class="chat-peer-name">
           <?= e($otherName) ?>
         </a>
-        <div class="chat-peer-status" data-helppy-typing="">online</div>
+        <div class="chat-peer-status <?= $peerOnline ? 'is-online' : 'is-offline' ?>"
+             data-chat-presence
+             data-peer-id="<?= (int)$otherId ?>">
+          <?php if ($peerOnline): ?>
+            online
+          <?php elseif ($peerSeen): ?>
+            parë <?= e($peerSeen) ?>
+          <?php else: ?>
+            offline
+          <?php endif; ?>
+        </div>
       </div>
       <?php if (Auth::role() === 'admin'): ?>
         <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/conversations/<?= (int)$conv['id'] ?>/delete"

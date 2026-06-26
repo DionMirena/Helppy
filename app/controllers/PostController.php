@@ -31,12 +31,28 @@ final class PostController extends Controller {
             }
         }
 
+        // Drill-down state for the chip strip.
+        $category = !empty($filters['category_id']) ? Category::find((int)$filters['category_id']) : null;
+        $openCat = null;
+        if ($category) {
+            if (!empty($category['parent_id'])) {
+                $openCat = Category::find((int)$category['parent_id']);
+            } else {
+                if (Category::children((int)$category['id'])) $openCat = $category;
+            }
+        }
+        $openCatChildren = $openCat ? Category::children((int)$openCat['id']) : [];
+
         $this->render('posts/index', [
             'title'           => 'Postimet',
             'posts'           => $posts,
             'filters'         => $filters,
             'categories'      => Category::all(),
             'cities'          => City::all(),
+            'topCategories'   => Category::topLevelWithChildren(),
+            'openCat'         => $openCat,
+            'openCatChildren' => $openCatChildren,
+            'activeCategory'  => $category,
             'nearby_posts'    => $nearbyPosts,
             'nearby_district' => $nearbyDistrict,
             'selected_city'   => $selectedCity,

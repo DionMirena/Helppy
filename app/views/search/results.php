@@ -75,16 +75,94 @@
       </button>
     </form>
 
-    <div class="category-chips">
-      <?php foreach ($categories as $cat):
-        $isActive = $category && $category['id'] == $cat['id'];
-      ?>
-        <a class="category-chip <?= $isActive ? 'is-active' : '' ?>"
-           href="<?= e(CONFIG['base_url']) ?>/search?category=<?= (int)$cat['id'] ?><?= $city ? '&city=' . (int)$city['id'] : '' ?>">
-          <?php if (!empty($cat['icon'])): ?><i class="bi <?= e($cat['icon']) ?>"></i><?php endif; ?>
-          <?= e($cat['name']) ?>
-        </a>
-      <?php endforeach; ?>
+    <?php
+      $baseUrl   = e(CONFIG['base_url']);
+      $citySuf   = $city ? '&city=' . (int)$city['id'] : '';
+      $resetHref = $baseUrl . '/search' . ($city ? '?city=' . (int)$city['id'] : '');
+    ?>
+    <div class="category-strip" data-category-strip>
+      <?php if ($openCat): ?>
+        <div class="category-chips category-chips-drilled">
+          <a class="category-chip is-back" href="<?= e($resetHref) ?>">
+            <i class="bi bi-arrow-left"></i> Të gjitha
+          </a>
+          <a class="category-chip <?= ($category && (int)$category['id'] === (int)$openCat['id']) ? 'is-active' : '' ?>"
+             href="<?= $baseUrl ?>/search?category=<?= (int)$openCat['id'] ?><?= $citySuf ?>">
+            <?php if (!empty($openCat['icon'])): ?><i class="bi <?= e($openCat['icon']) ?>"></i><?php endif; ?>
+            <?= e($openCat['name']) ?>
+          </a>
+          <?php foreach ($openCatChildren as $child):
+            $isActiveChild = $category && (int)$category['id'] === (int)$child['id'];
+          ?>
+            <a class="category-chip category-chip-child <?= $isActiveChild ? 'is-active' : '' ?>"
+               href="<?= $baseUrl ?>/search?category=<?= (int)$child['id'] ?><?= $citySuf ?>">
+              <?php if (!empty($child['icon'])): ?><i class="bi <?= e($child['icon']) ?>"></i><?php endif; ?>
+              <?= e($child['name']) ?>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      <?php else: ?>
+        <div class="category-chips category-chips-desktop">
+          <?php foreach ($topCategories as $cat): ?>
+            <a class="category-chip has-children"
+               href="<?= $baseUrl ?>/search?category=<?= (int)$cat['id'] ?><?= $citySuf ?>">
+              <?php if (!empty($cat['icon'])): ?><i class="bi <?= e($cat['icon']) ?>"></i><?php endif; ?>
+              <?= e($cat['name']) ?>
+              <i class="bi bi-chevron-right has-children-caret"></i>
+            </a>
+          <?php endforeach; ?>
+        </div>
+        <div class="category-dropdown-mobile" data-cat-dropdown>
+          <button type="button" class="category-dropdown-toggle" data-cat-dropdown-toggle aria-haspopup="true" aria-expanded="false">
+            <i class="bi bi-grid"></i><span>Zgjidh kategorinë</span><i class="bi bi-chevron-down ms-auto"></i>
+          </button>
+          <ul class="category-dropdown-menu" data-cat-dropdown-menu hidden>
+            <?php foreach ($topCategories as $cat): ?>
+              <li><a class="category-dropdown-item" href="<?= $baseUrl ?>/search?category=<?= (int)$cat['id'] ?><?= $citySuf ?>">
+                <?php if (!empty($cat['icon'])): ?><i class="bi <?= e($cat['icon']) ?>"></i><?php endif; ?>
+                <?= e($cat['name']) ?>
+                <i class="bi bi-chevron-right ms-auto"></i>
+              </a></li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+      <?php endif; ?>
+
+      <button type="button" class="category-search-btn category-search-btn-right"
+              data-cat-search-toggle aria-haspopup="true" aria-expanded="false">
+        <i class="bi bi-search"></i> Kërko kategori
+      </button>
+
+      <div class="category-search-panel" data-cat-search-panel hidden>
+        <div class="category-search-input-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Kërko kategori…" autocomplete="off" data-cat-search-input aria-label="Kërko kategori">
+          <button type="button" class="category-search-close" data-cat-search-close title="Mbyll">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <ul class="category-search-results" data-cat-search-results>
+          <?php foreach ($categories as $cat):
+            $parentName = '';
+            if (!empty($cat['parent_id'])) {
+              foreach ($categories as $maybe) {
+                if ((int)$maybe['id'] === (int)$cat['parent_id']) { $parentName = (string)$maybe['name']; break; }
+              }
+            }
+          ?>
+            <li class="category-search-item" data-cat-name="<?= e(mb_strtolower($cat['name'] . ' ' . $parentName)) ?>">
+              <a href="<?= $baseUrl ?>/search?category=<?= (int)$cat['id'] ?><?= $citySuf ?>">
+                <?php if (!empty($cat['icon'])): ?><i class="bi <?= e($cat['icon']) ?>"></i><?php endif; ?>
+                <span><?= e($cat['name']) ?></span>
+                <?php if ($parentName): ?><small class="text-muted ms-auto"><?= e($parentName) ?></small><?php endif; ?>
+              </a>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+        <div class="category-search-empty text-muted small text-center py-3" data-cat-search-empty hidden>
+          <i class="bi bi-emoji-frown"></i> Asnjë kategori nuk u gjet.
+        </div>
+      </div>
     </div>
   </div>
 </section>

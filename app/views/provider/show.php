@@ -28,6 +28,12 @@ $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
           <div class="profile-header-info">
             <h1 class="profile-name mb-1">
               <?= e($p['name']) ?>
+              <?php $online = Presence::isOnline($p['last_seen_at'] ?? null); ?>
+              <span class="presence-pill <?= $online ? 'is-online' : 'is-offline' ?>"
+                    title="<?= $online ? 'Aktiv tani' : ('Parë ' . e((string)Presence::lastSeenLabel($p['last_seen_at'] ?? null))) ?>">
+                <span class="presence-dot <?= $online ? 'is-online' : 'is-offline' ?>"></span>
+                <?= $online ? 'Online' : 'Offline' ?>
+              </span>
               <?php if (!empty($p['is_premium'])): ?><span class="premium-badge">PREMIUM</span><?php endif; ?>
             </h1>
             <p class="text-muted mb-2 small">

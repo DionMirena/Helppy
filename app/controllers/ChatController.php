@@ -78,13 +78,16 @@ final class ChatController extends Controller {
         Message::markReadFor($id, $uid);
         $messages = Message::forConversation($id);
 
+        $otherLastSeen = DB::q('SELECT last_seen_at FROM users WHERE id = ?', [$otherId])->fetchColumn();
+
         $this->render('chat/show', [
-            'title'      => 'Bisedo me ' . $otherName,
-            'conv'       => $conv,
-            'otherId'    => $otherId,
-            'otherName'  => $otherName,
-            'viewerId'   => $uid,
-            'messages'   => $messages,
+            'title'         => 'Bisedo me ' . $otherName,
+            'conv'          => $conv,
+            'otherId'       => $otherId,
+            'otherName'     => $otherName,
+            'otherLastSeen' => $otherLastSeen ?: null,
+            'viewerId'      => $uid,
+            'messages'      => $messages,
         ]);
     }
 

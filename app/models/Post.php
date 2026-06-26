@@ -45,8 +45,10 @@ final class Post {
             $args[] = $filters['type'];
         }
         if (!empty($filters['category_id'])) {
-            $sql .= " AND p.category_id = ? ";
-            $args[] = (int)$filters['category_id'];
+            $catIds = Category::idsForFilter((int)$filters['category_id']);
+            $catPlaceholders = implode(',', array_fill(0, count($catIds), '?'));
+            $sql .= " AND p.category_id IN ($catPlaceholders) ";
+            foreach ($catIds as $cid) $args[] = (int)$cid;
         }
         if (!empty($filters['city_id'])) {
             $sql .= " AND p.city_id = ? ";

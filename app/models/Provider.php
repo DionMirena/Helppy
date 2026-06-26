@@ -5,7 +5,7 @@ final class Provider {
     /** Find a provider with joined user + city info. */
     public static function find(int $userId): ?array {
         $sql = "SELECT u.id, u.name, u.email, u.phone, u.is_active, u.email_verified, u.created_at,
-                       c.name AS city, u.district,
+                       c.name AS city, u.district, u.last_seen_at,
                        p.profession, p.bio, p.skills_services, p.hourly_rate, p.photo, p.is_company, p.company_name,
                        p.latitude, p.longitude,
                        p.is_premium, p.views
@@ -33,7 +33,7 @@ final class Provider {
      * the company name, and the profession (case-insensitive LIKE).
      */
     public static function searchInCities(array $cityIds, ?int $categoryId, ?string $query = null): array {
-        $sql = "SELECT u.id, u.name, u.phone, u.city_id, c.name AS city, u.district,
+        $sql = "SELECT u.id, u.name, u.phone, u.city_id, c.name AS city, u.district, u.last_seen_at,
                        p.profession, p.photo, p.is_company, p.company_name,
                        p.is_premium, p.hourly_rate,
                        (SELECT AVG(rating) FROM reviews WHERE provider_id = p.user_id) AS avg_rating,
@@ -49,8 +49,12 @@ final class Provider {
             foreach ($cityIds as $id) $args[] = (int)$id;
         }
         if ($categoryId !== null) {
-            $sql .= " AND EXISTS (SELECT 1 FROM provider_categories pc WHERE pc.provider_id = p.user_id AND pc.category_id = ?)";
-            $args[] = $categoryId;
+            // If the picked category is an umbrella, widen the match to all
+            // direct children so the umbrella filter still finds workers.
+            $catIds = Category::idsForFilter((int)$categoryId);
+            $catPlaceholders = implode(',', array_fill(0, count($catIds), '?'));
+            $sql .= " AND EXISTS (SELECT 1 FROM provider_categories pc WHERE pc.provider_id = p.user_id AND pc.category_id IN ($catPlaceholders))";
+            foreach ($catIds as $cid) $args[] = (int)$cid;
         }
         $q = $query !== null ? trim($query) : '';
         if ($q !== '') {
@@ -87,7 +91,7 @@ final class Provider {
         $offset = max(0, $offset);
         $limit  = max(1, min(50, $limit));
         $where  = self::typeWhere($type);
-        $sql = "SELECT u.id, u.name, u.phone, c.name AS city, u.district,
+        $sql = "SELECT u.id, u.name, u.phone, c.name AS city, u.district, u.last_seen_at,
                        p.profession, p.photo, p.is_company, p.company_name,
                        p.is_premium, p.hourly_rate,
                        (SELECT AVG(rating) FROM reviews WHERE provider_id = p.user_id) AS avg_rating

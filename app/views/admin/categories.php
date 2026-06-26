@@ -3,6 +3,21 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', function () {
+    var row = document.querySelector('[data-just-added]');
+    if (!row) return;
+    // Bring the new row into view smoothly.
+    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Clean URL so refreshing the page doesn't re-trigger the highlight.
+    if (window.history && window.history.replaceState) {
+      var u = new URL(window.location.href);
+      u.searchParams.delete('new');
+      window.history.replaceState({}, document.title, u.pathname + (u.search ? u.search : ''));
+    }
+  });
+  </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
     var root = document.querySelector('[data-icon-picker]');
     if (!root) return;
     var toggle  = root.querySelector('[data-icon-picker-toggle]');
@@ -69,8 +84,10 @@
         <table class="table table-hover align-middle mb-0">
           <thead><tr><th>ID</th><th>Emri</th><th>Slug</th><th>Ikona</th><th></th></tr></thead>
           <tbody>
-            <?php foreach ($categories as $c): ?>
-            <tr>
+            <?php foreach ($categories as $c):
+              $isJustAdded = !empty($highlightId) && (int)$c['id'] === (int)$highlightId;
+            ?>
+            <tr class="<?= $isJustAdded ? 'is-just-added' : '' ?>" <?= $isJustAdded ? 'data-just-added' : '' ?>>
               <td><?= (int)$c['id'] ?></td>
               <td><?= e($c['name']) ?></td>
               <td><code><?= e($c['slug']) ?></code></td>

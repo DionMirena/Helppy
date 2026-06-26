@@ -36,6 +36,12 @@ require APP_ROOT . '/app/core/Stripe.php';
 require APP_ROOT . '/app/core/BankGateway.php';
 require APP_ROOT . '/app/core/Payments.php';
 
+// Presence heartbeat: bump last_seen_at once per authenticated request so
+// providers/clients show as "online" while they're actively using the site.
+if (Auth::check()) {
+    Presence::touch((int)$_SESSION['uid']);
+}
+
 $router = new Router();
 
 // PUBLIC

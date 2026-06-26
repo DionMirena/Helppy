@@ -581,6 +581,180 @@
     });
   }
 
+  function wireProviderTypeToggle() {
+    var toggle  = document.querySelector('.provider-type-toggle');
+    if (!toggle) return;
+    var btns    = Array.prototype.slice.call(toggle.querySelectorAll('.provider-type-btn'));
+    var scroller = document.querySelector('[data-providers-scroller]');
+    if (!btns.length || !scroller) return;
+
+    var grid    = scroller.querySelector('[data-providers-grid]');
+    var moreBtn = scroller.querySelector('[data-providers-load-more]');
+    var endEl   = scroller.querySelector('[data-providers-end]');
+    var shown   = document.querySelector('[data-providers-shown]');
+    var heading = document.querySelector('section.container > .d-flex .section-title');
+
+    function typeFromHref(href) {
+      try {
+        var u = new URL(href, window.location.origin);
+        var t = u.searchParams.get('type');
+        return (t === 'person' || t === 'company') ? t : '';
+      } catch (e) { return ''; }
+    }
+    function headingFor(type) {
+      if (type === 'company') return 'Kompanitë';
+      if (type === 'person')  return 'Punëtorët';
+      return 'Punonjesit me te afert';
+    }
+    function setActive(type) {
+      btns.forEach(function (b) {
+        var t = typeFromHref(b.href);
+        b.classList.toggle('is-active', t === type);
+        b.setAttribute('aria-selected', t === type ? 'true' : 'false');
+      });
+    }
+
+    function loadType(type, href, pushHistory) {
+      // Fade the grid while we swap content.
+      grid.style.opacity = '.4';
+      grid.style.pointerEvents = 'none';
+
+      var qs = type ? '?offset=0&type=' + encodeURIComponent(type) : '?offset=0';
+      fetch((window.HELPPY_BASE || '') + '/api/providers.json' + qs, {
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data || !data.ok) return;
+          grid.innerHTML = data.html;
+
+          // Update scroller state so load-more keeps working.
+          scroller.setAttribute('data-next-offset', String(data.next));
+          scroller.setAttribute('data-total', String(data.total));
+          scroller.setAttribute('data-type', type);
+          if (shown) shown.textContent = String(data.returned);
+
+          // Update count next to heading: "<shown> / <total>".
+          var countEl = document.querySelector('section.container > .d-flex .text-muted.small');
+          if (countEl) {
+            countEl.innerHTML = 'Po shfaqen <span data-providers-shown>' + data.returned + '</span> / ' + data.total;
+          }
+
+          // Reset load-more button by cloning (drops old listeners), then
+          // re-binding the scroller so the new offset is captured cleanly.
+          if (moreBtn) {
+            var fresh = moreBtn.cloneNode(true);
+            fresh.hidden = data.total <= data.returned;
+            fresh.classList.remove('is-loading');
+            fresh.disabled = false;
+            moreBtn.parentNode.replaceChild(fresh, moreBtn);
+            moreBtn = fresh;
+          }
+          if (endEl) endEl.hidden = data.total > data.returned;
+
+          wireProvidersScroller();
+          setActive(type);
+          if (heading) heading.textContent = headingFor(type);
+
+          if (pushHistory && href) {
+            window.history.pushState({ type: type }, '', href);
+          }
+        })
+        .finally(function () {
+          grid.style.opacity = '';
+          grid.style.pointerEvents = '';
+        });
+    }
+
+    btns.forEach(function (b) {
+      b.addEventListener('click', function (e) {
+        // Let modified clicks (cmd/ctrl/middle) fall through to normal nav.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        loadType(typeFromHref(b.href), b.getAttribute('href'), true);
+      });
+    });
+    window.addEventListener('popstate', function () {
+      // Re-read the type from the current URL after Back/Forward.
+      var t = '';
+      try { t = new URL(window.location.href).searchParams.get('type') || ''; }
+      catch (e) {}
+      loadType((t === 'person' || t === 'company') ? t : '', null, false);
+    });
+  }
+
+  function wireCategoryStrip() {
+    var root = document.querySelector('[data-category-strip]');
+    if (!root) return;
+
+    // -- "Kërko kategori" search panel --------------------------------
+    var openBtn  = root.querySelector('[data-cat-search-toggle]');
+    var panel    = root.querySelector('[data-cat-search-panel]');
+    var input    = root.querySelector('[data-cat-search-input]');
+    var closeBt  = root.querySelector('[data-cat-search-close]');
+    var items    = Array.prototype.slice.call(root.querySelectorAll('.category-search-item'));
+    var empty    = root.querySelector('[data-cat-search-empty]');
+
+    if (openBtn && panel) {
+      function openPanel() {
+        panel.hidden = false;
+        openBtn.setAttribute('aria-expanded', 'true');
+        if (input) { input.value = ''; filter(''); input.focus(); }
+      }
+      function closePanel() {
+        panel.hidden = true;
+        openBtn.setAttribute('aria-expanded', 'false');
+      }
+      function filter(q) {
+        q = q.toLowerCase().trim();
+        var anyVisible = false;
+        items.forEach(function (it) {
+          var n = (it.getAttribute('data-cat-name') || '').toLowerCase();
+          var match = !q || n.indexOf(q) !== -1;
+          it.style.display = match ? '' : 'none';
+          if (match) anyVisible = true;
+        });
+        if (empty) empty.hidden = anyVisible;
+      }
+      openBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (panel.hidden) openPanel(); else closePanel();
+      });
+      if (closeBt) closeBt.addEventListener('click', closePanel);
+      if (input)   input.addEventListener('input', function () { filter(input.value); });
+      document.addEventListener('click', function (e) {
+        if (!root.contains(e.target)) closePanel();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !panel.hidden) { closePanel(); openBtn.focus(); }
+      });
+    }
+
+    // -- Mobile dropdown ----------------------------------------------
+    var ddRoot   = root.querySelector('[data-cat-dropdown]');
+    if (ddRoot) {
+      var ddToggle = ddRoot.querySelector('[data-cat-dropdown-toggle]');
+      var ddMenu   = ddRoot.querySelector('[data-cat-dropdown-menu]');
+      if (ddToggle && ddMenu) {
+        ddToggle.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var open = ddMenu.hidden;
+          ddMenu.hidden = !open;
+          ddRoot.classList.toggle('is-open', open);
+          ddToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        document.addEventListener('click', function (e) {
+          if (!ddRoot.contains(e.target)) {
+            ddMenu.hidden = true;
+            ddRoot.classList.remove('is-open');
+            ddToggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+    }
+  }
+
   function wireThemeToggle() {
     var btn = document.querySelector('[data-theme-toggle]');
     if (!btn) return;
@@ -751,8 +925,10 @@
     wireLightbox();
     wireChatPanel();
     wireProvidersScroller();
+    wireProviderTypeToggle();
     wireCityPickers();
     wireShareButtons();
+    wireCategoryStrip();
     wireThemeToggle();
     if (!window.HELPPY_BASE) return;
     refreshBadges();

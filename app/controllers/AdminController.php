@@ -45,7 +45,8 @@ final class AdminController extends Controller {
         if (!Verification::isEmailVerified((int)Auth::user()['id'])) { $this->redirect('/verify-email'); }
         $this->render('admin/categories', [
             'title'      => 'Kategorite',
-            'categories' => Category::all(),
+            'categories' => Category::allNewestFirst(),
+            'highlightId' => is_numeric(Request::get('new')) ? (int)Request::get('new') : 0,
         ]);
     }
 
@@ -64,9 +65,10 @@ final class AdminController extends Controller {
             $this->flash('danger', 'Slug-u ekziston.');
             $this->redirect('/admin/categories');
         }
-        Category::create($name, $slug, $icon);
+        $newId = Category::create($name, $slug, $icon);
         $this->flash('success', 'Kategoria u shtua.');
-        $this->redirect('/admin/categories');
+        // Append ?new=ID so the view can highlight and scroll to the new row.
+        $this->redirect('/admin/categories?new=' . (int)$newId);
     }
 
     public function deleteCategory(array $params = []): void {

@@ -8,10 +8,23 @@ final class HomeController extends Controller {
         $type = self::normalizeType((string)Request::get('type', ''));
         $first = Provider::listPaged(0, self::PAGE_SIZE, $type);
         $total = Provider::listCount($type);
+
+        // Category chip drill-down: when ?cat=ID, show that branch alone
+        // (parent + its children) instead of the whole top-level list.
+        $openCatId = (int)Request::get('cat', 0);
+        $openCat   = $openCatId > 0 ? Category::find($openCatId) : null;
+        // Strip only shows umbrella categories (those with children) — the rest
+        // are still reachable via the "Kërko kategori" search panel.
+        $topLevel  = Category::topLevelWithChildren();
+        $children  = $openCat ? Category::children((int)$openCat['id']) : [];
+
         $this->render('home/index', [
             'title'      => 'Helppy.com',
             'cities'     => City::all(),
             'categories' => Category::all(),
+            'topCategories' => $topLevel,
+            'openCat'    => $openCat,
+            'openCatChildren' => $children,
             'featured'   => $first,
             'totalCount' => $total,
             'pageSize'   => self::PAGE_SIZE,
