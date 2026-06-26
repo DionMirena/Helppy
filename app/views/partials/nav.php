@@ -4,49 +4,53 @@ $__currentPath = trim((string)($_GET['url'] ?? ''), '/');
 $__isHome      = $__currentPath === '';
 ?>
 <nav class="navbar navbar-expand-lg helppy-nav">
-  <div class="container-fluid">
-    <a class="navbar-brand text-white d-flex align-items-center" href="<?= e(CONFIG['base_url']) ?>/">
-      <img src="<?= e(CONFIG['base_url']) ?>/assets/img/logo.svg" alt="Helppy" height="32" class="me-2">
-      <span class="fw-bold">Helppy</span>
-    </a>
+  <div class="container-fluid helppy-nav-container">
+    <!-- Back button (left, before brand) only when not on home -->
     <?php if (!$__isHome): ?>
       <button type="button" class="helppy-back-btn" data-helppy-back
               aria-label="Kthehu mbrapa" title="Kthehu mbrapa">
         <i class="bi bi-arrow-left"></i>
-        <span class="d-none d-md-inline ms-1">Kthehu mbrapa</span>
+        <span class="back-btn-label">Mbrapa</span>
       </button>
     <?php endif; ?>
-    <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+
+    <a class="navbar-brand text-white d-flex align-items-center" href="<?= e(CONFIG['base_url']) ?>/">
+      <img src="<?= e(CONFIG['base_url']) ?>/assets/img/logo.svg" alt="Helppy" height="32" class="me-2">
+      <span class="fw-bold">Helppy</span>
+    </a>
+
+    <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu" aria-label="Menu">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navmenu">
-      <ul class="navbar-nav">
+      <ul class="navbar-nav align-items-lg-center">
         <li class="nav-item">
-          <a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/posts">Postimet</a>
-        </li>
-        <li class="nav-item">
-          <button type="button" class="nav-link text-white nav-icon-link theme-toggle-btn"
-                  data-theme-toggle title="Ndrysho temë (e errët / e ndritshme)"
-                  aria-label="Ndrysho temë">
-            <i class="bi bi-moon-stars-fill" data-theme-icon></i>
-          </button>
+          <a class="nav-link text-white nav-link-icon" href="<?= e(CONFIG['base_url']) ?>/posts">
+            <i class="bi bi-postcard"></i> <span>Postimet</span>
+          </a>
         </li>
         <?php if (Auth::check()): ?>
           <?php $u = Auth::user(); ?>
 
           <li class="nav-item">
-            <a class="nav-link text-white nav-icon-link" href="<?= e(CONFIG['base_url']) ?>/chat" title="Bisedat" aria-label="Bisedat">
+            <a class="nav-link text-white nav-link-icon" href="<?= e(CONFIG['base_url']) ?>/chat" title="Bisedat" aria-label="Bisedat">
               <i class="bi bi-chat-dots"></i>
+              <span>Bisedat</span>
               <span class="nav-badge" data-helppy-badge="chat" hidden>0</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white nav-icon-link" href="<?= e(CONFIG['base_url']) ?>/notifications" title="Njoftimet" aria-label="Njoftimet">
+            <a class="nav-link text-white nav-link-icon" href="<?= e(CONFIG['base_url']) ?>/notifications" title="Njoftimet" aria-label="Njoftimet">
               <i class="bi bi-bell"></i>
+              <span>Njoftimet</span>
               <span class="nav-badge" data-helppy-badge="notifications" hidden>0</span>
             </a>
           </li>
-          <li class="nav-item"><a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/bookings">Rezervimet</a></li>
+          <li class="nav-item">
+            <a class="nav-link text-white nav-link-icon" href="<?= e(CONFIG['base_url']) ?>/bookings">
+              <i class="bi bi-calendar-check"></i> <span>Rezervimet</span>
+            </a>
+          </li>
 
           <?php
           // Build the role-specific "my dashboard" target once.
@@ -55,6 +59,14 @@ $__isHome      = $__currentPath === '';
           if (Auth::role() === 'admin')          { $myDashUrl = CONFIG['base_url'] . '/admin';              $myDashLabel = 'Paneli i admin'; }
           elseif (Auth::role() === 'provider')   { $myDashUrl = CONFIG['base_url'] . '/provider/dashboard'; $myDashLabel = 'Profili im'; }
           ?>
+
+          <li class="nav-item">
+            <button type="button" class="nav-link text-white nav-icon-link theme-toggle-btn"
+                    data-theme-toggle title="Ndrysho temë (e errët / e ndritshme)"
+                    aria-label="Ndrysho temë">
+              <i class="bi bi-moon-stars-fill" data-theme-icon></i>
+            </button>
+          </li>
 
           <li class="nav-item dropdown profile-menu">
             <a class="nav-link text-white d-flex align-items-center gap-2" href="#"
@@ -92,6 +104,12 @@ $__isHome      = $__currentPath === '';
             </ul>
           </li>
         <?php else: ?>
+          <li class="nav-item">
+            <button type="button" class="nav-link text-white nav-icon-link theme-toggle-btn"
+                    data-theme-toggle title="Ndrysho temë" aria-label="Ndrysho temë">
+              <i class="bi bi-moon-stars-fill" data-theme-icon></i>
+            </button>
+          </li>
           <li class="nav-item"><a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/login">Hyrje</a></li>
           <li class="nav-item"><a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/register">Regjistrohu</a></li>
         <?php endif; ?>

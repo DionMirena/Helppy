@@ -3128,18 +3128,19 @@ body.helppy-lightbox-open { overflow: hidden; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   background: rgba(255, 255, 255, .12);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, .25);
   border-radius: var(--helppy-radius-pill);
   padding: 6px 12px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  margin-left: 10px;     /* gap from the Helppy logo to its left */
+  margin-right: 10px;    /* now sits BEFORE the Helppy brand */
   transition: background .15s ease, transform .08s ease, border-color .15s ease;
   -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
 }
 .helppy-back-btn:hover { background: rgba(255, 255, 255, .22); border-color: rgba(255, 255, 255, .4); }
 .helppy-back-btn:active { transform: translateY(1px); }
@@ -3148,14 +3149,61 @@ body.helppy-lightbox-open { overflow: hidden; }
   box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .35);
 }
 .helppy-back-btn i { font-size: 18px; line-height: 1; }
-@media (max-width: 575.98px) {
+.back-btn-label { display: inline; }
+@media (max-width: 767.98px) {
+  /* Compact circular back button on phones so it sits cleanly next to the brand. */
   .helppy-back-btn {
     width: 38px; height: 38px;
     padding: 0;
     border-radius: 50%;
-    margin-left: 8px;
-    margin-right: 0;
+    margin-right: 8px;
   }
+  .back-btn-label { display: none; }
+}
+
+/* Nav items showing both icon AND label (Bisedat, Njoftimet, Rezervimet, Postimet). */
+.nav-link-icon {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+.nav-link-icon i { font-size: 18px; line-height: 1; }
+.nav-link-icon .nav-badge {
+  position: static;
+  margin-left: 4px;
+  min-width: 20px; height: 18px;
+  padding: 0 6px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.nav-link-icon[hidden] { display: none !important; }
+
+/* Inside the collapsed mobile drawer items go full-width for tap-friendliness. */
+@media (max-width: 991.98px) {
+  .helppy-nav .navbar-collapse { margin-top: 8px; }
+  .helppy-nav .navbar-nav { gap: 4px; }
+  .nav-link-icon {
+    padding: 10px 12px !important;
+    border-radius: var(--helppy-radius-sm);
+  }
+  .nav-link-icon:hover { background: rgba(255, 255, 255, .10); }
+  /* Theme toggle inside the drawer aligns with the others. */
+  .theme-toggle-btn { width: auto; justify-content: flex-start; padding: 10px 12px; }
+}
+
+/* Helppy nav container — keep things from overflowing on tiny phones. */
+.helppy-nav-container { flex-wrap: nowrap; }
+.helppy-nav .navbar-brand { flex-shrink: 0; margin-right: auto; }
+@media (max-width: 360px) {
+  .helppy-nav .navbar-brand span.fw-bold { display: none; }  /* logo-only on ultra-narrow */
 }
 
 /* ===========================================================
@@ -3297,21 +3345,23 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
    =========================================================== */
 @media (max-width: 575.98px) {
   .helppy-search { position: relative; }
-  .helppy-search > .location-icon:first-child {
-    position: absolute;
-    left: 22px;
-    top: 22px;
-    z-index: 2;
-    pointer-events: none;
-    color: var(--helppy-green);
-    width: auto; height: auto;
-    padding: 0;
-    margin: 0;
-    flex: 0 0 auto;
-  }
-  /* Push the placeholder/text right of the icon. */
+
+  /* First .location-icon (search) — hidden on mobile and the input itself
+     wears the magnifier as a background-SVG so it auto-centers vertically
+     and can never overlap the text. */
+  .helppy-search > .location-icon:first-child { display: none !important; }
   .helppy-search .form-control.helppy-search-q,
   .helppy-search input.helppy-search-q {
-    padding-left: 44px !important;
+    padding-left: 42px !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%235a7a4f'><path d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 14px center;
+    background-size: 18px 18px;
   }
+
+  /* Second .location-icon (geo pin) — hidden on mobile. The picker is
+     already styled as a clearly tappable pill, so an extra outside icon
+     is redundant and was overlapping the label text on small screens. */
+  .helppy-search > .location-icon ~ .location-icon { display: none !important; }
+  .helppy-search .helppy-citypicker-label { min-width: 0; flex: 1; }
 }
