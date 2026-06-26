@@ -5,7 +5,12 @@ $__isHome      = $__currentPath === '';
 ?>
 <nav class="navbar navbar-expand-lg helppy-nav">
   <div class="container-fluid helppy-nav-container">
-    <!-- Back button (left, before brand) only when not on home -->
+    <a class="navbar-brand text-white d-flex align-items-center" href="<?= e(CONFIG['base_url']) ?>/">
+      <img src="<?= e(CONFIG['base_url']) ?>/assets/img/logo.svg" alt="Helppy" height="32" class="me-2">
+      <span class="fw-bold">Helppy</span>
+    </a>
+
+    <!-- Back button sits AFTER the brand on every screen size. -->
     <?php if (!$__isHome): ?>
       <button type="button" class="helppy-back-btn" data-helppy-back
               aria-label="Kthehu mbrapa" title="Kthehu mbrapa">
@@ -14,10 +19,15 @@ $__isHome      = $__currentPath === '';
       </button>
     <?php endif; ?>
 
-    <a class="navbar-brand text-white d-flex align-items-center" href="<?= e(CONFIG['base_url']) ?>/">
-      <img src="<?= e(CONFIG['base_url']) ?>/assets/img/logo.svg" alt="Helppy" height="32" class="me-2">
-      <span class="fw-bold">Helppy</span>
-    </a>
+    <!-- Abonohu CTA — visible to providers (and prominent on every page).
+         Always rendered; CSS hides it inside the toggler-row when the
+         drawer is open so it doesn't fight for space on tiny phones. -->
+    <?php if (Auth::check() && (Auth::role() === 'provider' || Auth::role() === 'admin')): ?>
+      <a class="nav-abonohu-btn" href="<?= e(CONFIG['base_url']) ?>/subscribe">
+        <i class="bi bi-stars"></i>
+        <span>Abonohu</span>
+      </a>
+    <?php endif; ?>
 
     <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu" aria-label="Menu">
       <span class="navbar-toggler-icon"></span>

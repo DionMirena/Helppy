@@ -700,7 +700,13 @@
       function openPanel() {
         panel.hidden = false;
         openBtn.setAttribute('aria-expanded', 'true');
-        if (input) { input.value = ''; filter(''); input.focus(); }
+        var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
+                    || (window.matchMedia && window.matchMedia('(hover: none)').matches);
+        if (input) {
+          input.value = '';
+          filter('');
+          if (!isTouch) input.focus();
+        }
       }
       function closePanel() {
         panel.hidden = true;
@@ -822,7 +828,16 @@
         panel.hidden = false;
         root.classList.add('is-open');
         toggle.setAttribute('aria-expanded', 'true');
-        if (search) { search.value = ''; filter(''); search.focus(); }
+        // Only auto-focus the search input on devices with a real mouse —
+        // on touch devices the focus pops the on-screen keyboard immediately,
+        // which is jarring when the user just wanted to scroll the city list.
+        var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
+                    || (window.matchMedia && window.matchMedia('(hover: none)').matches);
+        if (search) {
+          search.value = '';
+          filter('');
+          if (!isTouch) search.focus();
+        }
         activeIdx = -1;
       }
       function close() {

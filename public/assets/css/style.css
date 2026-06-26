@@ -3200,10 +3200,68 @@ body.helppy-lightbox-open { overflow: hidden; }
 }
 
 /* Helppy nav container — keep things from overflowing on tiny phones. */
-.helppy-nav-container { flex-wrap: nowrap; }
-.helppy-nav .navbar-brand { flex-shrink: 0; margin-right: auto; }
+.helppy-nav-container {
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
+}
+.helppy-nav .navbar-brand { flex-shrink: 0; margin-right: 0; }
+.helppy-nav .navbar-toggler { flex-shrink: 0; margin-left: auto; }
+
+/* Abonohu CTA — gold/amber pill so it stands out as the upsell button.
+   Visible on every screen size next to the brand + back button. */
+.nav-abonohu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff !important;
+  border: none;
+  border-radius: var(--helppy-radius-pill);
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none !important;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, .35);
+  transition: transform .08s, box-shadow .15s;
+}
+.nav-abonohu-btn:hover {
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(217, 119, 6, .50);
+}
+.nav-abonohu-btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(245, 158, 11, .35); }
+.nav-abonohu-btn i { font-size: 14px; }
+
+/* Tighter on small screens — keep label visible until phones get really narrow. */
+@media (max-width: 575.98px) {
+  .nav-abonohu-btn { padding: 6px 10px; font-size: 12px; }
+}
 @media (max-width: 360px) {
-  .helppy-nav .navbar-brand span.fw-bold { display: none; }  /* logo-only on ultra-narrow */
+  /* Logo-only on ultra-narrow + collapse Abonohu to icon only. */
+  .helppy-nav .navbar-brand span.fw-bold { display: none; }
+  .nav-abonohu-btn span { display: none; }
+  .nav-abonohu-btn { padding: 6px 9px; }
+}
+
+/* Bigger devices: Abonohu lives outside the collapsible drawer next to
+   brand so it's always one tap away. Keep it that way on phones too. */
+.nav-abonohu-btn { order: 0; }
+@media (max-width: 991.98px) {
+  .helppy-nav-container .navbar-brand { order: 0; }
+  .helppy-nav-container .helppy-back-btn { order: 1; }
+  .helppy-nav-container .nav-abonohu-btn { order: 2; margin-left: auto; }
+  .helppy-nav-container .navbar-toggler { order: 3; margin-left: 6px; }
+}
+
+/* When ultra-narrow and the back button + Abonohu + toggler all fight for
+   space, hide the back-button label (already handled above) and trim
+   horizontal padding so everything fits without wrapping. */
+@media (max-width: 419.98px) {
+  .helppy-nav { padding: 8px 0; }
+  .helppy-nav .navbar-brand img { height: 28px; }
 }
 
 /* ===========================================================
