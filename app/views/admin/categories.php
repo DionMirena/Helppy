@@ -38,7 +38,14 @@
       label.textContent = 'bi-' + bare;
       preview.className = 'bi bi-' + bare;
     }
-    function open()  { panel.hidden = false; root.classList.add('is-open');  if (filter) filter.focus(); }
+    function open()  {
+      document.dispatchEvent(new CustomEvent('helppy:dropdown-open', { detail: { source: panel } }));
+      panel.hidden = false; root.classList.add('is-open');
+      // Skip auto-focus on touch — keeps the on-screen keyboard from popping.
+      var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
+                  || (window.matchMedia && window.matchMedia('(hover: none)').matches);
+      if (filter && !isTouch) filter.focus();
+    }
     function close() { panel.hidden = true;  root.classList.remove('is-open'); }
     function applyFilter(q) {
       q = q.toLowerCase().trim();
@@ -75,6 +82,9 @@
     if (closeBt) closeBt.addEventListener('click', close);
     document.addEventListener('click', function (e) { if (!root.contains(e.target)) close(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !panel.hidden) close(); });
+    document.addEventListener('helppy:dropdown-open', function (e) {
+      if (!e.detail || e.detail.source !== panel) close();
+    });
   });
   </script>
 

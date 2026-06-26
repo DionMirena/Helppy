@@ -698,6 +698,7 @@
 
     if (openBtn && panel) {
       function openPanel() {
+        document.dispatchEvent(new CustomEvent('helppy:dropdown-open', { detail: { source: panel } }));
         panel.hidden = false;
         openBtn.setAttribute('aria-expanded', 'true');
         var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
@@ -735,6 +736,9 @@
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && !panel.hidden) { closePanel(); openBtn.focus(); }
       });
+      document.addEventListener('helppy:dropdown-open', function (e) {
+        if (!e.detail || e.detail.source !== panel) closePanel();
+      });
     }
 
     // -- Mobile dropdown ----------------------------------------------
@@ -743,19 +747,26 @@
       var ddToggle = ddRoot.querySelector('[data-cat-dropdown-toggle]');
       var ddMenu   = ddRoot.querySelector('[data-cat-dropdown-menu]');
       if (ddToggle && ddMenu) {
+        function ddClose() {
+          ddMenu.hidden = true;
+          ddRoot.classList.remove('is-open');
+          ddToggle.setAttribute('aria-expanded', 'false');
+        }
         ddToggle.addEventListener('click', function (e) {
           e.stopPropagation();
-          var open = ddMenu.hidden;
-          ddMenu.hidden = !open;
-          ddRoot.classList.toggle('is-open', open);
-          ddToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          var willOpen = ddMenu.hidden;
+          if (willOpen) {
+            document.dispatchEvent(new CustomEvent('helppy:dropdown-open', { detail: { source: ddMenu } }));
+          }
+          ddMenu.hidden = !willOpen;
+          ddRoot.classList.toggle('is-open', willOpen);
+          ddToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
         });
         document.addEventListener('click', function (e) {
-          if (!ddRoot.contains(e.target)) {
-            ddMenu.hidden = true;
-            ddRoot.classList.remove('is-open');
-            ddToggle.setAttribute('aria-expanded', 'false');
-          }
+          if (!ddRoot.contains(e.target)) ddClose();
+        });
+        document.addEventListener('helppy:dropdown-open', function (e) {
+          if (!e.detail || e.detail.source !== ddMenu) ddClose();
         });
       }
     }
@@ -825,12 +836,11 @@
 
       function open() {
         if (!panel.hidden) return;
+        // Tell every other Helppy dropdown to close.
+        document.dispatchEvent(new CustomEvent('helppy:dropdown-open', { detail: { source: root } }));
         panel.hidden = false;
         root.classList.add('is-open');
         toggle.setAttribute('aria-expanded', 'true');
-        // Only auto-focus the search input on devices with a real mouse —
-        // on touch devices the focus pops the on-screen keyboard immediately,
-        // which is jarring when the user just wanted to scroll the city list.
         var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
                     || (window.matchMedia && window.matchMedia('(hover: none)').matches);
         if (search) {
@@ -929,6 +939,10 @@
       });
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && !panel.hidden) { close(); toggle.focus(); }
+      });
+      // Close myself when another Helppy dropdown announces it opened.
+      document.addEventListener('helppy:dropdown-open', function (e) {
+        if (!e.detail || e.detail.source !== root) close();
       });
     });
   }
