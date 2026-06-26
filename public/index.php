@@ -138,6 +138,7 @@ $router->post('/provider/edit',                       [ProviderController::class
 $router->post('/provider/photo',                      [ProviderController::class,'uploadPhoto']);
 $router->post('/provider/work-photo',                 [ProviderController::class,'uploadWorkPhoto']);
 $router->post('/provider/work-photo/{id}/delete',     [ProviderController::class,'deleteWorkPhoto']);
+$router->post('/provider/categories/add',             [ProviderController::class,'addCategoryJson']);
 
 // ADMIN
 $router->get('/admin',                     [AdminController::class,   'index']);

@@ -63,15 +63,6 @@ final class ProviderController extends Controller {
         $companyName    = trim((string)Request::post('company_name', ''));
         $categoryIds    = array_map('intval', (array)Request::post('categories', []));
 
-        // Optional: provider typed a profession that isn't in the dropdown — create it.
-        $newCategoryName = trim((string)Request::post('new_category', ''));
-        if ($newCategoryName !== '') {
-            $newId = Category::findOrCreateByName($newCategoryName);
-            if ($newId > 0 && !in_array($newId, $categoryIds, true)) {
-                $categoryIds[] = $newId;
-            }
-        }
-
         // Optional pin from the map picker. Empty = clear the pin.
         $latRaw = Request::post('latitude');
         $lngRaw = Request::post('longitude');
@@ -108,6 +99,45 @@ final class ProviderController extends Controller {
 
         $this->flash('success', 'Profili u perditesua.');
         $this->redirect('/provider/dashboard');
+    }
+
+    /**
+     * POST /provider/categories/add — JSON endpoint that creates (or finds)
+     * a category by name and links it to the current provider. Returns the
+     * category row so the dashboard can append a checked chip without reload.
+     */
+    public function addCategoryJson(array $params = []): void {
+        Auth::require('provider');
+        header('Content-Type: application/json; charset=utf-8');
+
+        $uid  = (int)Auth::user()['id'];
+        $name = trim((string)Request::post('name', ''));
+
+        if ($name === '' || mb_strlen($name) < 2 || mb_strlen($name) > 80) {
+            http_response_code(400);
+            echo json_encode(['ok' => false, 'error' => 'Emri duhet të jetë 2-80 karaktere.']);
+            return;
+        }
+
+        $newId = Category::findOrCreateByName($name);
+        if ($newId <= 0) {
+            http_response_code(400);
+            echo json_encode(['ok' => false, 'error' => 'Nuk munda të krijoj kategorinë.']);
+            return;
+        }
+
+        // Skip if provider already has this category — return the existing one anyway.
+        $already = DB::q('SELECT 1 FROM provider_categories WHERE provider_id = ? AND category_id = ? LIMIT 1', [$uid, $newId])->fetch();
+        if (!$already) {
+            DB::q('INSERT INTO provider_categories (provider_id, category_id) VALUES (?, ?)', [$uid, $newId]);
+        }
+
+        $cat = Category::find($newId);
+        echo json_encode([
+            'ok'        => true,
+            'category'  => $cat,
+            'duplicate' => (bool)$already,
+        ]);
     }
 
     public function uploadPhoto(array $params = []): void {

@@ -162,13 +162,22 @@
 </section>
 
 <section class="container py-3">
+  <?php $homeHasFilters = !empty($activeType) || !empty($openCat); ?>
   <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
     <h2 class="section-title mb-0">
       <?php if ($activeType === 'company'): ?>Kompanitë
       <?php elseif ($activeType === 'person'): ?>Punëtorët
       <?php else: ?>Punonjesit me te afert<?php endif; ?>
     </h2>
-    <span class="text-muted small">Po shfaqen <span data-providers-shown><?= count($featured) ?></span> / <?= (int)$totalCount ?></span>
+    <div class="d-flex align-items-center gap-2">
+      <?php if ($homeHasFilters): ?>
+        <a class="btn btn-sm btn-outline-danger clear-filters-btn"
+           href="<?= e(CONFIG['base_url']) ?>/" title="Largo të gjithë filtrat">
+          <i class="bi bi-x-circle"></i> Hiq filtrat
+        </a>
+      <?php endif; ?>
+      <span class="text-muted small">Po shfaqen <span data-providers-shown><?= count($featured) ?></span> / <?= (int)$totalCount ?></span>
+    </div>
   </div>
 
   <?php

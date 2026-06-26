@@ -752,6 +752,18 @@ tr.is-just-added > td:first-child::before {
 }
 .district-badge i { font-size: 11px; }
 
+/* ---------- "Hiq filtrat" reset button ---------- */
+.clear-filters-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  border-radius: var(--helppy-radius-pill);
+  padding: 4px 14px;
+  transition: background .12s, color .12s, transform .08s;
+}
+.clear-filters-btn:hover { transform: translateY(-1px); }
+
 /* ---------- "Nearby workers" + invite banner on /search and /posts ---------- */
 .nearby-banner {
   border: 1px solid #b6d4e3;
@@ -806,6 +818,107 @@ tr.is-just-added > td:first-child::before {
   border-color: var(--helppy-green);
   color: #fff;
 }
+/* Drill-down category picker on the provider dashboard */
+.category-picker { display: flex; flex-direction: column; gap: 10px; }
+.category-picker-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.category-picker-group { display: contents; }
+.category-picker-group.is-hidden { display: none !important; }
+.category-picker-group.is-active-group { display: contents; }
+.category-picker-group .category-picker-children {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: var(--helppy-green-bg);
+  border: 1px solid var(--helppy-green-light);
+  border-radius: var(--helppy-radius);
+  margin-top: 6px;
+}
+[data-theme="dark"] .category-picker-group .category-picker-children {
+  background: rgba(143, 174, 130, .10);
+  border-color: var(--helppy-green-light);
+}
+
+.category-picker-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1.5px solid var(--helppy-green-light);
+  border-radius: var(--helppy-radius-pill);
+  background: var(--helppy-green-bg);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--helppy-green-dark);
+  cursor: pointer;
+  transition: background .12s, color .12s, border-color .12s, transform .08s, box-shadow .12s;
+  box-shadow: 0 1px 3px rgba(90, 122, 79, .10);
+}
+.category-picker-toggle > i:first-child { color: var(--helppy-green); font-size: 16px; }
+.category-picker-toggle:hover {
+  background: var(--helppy-green-light);
+  border-color: var(--helppy-green);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(90, 122, 79, .22);
+}
+.category-picker-toggle:hover > i:first-child { color: #fff; }
+.category-picker-toggle:active { transform: translateY(0); }
+.category-picker-toggle.has-selected {
+  background: var(--helppy-green);
+  color: #fff;
+  border-color: var(--helppy-green-dark);
+  box-shadow: 0 4px 12px rgba(90, 122, 79, .30);
+}
+.category-picker-toggle.has-selected > i:first-child { color: #fff; }
+.category-picker-toggle.has-selected:hover { background: var(--helppy-green-dark); color: #fff; }
+.category-picker-toggle .picker-count {
+  background: #fff;
+  color: var(--helppy-green-dark);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  min-width: 20px;
+  text-align: center;
+}
+.category-picker-toggle:not(.has-selected) .picker-count {
+  background: var(--helppy-green);
+  color: #fff;
+}
+.category-picker-toggle .has-children-caret { font-size: 11px; opacity: .65; }
+
+.category-picker-standalones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--helppy-border);
+}
+
+.category-picker-drilled {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.category-picker-active-label {
+  font-weight: 700;
+  color: var(--helppy-green-dark);
+}
+[data-theme="dark"] .category-picker-active-label { color: var(--helppy-green-light); }
+[data-theme="dark"] .category-picker-toggle { background: var(--helppy-card); color: var(--helppy-text); border-color: var(--helppy-border); }
+[data-theme="dark"] .category-picker-toggle:hover { background: var(--helppy-surface-2); color: var(--helppy-green-light); }
+[data-theme="dark"] .category-picker-toggle .picker-count { background: var(--helppy-card); color: var(--helppy-green-light); }
+[data-theme="dark"] .category-picker-toggle:not(.has-selected) .picker-count { background: var(--helppy-green); color: #fff; }
+
 .new-category-input .input-group-text {
   background: rgba(90, 122, 79, .08);
   border-color: var(--helppy-border);
@@ -815,6 +928,28 @@ tr.is-just-added > td:first-child::before {
   border-color: var(--helppy-border);
   background: #fff;
 }
+.new-category-input .btn-helppy {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Freshly-added category chip flashes green then settles into the row. */
+.category-check.is-just-added {
+  animation: catChipPop .35s ease-out 1, catChipGlow 2s ease-out 1;
+}
+@keyframes catChipPop {
+  0%   { transform: scale(.8); opacity: 0; }
+  60%  { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes catChipGlow {
+  0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, .55); }
+  35%  { box-shadow: 0 0 0 8px rgba(34, 197, 94, .15); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
 
 /* ---------- Provider location map (Leaflet / Google Maps) ---------- */
 .provider-map {
@@ -822,6 +957,32 @@ tr.is-just-added > td:first-child::before {
   border-radius: var(--helppy-radius);
   border: 1px solid var(--helppy-border);
   overflow: hidden;
+}
+
+/* Two-column layout: form controls left, map right.
+   Stretches the map to fill the column height so it doesn't look tiny. */
+.location-grid { align-items: stretch; }
+.location-map-col { display: flex; flex-direction: column; }
+.location-map-col .provider-map {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 320px;
+}
+.location-controls { display: flex; flex-direction: column; }
+.location-coords {
+  margin-top: auto;
+  padding: 10px 12px;
+  background: var(--helppy-green-bg);
+  border: 1px dashed var(--helppy-green-light);
+  border-radius: var(--helppy-radius-sm);
+}
+[data-theme="dark"] .location-coords {
+  background: rgba(143, 174, 130, .10);
+  border-color: var(--helppy-green-light);
+}
+@media (max-width: 991.98px) {
+  /* Stack vertically on tablets/phones: map below form. */
+  .location-map-col .provider-map { min-height: 260px; }
 }
 
 /* Compact read-only map shown on the public profile. */
@@ -912,26 +1073,69 @@ body.helppy-no-scroll { overflow: hidden; }
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  background: var(--helppy-green-bg);
+  border: 1.5px solid var(--helppy-green-light);
+  padding: 10px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--helppy-green-dark);
+  cursor: pointer;
+  border-radius: var(--helppy-radius-sm);
+  text-align: left;
+  min-height: var(--helppy-touch);
+  transition: background .12s, border-color .12s, box-shadow .12s;
+  box-shadow: 0 1px 3px rgba(90, 122, 79, .08);
+}
+.helppy-citypicker-toggle:hover {
+  background: var(--helppy-green-light);
+  border-color: var(--helppy-green);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(90, 122, 79, .22);
+}
+.helppy-citypicker-toggle:hover .helppy-citypicker-label { color: #fff; }
+.helppy-citypicker-toggle:hover .helppy-citypicker-caret  { color: #fff; }
+.helppy-citypicker-toggle:focus { outline: none; box-shadow: 0 0 0 3px rgba(90, 122, 79, .25); }
+.helppy-citypicker.is-open > .helppy-citypicker-toggle {
+  background: var(--helppy-green);
+  border-color: var(--helppy-green-dark);
+  color: #fff;
+}
+.helppy-citypicker.is-open > .helppy-citypicker-toggle .helppy-citypicker-label,
+.helppy-citypicker.is-open > .helppy-citypicker-toggle .helppy-citypicker-caret { color: #fff; }
+
+/* When the picker lives inside the white search-pill, keep it transparent —
+   the pill already provides the visual container. */
+.helppy-search .helppy-citypicker-toggle {
   background: transparent;
   border: none;
   padding: 10px 8px;
   font-size: 16px;
   color: var(--helppy-text);
-  cursor: pointer;
-  border-radius: var(--helppy-radius-sm);
-  text-align: left;
-  min-height: var(--helppy-touch);
+  font-weight: 400;
+  box-shadow: none;
 }
-.helppy-citypicker-toggle:hover { background: rgba(90, 122, 79, .06); }
-.helppy-citypicker-toggle:focus { outline: none; background: rgba(90, 122, 79, .08); }
+.helppy-search .helppy-citypicker-toggle:hover { background: rgba(90, 122, 79, .06); color: var(--helppy-text); }
+.helppy-search .helppy-citypicker-toggle:hover .helppy-citypicker-label { color: var(--helppy-text); }
+.helppy-search .helppy-citypicker-toggle:hover .helppy-citypicker-caret  { color: var(--helppy-green); }
+.helppy-search .helppy-citypicker.is-open > .helppy-citypicker-toggle {
+  background: rgba(90, 122, 79, .08);
+  color: var(--helppy-text);
+  border: none;
+}
+.helppy-search .helppy-citypicker.is-open > .helppy-citypicker-toggle .helppy-citypicker-label { color: var(--helppy-text); }
+.helppy-search .helppy-citypicker.is-open > .helppy-citypicker-toggle .helppy-citypicker-caret  { color: var(--helppy-green); }
 .helppy-citypicker-label {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #9ca3af;
+  color: var(--helppy-green-dark);
+  opacity: .85;
 }
-.helppy-citypicker.is-selected .helppy-citypicker-label { color: var(--helppy-text); font-weight: 600; }
+.helppy-citypicker.is-selected .helppy-citypicker-label { color: var(--helppy-green-dark); opacity: 1; font-weight: 700; }
+/* Inside the white search-pill the label uses the older muted-gray look. */
+.helppy-search .helppy-citypicker-label { color: #9ca3af; opacity: 1; font-weight: 400; }
+.helppy-search .helppy-citypicker.is-selected .helppy-citypicker-label { color: var(--helppy-text); font-weight: 600; }
 .helppy-citypicker-caret {
   color: var(--helppy-green);
   font-size: 14px;

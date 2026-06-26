@@ -14,13 +14,22 @@ $qsBase = function(array $override) use ($activeType, $activeCategory, $activeCi
 };
 ?>
 <section class="container py-4">
+  <?php $hasFilters = !empty($activeType) || !empty($activeCity) || !empty($activeCategory); ?>
   <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
     <h1 class="section-title mb-0">Postimet</h1>
-    <?php if (Auth::check() && (Auth::role() === 'provider' || Auth::role() === 'client' || Auth::role() === 'admin')): ?>
-      <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/posts/create">
-        <i class="bi bi-plus-lg"></i> Posto
-      </a>
-    <?php endif; ?>
+    <div class="d-flex gap-2 flex-wrap">
+      <?php if ($hasFilters): ?>
+        <a class="btn btn-sm btn-outline-danger clear-filters-btn"
+           href="<?= e(CONFIG['base_url']) ?>/posts" title="Largo të gjithë filtrat">
+          <i class="bi bi-x-circle"></i> Hiq filtrat
+        </a>
+      <?php endif; ?>
+      <?php if (Auth::check() && (Auth::role() === 'provider' || Auth::role() === 'client' || Auth::role() === 'admin')): ?>
+        <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/posts/create">
+          <i class="bi bi-plus-lg"></i> Posto
+        </a>
+      <?php endif; ?>
+    </div>
   </div>
 
   <!-- Type tabs -->

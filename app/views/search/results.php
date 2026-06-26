@@ -168,20 +168,27 @@
 </section>
 
 <?php
-  // The grid only ever shows workers from the EXACT picked city. The nearby
-  // list is shown as a clearly separate section below, only when the exact
-  // city had zero matches.
   $hasExact     = !empty($providers);
   $hasNearby    = ($city && !$hasExact && !empty($nearby_providers));
   $registerUrl  = CONFIG['base_url'] . '/register';
+  $hasFilters   = $city || $category || !empty($query);
 ?>
 <section class="container py-3">
-  <h2 class="section-title">
-    <?php if ($category): ?><?= e($category['name']) ?> <?php endif; ?>
-    <?php if ($city): ?>ne <?= e($city['name']) ?><?php endif; ?>
-    <?php if (!$category && !$city): ?>Te gjithe punonjesit<?php endif; ?>
-    <small class="text-muted fw-normal" style="font-size: 16px;">(<?= count($providers) ?>)</small>
-  </h2>
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+    <h2 class="section-title mb-0">
+      <?php if ($category): ?><?= e($category['name']) ?> <?php endif; ?>
+      <?php if ($city): ?>ne <?= e($city['name']) ?><?php endif; ?>
+      <?php if (!$category && !$city): ?>Te gjithe punonjesit<?php endif; ?>
+      <small class="text-muted fw-normal" style="font-size: 16px;">(<?= count($providers) ?>)</small>
+    </h2>
+    <?php if ($hasFilters): ?>
+      <a class="btn btn-sm btn-outline-danger clear-filters-btn"
+         href="<?= e(CONFIG['base_url']) ?>/search"
+         title="Largo të gjithë filtrat">
+        <i class="bi bi-x-circle"></i> Hiq filtrat
+      </a>
+    <?php endif; ?>
+  </div>
 
   <?php if ($hasExact): ?>
     <!-- Exact-city results only. No nearby pollution. -->
