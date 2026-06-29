@@ -3303,7 +3303,15 @@ body.helppy-lightbox-open { overflow: hidden; }
   textarea,
   .form-control,
   .form-select,
-  .chat-composer textarea {
+  .chat-composer textarea,
+  .helppy-citypicker-search input,
+  .icon-picker-search input,
+  .category-search-input-wrap input,
+  [data-citypicker-search],
+  [data-new-cat-input],
+  [data-cat-search-input],
+  [data-icon-picker-filter],
+  [data-icon-picker-manual] {
     font-size: 16px !important;
     line-height: 1.4;
   }
