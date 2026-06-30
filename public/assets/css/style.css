@@ -1,23 +1,30 @@
 
 
 :root {
-  --helppy-green:        #5a7a4f;
-  --helppy-green-dark:   #3f5a36;
-  --helppy-green-darker: #2f4528;
-  --helppy-green-light:  #7a9a6f;
-  --helppy-green-bg:     #eef2eb;
-  --helppy-bg:           #f3f4f6;
+  --helppy-green:        #4ea84c;   /* brighter leaf green */
+  --helppy-green-dark:   #3a8c39;
+  --helppy-green-darker: #2a6b29;
+  --helppy-green-light:  #7fc77d;
+  --helppy-green-bg:     #effaee;   /* fresher green tint */
+  --helppy-bg:           #fafdf9;   /* near-white with a hint of green */
   --helppy-card:         #ffffff;
-  --helppy-surface-2:    #fafaf7;   /* slightly off-white for panels */
-  --helppy-text:         #111827;
+  --helppy-surface-2:    #f4faf3;   /* subtle off-white panel */
+  --helppy-text:         #142918;   /* deep green-ink for better contrast */
   --helppy-muted:        #6b7280;
-  --helppy-border:       #e5e7eb;
-  --helppy-chip:         #d8dce0;
-  --helppy-chip-hover:   #c2c7cd;
+  --helppy-border:       #dceadb;   /* soft green-tinted border */
+  --helppy-chip:         #dde7dc;
+  --helppy-chip-hover:   #c8d6c7;
   --helppy-star:         #f5b400;
-  --helppy-shadow:       0 2px 8px rgba(17, 24, 39, .06);
-  --helppy-shadow-lg:    0 10px 30px rgba(17, 24, 39, .08);
-  --helppy-shadow-ring:  0 0 0 .2rem rgba(90, 122, 79, .22);
+  /* Accent colors so the whole page isn't all-green. */
+  --helppy-blue:         #5dade2;
+  --helppy-blue-bg:      #e8f4fc;
+  --helppy-amber:        #f59e0b;
+  --helppy-amber-bg:     #fef3df;
+  --helppy-pink:         #f472b6;
+  --helppy-pink-bg:      #fce7f3;
+  --helppy-shadow:       0 2px 8px rgba(78, 168, 76, .08);
+  --helppy-shadow-lg:    0 10px 30px rgba(78, 168, 76, .12);
+  --helppy-shadow-ring:  0 0 0 .2rem rgba(78, 168, 76, .25);
   --helppy-radius:       14px;
   --helppy-radius-sm:    10px;
   --helppy-radius-pill:  999px;
@@ -307,10 +314,27 @@ a:hover { color: var(--helppy-green-darker); }
 }
 .helppy-nav .navbar-toggler:focus { box-shadow: none; }
 
-/* ---------- Hero ---------- */
+/* ---------- Hero — multi-color soft glow background ---------- */
 .hero {
-  background: var(--helppy-bg);
+  background:
+    radial-gradient(ellipse 60% 80% at 10% 0%,   rgba(127, 199, 125, .22) 0%, transparent 60%),  /* green top-left */
+    radial-gradient(ellipse 55% 70% at 90% 10%,  rgba(93, 173, 226,  .18) 0%, transparent 60%),  /* blue top-right */
+    radial-gradient(ellipse 55% 70% at 80% 100%, rgba(245, 158, 11,  .15) 0%, transparent 60%),  /* amber bottom-right */
+    radial-gradient(ellipse 45% 60% at 0% 100%,  rgba(244, 114, 182, .15) 0%, transparent 60%),  /* pink bottom-left */
+    linear-gradient(180deg, #ffffff 0%, var(--helppy-bg) 100%);
   padding: 28px 0 8px;
+  position: relative;
+  overflow: hidden;
+}
+.hero .container { position: relative; z-index: 1; }
+
+[data-theme="dark"] .hero {
+  background:
+    radial-gradient(ellipse 60% 80% at 10% 0%,   rgba(143, 174, 130, .12) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 70% at 90% 10%,  rgba(93, 173, 226,  .10) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 70% at 80% 100%, rgba(245, 158, 11,  .08) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 60% at 0% 100%,  rgba(244, 114, 182, .08) 0%, transparent 60%),
+    var(--helppy-bg);
 }
 .hero h1 {
   font-weight: 800;
@@ -574,6 +598,43 @@ tr.is-just-added > td:first-child::before {
   .user-action-btn span { display: none; }
   .user-action-btn { padding: 4px 8px; }
   .user-actions .dropdown-toggle::after { display: none; }
+}
+
+/* Subtle multi-color tint on umbrella pills so the chip strip pops. */
+.category-chips-desktop .category-chip.has-children:nth-of-type(3n+1) {
+  border-color: var(--helppy-green-light);
+  background: rgba(127, 199, 125, .14);
+  color: var(--helppy-green-darker);
+}
+.category-chips-desktop .category-chip.has-children:nth-of-type(3n+2) {
+  border-color: var(--helppy-blue);
+  background: var(--helppy-blue-bg);
+  color: #1e6e9c;
+}
+.category-chips-desktop .category-chip.has-children:nth-of-type(3n+2) .has-children-caret { color: #1e6e9c; }
+.category-chips-desktop .category-chip.has-children:nth-of-type(3n+2):hover {
+  background: var(--helppy-blue);
+  color: #fff;
+  border-color: #1e6e9c;
+}
+.category-chips-desktop .category-chip.has-children:nth-of-type(3n+3) {
+  border-color: var(--helppy-amber);
+  background: var(--helppy-amber-bg);
+  color: #8a5a04;
+}
+.category-chips-desktop .category-chip.has-children:nth-of-type(3n+3) .has-children-caret { color: #8a5a04; }
+.category-chips-desktop .category-chip.has-children:nth-of-type(3n+3):hover {
+  background: var(--helppy-amber);
+  color: #fff;
+  border-color: #8a5a04;
+}
+.category-dropdown-menu li:nth-of-type(3n+2) .category-dropdown-item i:first-child { color: var(--helppy-blue); }
+.category-dropdown-menu li:nth-of-type(3n+3) .category-dropdown-item i:first-child { color: var(--helppy-amber); }
+[data-theme="dark"] .category-chips-desktop .category-chip.has-children:nth-of-type(3n+2) {
+  background: rgba(93, 173, 226, .10); color: #9bc6e0;
+}
+[data-theme="dark"] .category-chips-desktop .category-chip.has-children:nth-of-type(3n+3) {
+  background: rgba(245, 158, 11, .10); color: #e5c785;
 }
 
 /* ---------- Bordered "shell" around result grids on /search and /posts ---------- */
@@ -950,6 +1011,109 @@ tr.is-just-added > td:first-child::before {
   35%  { box-shadow: 0 0 0 8px rgba(34, 197, 94, .15); }
   100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
 }
+
+/* ---------- Provider profile — colorful accents on each section ---------- */
+/* Soft multi-color tint behind the whole profile page. */
+.container.py-4:has(.provider-top-row) {
+  background:
+    radial-gradient(ellipse 60% 60% at 0% 0%,   rgba(127, 199, 125, .14) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 60% at 100% 0%, rgba(93, 173, 226,  .12) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 100% 100%, rgba(245, 158, 11, .10) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 50% at 0% 100%, rgba(244, 114, 182, .10) 0%, transparent 55%);
+  border-radius: var(--helppy-radius);
+}
+
+/* Cards get a 4px colored top stripe in cycling brand accents. */
+.provider-top-row .profile-card,
+.provider-top-row .provider-gallery-card,
+.row.mb-4 > [class*='col-'] .profile-card,
+.profile-map-card,
+.review-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--helppy-border);
+}
+.provider-top-row .profile-card::before,
+.provider-top-row .provider-gallery-card::before,
+.row.mb-4 > [class*='col-']:nth-child(1) .profile-card::before,
+.row.mb-4 > [class*='col-']:nth-child(2) .profile-card::before,
+.profile-map-card::before,
+.review-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--helppy-green);
+  border-radius: var(--helppy-radius) var(--helppy-radius) 0 0;
+}
+/* Left card = green (default), right card = blue */
+.provider-top-row > [class*='col-']:nth-child(2) .profile-card::before { background: var(--helppy-blue); }
+/* Bio (1st child) = amber, Skills (2nd) = pink. */
+.row.mb-4 > [class*='col-']:nth-child(1) .profile-card::before { background: var(--helppy-amber); }
+.row.mb-4 > [class*='col-']:nth-child(2) .profile-card::before { background: var(--helppy-pink); }
+/* Map card = blue */
+.profile-map-card::before { background: var(--helppy-blue); }
+
+/* Each section header icon picks up the matching accent. */
+.profile-map-card h5 i.bi-geo-alt-fill { color: var(--helppy-blue); }
+.row.mb-4 > [class*='col-']:nth-child(1) .profile-card h5 i { color: var(--helppy-amber); }
+.row.mb-4 > [class*='col-']:nth-child(2) .profile-card h5 i { color: var(--helppy-pink); }
+
+/* Rate badge — amber gradient pill */
+.rate-badge:not(.rate-badge-muted) {
+  background: linear-gradient(135deg, var(--helppy-amber-bg), #ffeac0);
+  color: #8a5a04;
+  border: 1px solid var(--helppy-amber);
+  padding: 5px 12px;
+  border-radius: var(--helppy-radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+.rate-badge:not(.rate-badge-muted) i { color: var(--helppy-amber); }
+[data-theme="dark"] .rate-badge:not(.rate-badge-muted) {
+  background: rgba(245, 158, 11, .14); color: #f0d189; border-color: rgba(245, 158, 11, .35);
+}
+
+/* Stars highlighted in gold instead of bland gray. */
+.stars .bi-star-fill { color: var(--helppy-star); }
+.stars .bi-star      { color: #d9d9d9; }
+[data-theme="dark"] .stars .bi-star { color: #4b5563; }
+
+/* Profile-chips (categories on the profile header) cycle the 3 accent colors. */
+.profile-chips .category-chip-sm:nth-of-type(3n+1) {
+  background: rgba(127, 199, 125, .18); color: var(--helppy-green-darker); border-color: var(--helppy-green-light);
+}
+.profile-chips .category-chip-sm:nth-of-type(3n+2) {
+  background: var(--helppy-blue-bg); color: #1e6e9c; border-color: var(--helppy-blue);
+}
+.profile-chips .category-chip-sm:nth-of-type(3n+3) {
+  background: var(--helppy-amber-bg); color: #8a5a04; border-color: var(--helppy-amber);
+}
+[data-theme="dark"] .profile-chips .category-chip-sm:nth-of-type(3n+2) {
+  background: rgba(93, 173, 226, .10); color: #9bc6e0; border-color: rgba(93, 173, 226, .35);
+}
+[data-theme="dark"] .profile-chips .category-chip-sm:nth-of-type(3n+3) {
+  background: rgba(245, 158, 11, .10); color: #e5c785; border-color: rgba(245, 158, 11, .35);
+}
+
+/* Section h5 (Rreth meje, Aftësitë, Lokacioni) get a bit more weight. */
+.profile-card h5 { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+
+/* "Hape në Google Maps" + "Plot ekran" buttons inside the map card — blue accent. */
+.profile-map-card .btn-helppy-outline {
+  border-color: var(--helppy-blue);
+  color: var(--helppy-blue);
+}
+.profile-map-card .btn-helppy-outline:hover {
+  background: var(--helppy-blue); color: #fff;
+}
+[data-theme="dark"] .profile-map-card .btn-helppy-outline { color: #9bc6e0; border-color: #9bc6e0; }
+
+/* Review cards alternate between green and blue top stripes for visual rhythm. */
+.review-card::before { background: var(--helppy-green); }
+.review-card:nth-of-type(even)::before { background: var(--helppy-blue); }
 
 /* ---------- Provider location map (Leaflet / Google Maps) ---------- */
 .provider-map {
