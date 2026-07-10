@@ -10,9 +10,9 @@ return [
         'charset'  => 'utf8mb4',
     ],
 
-    'base_url'   => 'https://helppy.com.loc',
+    'base_url'   => 'https://helppy.com',       // ← change to your live domain
     'upload_dir' => __DIR__ . '/../public/uploads',
-    'upload_url' => 'https://helppy.com.loc/uploads',
+    'upload_url' => 'https://helppy.com/uploads', // ← same domain + /uploads
     'debug'      => true,
 
     // ============================================================

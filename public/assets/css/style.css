@@ -324,7 +324,6 @@ a:hover { color: var(--helppy-green-darker); }
     linear-gradient(180deg, #ffffff 0%, var(--helppy-bg) 100%);
   padding: 28px 0 8px;
   position: relative;
-  overflow: hidden;
 }
 .hero .container { position: relative; z-index: 1; }
 
@@ -483,7 +482,7 @@ tr.is-just-added > td:first-child::before {
   position: absolute;
   top: calc(100% + 6px);
   left: 0; right: 0;
-  z-index: 50;
+  z-index: 1050;
   background: #fff;
   border: 1px solid var(--helppy-border);
   border-radius: var(--helppy-radius);
@@ -1312,7 +1311,7 @@ body.helppy-no-scroll { overflow: hidden; }
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  z-index: 30;
+  z-index: 1050;
   background: #fff;
   border: 1px solid var(--helppy-border);
   border-radius: var(--helppy-radius);
@@ -1597,7 +1596,7 @@ body.helppy-no-scroll { overflow: hidden; }
   border: 1px solid var(--helppy-border);
   border-radius: var(--helppy-radius);
   box-shadow: var(--helppy-shadow-lg);
-  z-index: 30;
+  z-index: 1050;
   max-height: 50vh;
   overflow-y: auto;
 }
@@ -3622,3 +3621,298 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
   .helppy-search > .location-icon ~ .location-icon { display: none !important; }
   .helppy-search .helppy-citypicker-label { min-width: 0; flex: 1; }
 }
+
+/* ===========================================================
+   COMPREHENSIVE MOBILE — keyboard, touch targets, layout
+   =========================================================== */
+
+/* --- Anti-zoom: EVERY input must be ≥16px on phones (prevents iOS Safari
+      from zooming the viewport on focus). The earlier rule at 767.98px
+      covers most cases; this block closes remaining gaps (input-group,
+      admin search, icon-picker manual, etc.) and is scoped to 991.98px so
+      tablets also never zoom. --- */
+@media (max-width: 991.98px) {
+  input, input[type], input[type="text"], input[type="email"],
+  input[type="password"], input[type="search"], input[type="tel"],
+  input[type="number"], input[type="url"],
+  select, textarea,
+  .form-control, .form-select,
+  .input-group > .form-control,
+  .input-group > input,
+  [data-icon-picker-manual],
+  [data-icon-picker-filter],
+  [data-citypicker-search],
+  [data-new-cat-input],
+  #provider-search {
+    font-size: 16px !important;
+    line-height: 1.5;
+  }
+}
+
+/* --- Touch targets: 44 × 44 px minimum for all tappable controls.
+      Bootstrap's .btn-sm is intentionally smaller — keep it as-is in
+      table cells (users have a pointer there). Only enforce on phones. --- */
+@media (max-width: 767.98px) {
+  .btn:not(.btn-sm) {
+    min-height: 44px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .nav-link { min-height: 44px; display: inline-flex; align-items: center; }
+  .dropdown-item { min-height: 44px; display: flex; align-items: center; }
+
+  /* Tappable table-cell action buttons get at least 36px so they're easy
+     to hit even when btn-sm. */
+  td .btn-sm { min-height: 36px; padding: 6px 10px; }
+}
+
+/* --- Chat: use dvh so the shell shrinks correctly when the virtual
+      keyboard opens (100vh stays fixed on iOS; 100dvh tracks the real
+      visible area). --- */
+@media (max-width: 767.98px) {
+  .chat-shell {
+    height: calc(100dvh - 120px);
+    min-height: 0;
+    max-height: none;
+  }
+  /* Composer textarea: slightly taller default so the send button is easy
+     to tap without accidentally tapping the textarea edge. */
+  .chat-composer { padding: 10px; gap: 10px; }
+  .chat-composer textarea { min-height: 44px; font-size: 16px !important; }
+  .chat-composer .btn-helppy { width: 46px; height: 46px; flex: 0 0 46px; font-size: 20px; }
+}
+
+/* --- Admin scrollable lists: cap height relative to viewport on phones
+      so users don't have a 980-px tall box on a 667-px screen. --- */
+@media (max-width: 767.98px) {
+  .admin-scroll-list { max-height: 55vh !important; }
+}
+@media (max-width: 575.98px) {
+  .admin-scroll-list { max-height: 50vh !important; }
+}
+
+/* --- Admin table: make wide tables scroll horizontally on phones rather
+      than overflowing. Wrap every admin table in the existing
+      .table-responsive; this rule tightens the inner min-width so it
+      doesn't push too far off-screen. --- */
+@media (max-width: 575.98px) {
+  .admin-scroll-list table { min-width: 480px; }
+}
+
+/* --- Forms: ensure form cards fill the screen on phones and have
+      comfortable padding. --- */
+@media (max-width: 575.98px) {
+  .form-card { padding: 16px; }
+  /* Auth / centered forms stretch to full width on very small screens. */
+  [style*="max-width: 480px"],
+  [style*="max-width: 640px"] { max-width: 100% !important; padding-left: 4px; padding-right: 4px; }
+}
+
+/* --- Provider search header row: stack the title and search bar
+      vertically on phones. --- */
+@media (max-width: 575.98px) {
+  #provider-search-header {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+  #provider-search-header .input-group { max-width: 100% !important; }
+}
+
+/* --- Citypicker panel: use most of the screen width on very small phones
+      so the list is readable without tight wrapping. --- */
+@media (max-width: 575.98px) {
+  .helppy-citypicker-panel { left: -8px; right: -8px; }
+}
+
+/* --- iOS safe-area insets: push content above home-indicator / notch --- */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .chat-composer { padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+  .helppy-footer { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+  @media (max-width: 767.98px) {
+    .helppy-nav { padding-top: env(safe-area-inset-top); }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Providers map page  (/map)
+   ═══════════════════════════════════════════════════════════ */
+.providers-map-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px); /* full viewport minus navbar */
+  overflow: hidden;
+}
+
+/* ── Toolbar ── */
+.providers-map-toolbar {
+  background: var(--helppy-card);
+  border-bottom: 1px solid var(--helppy-border);
+  padding: 10px 0;
+  flex-shrink: 0;
+  z-index: 30;
+}
+.providers-map-toolbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.map-toolbar-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--helppy-text);
+  margin: 0;
+  white-space: nowrap;
+}
+.map-toolbar-title i { color: var(--helppy-green); }
+.map-filters { flex: 1; min-width: 0; }
+
+/* Compact citypicker variant inside the toolbar */
+.map-filter-picker .helppy-citypicker-toggle {
+  padding: 7px 12px;
+  font-size: 14px;
+  min-height: 38px;
+}
+.map-filter-picker .helppy-citypicker-panel {
+  min-width: 220px;
+  max-height: 300px;
+}
+
+/* Name/q search inside toolbar */
+.map-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 140px;
+  max-width: 280px;
+}
+.map-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--helppy-muted);
+  pointer-events: none;
+  font-size: 14px;
+}
+.map-search-input {
+  padding-left: 32px;
+  font-size: 14px;
+  height: 38px;
+  border-radius: var(--helppy-radius-pill);
+  border: 1px solid var(--helppy-border);
+  background: var(--helppy-surface-2);
+}
+.map-search-input:focus {
+  background: #fff;
+  border-color: var(--helppy-green);
+  box-shadow: var(--helppy-shadow-ring);
+  outline: none;
+}
+[data-theme="dark"] .map-search-input { background: var(--helppy-surface-2); color: var(--helppy-text); }
+[data-theme="dark"] .map-search-input:focus { background: var(--helppy-card); }
+
+.map-count-badge {
+  font-size: 13px;
+  color: var(--helppy-muted);
+  white-space: nowrap;
+}
+
+/* ── Map canvas ── */
+.providers-map-canvas {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  z-index: 10;
+}
+
+/* ── Side panel ── */
+.map-side-panel {
+  position: absolute;
+  top: 0; right: 0;
+  width: 320px;
+  max-width: 100vw;
+  height: 100%;
+  background: var(--helppy-card);
+  border-left: 1px solid var(--helppy-border);
+  box-shadow: -4px 0 20px rgba(0,0,0,.10);
+  z-index: 20;
+  overflow-y: auto;
+  padding: 16px;
+}
+.providers-map-page { position: relative; }
+.map-side-close {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: none;
+  border: none;
+  color: var(--helppy-muted);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  line-height: 1;
+}
+.map-side-close:hover { background: var(--helppy-green-bg); color: var(--helppy-green-dark); }
+.map-side-content { padding-top: 36px; }
+
+/* ── Provider card in side panel ── */
+.map-pin-card-header {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.map-pin-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--helppy-border);
+  flex-shrink: 0;
+}
+.map-pin-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--helppy-text);
+  line-height: 1.3;
+}
+
+/* ── Leaflet marker dot ── */
+.map-marker-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--helppy-card);
+  border: 3px solid var(--helppy-green);
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .15s, transform .15s;
+}
+.map-marker-dot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.map-marker-dot.is-premium {
+  border-color: var(--helppy-amber);
+  box-shadow: 0 2px 10px rgba(245,180,0,.40);
+}
+.map-marker-dot:hover { transform: scale(1.15); }
+
+/* ── Responsive tweaks ── */
+@media (max-width: 767.98px) {
+  .map-toolbar-title { display: none; }
+  .providers-map-toolbar-inner { gap: 8px; }
+  .map-side-panel {
+    width: 100%;
+    height: 50%;
+    top: auto; bottom: 0; right: 0;
+    border-left: none;
+    border-top: 1px solid var(--helppy-border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,.12);
+  }
+  .map-search-wrap { max-width: 200px; }
+}
+[data-theme="dark"] .providers-map-toolbar { background: var(--helppy-card); }
+[data-theme="dark"] .map-side-panel { background: var(--helppy-card); }

@@ -171,6 +171,22 @@ final class Provider {
         DB::q('UPDATE providers SET is_premium = 1 - is_premium WHERE user_id = ?', [$userId]);
     }
 
+    /** All providers that have a GPS pin set, for the /map page. */
+    public static function allWithLocation(): array {
+        return DB::q(
+            "SELECT u.id, u.name, c.name AS city,
+                    p.profession, p.photo, p.is_company, p.company_name,
+                    p.is_premium, p.latitude, p.longitude,
+                    (SELECT AVG(rating) FROM reviews WHERE provider_id = p.user_id) AS avg_rating
+             FROM providers p
+             JOIN users u ON u.id = p.user_id AND u.is_active = 1 AND u.email_verified = 1
+             LEFT JOIN cities c ON c.id = u.city_id
+             WHERE p.latitude IS NOT NULL AND p.longitude IS NOT NULL
+             ORDER BY p.is_premium DESC, u.id DESC
+             LIMIT 500"
+        )->fetchAll();
+    }
+
     public static function allWithStatus(): array {
         return DB::q("SELECT u.id, u.name, u.email, u.is_active, u.email_verified, u.created_at,
                              p.profession, p.is_premium

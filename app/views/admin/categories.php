@@ -90,37 +90,41 @@
 
   <div class="row g-3">
     <div class="col-lg-7">
-      <div class="table-responsive bg-white" style="border-radius: var(--helppy-radius); box-shadow: var(--helppy-shadow);">
-        <table class="table table-hover align-middle mb-0">
-          <thead><tr><th>ID</th><th>Emri</th><th>Slug</th><th>Ikona</th><th></th></tr></thead>
-          <tbody>
-            <?php foreach ($categories as $c):
-              $isJustAdded = !empty($highlightId) && (int)$c['id'] === (int)$highlightId;
-            ?>
-            <tr class="<?= $isJustAdded ? 'is-just-added' : '' ?>" <?= $isJustAdded ? 'data-just-added' : '' ?>>
-              <td><?= (int)$c['id'] ?></td>
-              <td><?= e($c['name']) ?></td>
-              <td><code><?= e($c['slug']) ?></code></td>
-              <td>
-                <?php $iconClass = trim((string)($c['icon'] ?? '')); ?>
-                <?php if ($iconClass !== ''): ?>
-                  <i class="bi <?= e($iconClass) ?> category-icon-preview"></i>
-                <?php endif; ?>
-                <small class="text-muted ms-1"><?= e($iconClass) ?></small>
-              </td>
-              <td>
-                <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/categories/<?= (int)$c['id'] ?>/delete" class="d-inline"
-                      onsubmit="return confirm('Fshi kete kategori?');">
-                  <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                  <button class="btn btn-sm btn-outline-danger" type="submit">
-                    <i class="bi bi-trash"></i> Fshi
-                  </button>
-                </form>
-              </td>
-            </tr>
-            <?php endforeach; ?>
-          </tbody>
-        </table>
+      <div class="bg-white" style="border-radius: var(--helppy-radius); box-shadow: var(--helppy-shadow); overflow: hidden;">
+        <div class="admin-scroll-list" style="max-height: 980px; overflow-y: auto; overscroll-behavior: contain;">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="sticky-top bg-white" style="z-index: 2;">
+              <tr><th style="width:48px">#</th><th>Emri</th><th>Slug</th><th>Ikona</th><th></th></tr>
+            </thead>
+            <tbody>
+              <?php $n = 1; foreach ($categories as $c):
+                $isJustAdded = !empty($highlightId) && (int)$c['id'] === (int)$highlightId;
+              ?>
+              <tr class="<?= $isJustAdded ? 'is-just-added' : '' ?>" <?= $isJustAdded ? 'data-just-added' : '' ?>>
+                <td class="text-muted"><?= $n++ ?></td>
+                <td><?= e($c['name']) ?></td>
+                <td><code><?= e($c['slug']) ?></code></td>
+                <td>
+                  <?php $iconClass = trim((string)($c['icon'] ?? '')); ?>
+                  <?php if ($iconClass !== ''): ?>
+                    <i class="bi <?= e($iconClass) ?> category-icon-preview"></i>
+                  <?php endif; ?>
+                  <small class="text-muted ms-1"><?= e($iconClass) ?></small>
+                </td>
+                <td>
+                  <form method="post" action="<?= e(CONFIG['base_url']) ?>/admin/categories/<?= (int)$c['id'] ?>/delete" class="d-inline"
+                        onsubmit="return confirm('Fshi kete kategori?');">
+                    <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+                    <button class="btn btn-sm btn-outline-danger" type="submit">
+                      <i class="bi bi-trash"></i> Fshi
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 

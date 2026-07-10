@@ -47,6 +47,8 @@ $router = new Router();
 // PUBLIC
 $router->get('/',                          [HomeController::class,    'index']);
 $router->get('/api/providers.json',        [HomeController::class,    'providersJson']);
+$router->get('/map',                       [HomeController::class,    'map']);
+$router->get('/api/providers/map.json',    [HomeController::class,    'mapJson']);
 $router->get('/search',                    [SearchController::class,  'results']);
 $router->get('/provider/dashboard',        [ProviderController::class,'dashboard']);
 $router->get('/provider/{id}',             [ProviderController::class,'show']);

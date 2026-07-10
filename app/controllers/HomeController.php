@@ -13,9 +13,9 @@ final class HomeController extends Controller {
         // (parent + its children) instead of the whole top-level list.
         $openCatId = (int)Request::get('cat', 0);
         $openCat   = $openCatId > 0 ? Category::find($openCatId) : null;
-        // Strip only shows umbrella categories (those with children) — the rest
-        // are still reachable via the "Kërko kategori" search panel.
-        $topLevel  = Category::topLevelWithChildren();
+        // Strip shows all top-level categories; if a chip has children it drills
+        // down, if not it links directly to search results.
+        $topLevel  = Category::topLevel();
         $children  = $openCat ? Category::children((int)$openCat['id']) : [];
 
         $this->render('home/index', [
@@ -62,6 +62,41 @@ final class HomeController extends Controller {
             'returned'  => count($rows),
             'total'     => $total,
         ]);
+    }
+
+    /** GET /map — full-page map of all providers with a GPS pin. */
+    public function map(array $params = []): void {
+        $this->render('home/map', [
+            'title'      => 'Harta e punëtorëve – Helppy.com',
+            'cities'     => City::all(),
+            'categories' => Category::all(),
+        ]);
+    }
+
+    /** GET /api/providers/map.json — provider pins as JSON for the map page. */
+    public function mapJson(array $params = []): void {
+        $rows = Provider::allWithLocation();
+        $base = CONFIG['base_url'];
+        $uploadUrl = CONFIG['upload_url'];
+
+        $pins = [];
+        foreach ($rows as $r) {
+            $pins[] = [
+                'id'         => (int)$r['id'],
+                'name'       => $r['name'],
+                'profession' => $r['profession'],
+                'city'       => $r['city'] ?? '',
+                'photo'      => !empty($r['photo']) ? $uploadUrl . '/' . rawurlencode($r['photo']) : $base . '/assets/img/default-avatar.svg',
+                'lat'        => (float)$r['latitude'],
+                'lng'        => (float)$r['longitude'],
+                'avg_rating' => $r['avg_rating'] !== null ? round((float)$r['avg_rating'], 1) : null,
+                'is_premium' => (bool)$r['is_premium'],
+                'url'        => $base . '/provider/' . (int)$r['id'],
+            ];
+        }
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['ok' => true, 'pins' => $pins]);
     }
 
     /** Only 'person'/'company' are valid; anything else means "all". */

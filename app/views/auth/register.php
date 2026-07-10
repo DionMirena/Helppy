@@ -24,7 +24,7 @@
       <input class="form-control" type="password" name="password" minlength="6" required></div>
 
     <div class="mb-3"><label class="form-label">Telefoni</label>
-      <input class="form-control" name="phone" value="<?= e($old['phone'] ?? '') ?>" placeholder="+38344 xxx xxx"></div>
+      <input class="form-control" type="tel" inputmode="tel" name="phone" value="<?= e($old['phone'] ?? '') ?>" placeholder="+38344 xxx xxx"></div>
 
     <div class="mb-3"><label class="form-label">Qyteti</label>
       <select class="form-select" name="city_id">

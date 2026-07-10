@@ -82,8 +82,8 @@
         </div>
 
       <?php else: ?>
-        <!-- Umbrella categories only (those with children). Everything else
-             remains discoverable via the Kërko kategori search panel. -->
+        <!-- All top-level categories. Chips with children drill-down; those
+             without link directly to search results. -->
         <div class="category-chips category-chips-desktop">
           <?php foreach ($topCategories as $cat): ?>
             <a class="category-chip has-children" href="<?= $baseUrl ?>/?cat=<?= (int)$cat['id'] ?>">
