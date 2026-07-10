@@ -3,10 +3,47 @@
     <h1>Keni nevoje per nje punetor per problemin ne shtepi?</h1>
 
     <form method="get" action="<?= e(CONFIG['base_url']) ?>/search" class="helppy-search">
-      <span class="location-icon"><i class="bi bi-search"></i></span>
-      <input type="text" name="q" class="form-control helppy-search-q"
-             placeholder="Kërko emrin e punëtorit…" autocomplete="off"
-             aria-label="Kërko sipas emrit">
+      <span class="location-icon"><i class="bi bi-grid"></i></span>
+
+      <div class="helppy-catpick" data-catpick>
+        <input type="hidden" name="category" value="" data-catpick-value>
+        <button type="button" class="helppy-catpick-toggle" data-catpick-toggle
+                aria-haspopup="listbox" aria-expanded="false">
+          <i class="bi bi-grid helppy-catpick-icon" aria-hidden="true"></i>
+          <span class="helppy-catpick-label" data-catpick-label>Kërko kategori</span>
+          <i class="bi bi-chevron-down helppy-catpick-caret" aria-hidden="true"></i>
+        </button>
+        <div class="helppy-catpick-panel" data-catpick-panel hidden>
+          <div class="helppy-catpick-search">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Kërko kategori…" autocomplete="off"
+                   data-catpick-input aria-label="Kërko kategori">
+          </div>
+          <ul class="helppy-catpick-list" data-catpick-list>
+            <?php foreach ($categories as $cat):
+              $cpParent = '';
+              if (!empty($cat['parent_id'])) {
+                foreach ($categories as $maybe) {
+                  if ((int)$maybe['id'] === (int)$cat['parent_id']) { $cpParent = (string)$maybe['name']; break; }
+                }
+              }
+            ?>
+              <li class="helppy-catpick-item" tabindex="-1" role="option"
+                  data-catpick-option
+                  data-value="<?= (int)$cat['id'] ?>"
+                  data-name="<?= e(mb_strtolower($cat['name'] . ' ' . $cpParent)) ?>">
+                <?php if (!empty($cat['icon'])): ?><i class="bi <?= e($cat['icon']) ?>"></i><?php endif; ?>
+                <span><?= e($cat['name']) ?></span>
+                <?php if ($cpParent): ?><small><?= e($cpParent) ?></small><?php endif; ?>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+          <div class="helppy-catpick-empty" data-catpick-empty hidden>
+            <i class="bi bi-emoji-frown"></i> Asnjë kategori nuk u gjet.
+          </div>
+        </div>
+      </div>
+
       <div class="helppy-search-divider d-none d-sm-block"></div>
 
       <span class="location-icon"><i class="bi bi-geo-alt-fill"></i></span>
@@ -115,47 +152,26 @@
         </div>
       <?php endif; ?>
 
-      <!-- "Kërko kategori" sits on the RIGHT side of the strip. -->
-      <button type="button" class="category-search-btn category-search-btn-right"
-              data-cat-search-toggle aria-haspopup="true" aria-expanded="false">
-        <i class="bi bi-search"></i> Kërko kategori
-      </button>
+      <!-- Button only — panel lives as a sibling below so it pushes providers down -->
+      <div class="name-search-wrap">
+        <button type="button" class="category-search-btn"
+                data-name-search-toggle aria-haspopup="true" aria-expanded="false">
+          <i class="bi bi-person-search"></i>
+          <span class="d-none d-sm-inline">Kërko emrin e punëtorit</span>
+        </button>
+      </div>
 
-      <!-- Search panel: appears when "Kërko kategori" is clicked -->
-      <div class="category-search-panel" data-cat-search-panel hidden>
-        <div class="category-search-input-wrap">
-          <i class="bi bi-search"></i>
-          <input type="text" placeholder="Kërko kategori (p.sh. pastrim, elektrike, çelje)…"
-                 autocomplete="off" data-cat-search-input aria-label="Kërko kategori">
-          <button type="button" class="category-search-close" data-cat-search-close title="Mbyll">
+      <!-- Full-width inline panel: pushes the provider grid down instead of overlaying it -->
+      <div class="category-search-panel" data-name-search-panel hidden>
+        <form method="get" action="<?= e(CONFIG['base_url']) ?>/search"
+              class="category-search-input-wrap">
+          <i class="bi bi-person-search"></i>
+          <input type="text" name="q" placeholder="Kërko emrin e punëtorit…"
+                 autocomplete="off" data-name-search-input aria-label="Kërko emrin e punëtorit">
+          <button type="button" class="category-search-close" data-name-search-close title="Mbyll">
             <i class="bi bi-x-lg"></i>
           </button>
-        </div>
-        <ul class="category-search-results" data-cat-search-results>
-          <?php foreach ($categories as $cat):
-            $parentName = '';
-            if (!empty($cat['parent_id'])) {
-              foreach ($categories as $maybe) {
-                if ((int)$maybe['id'] === (int)$cat['parent_id']) { $parentName = (string)$maybe['name']; break; }
-              }
-            }
-            $href = empty($cat['parent_id']) && in_array((int)$cat['id'], array_column($topCategories, 'id'))
-                  ? $baseUrl . '/?cat=' . (int)$cat['id']
-                  : $baseUrl . '/search?category=' . (int)$cat['id'];
-          ?>
-            <li class="category-search-item"
-                data-cat-name="<?= e(mb_strtolower($cat['name'] . ' ' . $parentName)) ?>">
-              <a href="<?= $href ?>">
-                <?php if (!empty($cat['icon'])): ?><i class="bi <?= e($cat['icon']) ?>"></i><?php endif; ?>
-                <span><?= e($cat['name']) ?></span>
-                <?php if ($parentName): ?><small class="text-muted ms-auto"><?= e($parentName) ?></small><?php endif; ?>
-              </a>
-            </li>
-          <?php endforeach; ?>
-        </ul>
-        <div class="category-search-empty text-muted small text-center py-3" data-cat-search-empty hidden>
-          <i class="bi bi-emoji-frown"></i> Asnjë kategori nuk u gjet.
-        </div>
+        </form>
       </div>
     </div>
   </div>

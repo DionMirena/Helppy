@@ -10,9 +10,9 @@ return [
         'charset'  => 'utf8mb4',
     ],
 
-    'base_url'   => 'https://helppy.com',       // ← change to your live domain
+    'base_url'   => 'https://gruffly-prize-dreadful.ngrok-free.devhelppy.com',      
     'upload_dir' => __DIR__ . '/../public/uploads',
-    'upload_url' => 'https://helppy.com/uploads', // ← same domain + /uploads
+    'upload_url' => 'https://gruffly-prize-dreadful.ngrok-free.devuploads', // 
     'debug'      => true,
 
     // ============================================================

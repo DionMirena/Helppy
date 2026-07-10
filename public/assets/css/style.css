@@ -1276,6 +1276,7 @@ body.helppy-no-scroll { overflow: hidden; }
   color: var(--helppy-text);
   font-weight: 400;
   box-shadow: none;
+  height: 100%;
 }
 .helppy-search .helppy-citypicker-toggle:hover { background: rgba(90, 122, 79, .06); color: var(--helppy-text); }
 .helppy-search .helppy-citypicker-toggle:hover .helppy-citypicker-label { color: var(--helppy-text); }
@@ -1409,6 +1410,126 @@ body.helppy-no-scroll { overflow: hidden; }
   min-width: 64px;
 }
 
+/* ---------- Catpick (Kërko kategori inside helppy-search) ---------- */
+.helppy-catpick {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  align-self: stretch;
+  flex: 1;
+  min-width: 0;
+}
+.helppy-catpick-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 10px 8px;
+  font-size: 16px;
+  color: var(--helppy-text);
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: var(--helppy-radius-sm);
+  transition: background .15s;
+  min-width: 0;
+  height: 100%;
+}
+.helppy-catpick-toggle:hover  { background: rgba(90, 122, 79, .06); }
+.helppy-catpick-toggle:focus  { outline: none; box-shadow: 0 0 0 3px rgba(90, 122, 79, .22); }
+.helppy-catpick.is-open .helppy-catpick-toggle { background: rgba(90, 122, 79, .08); }
+.helppy-catpick-icon   { color: var(--helppy-green); font-size: 17px; display: none; }
+.helppy-catpick-label  {
+  flex: 1;
+  color: #9ca3af;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+.helppy-catpick-label.is-selected { color: var(--helppy-text); font-weight: 600; }
+.helppy-catpick-caret  { color: var(--helppy-green); font-size: 14px; transition: transform .18s; }
+.helppy-catpick.is-open .helppy-catpick-caret { transform: rotate(180deg); }
+
+.helppy-catpick-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: 300px;
+  z-index: 1060;
+  background: #fff;
+  border: 1px solid var(--helppy-border);
+  border-radius: var(--helppy-radius);
+  box-shadow: 0 12px 32px rgba(17, 24, 39, .13);
+  overflow: hidden;
+  animation: cityPickerIn .16s ease-out;
+}
+.helppy-catpick-search {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--helppy-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fafaf7;
+}
+.helppy-catpick-search i   { color: var(--helppy-green); font-size: 15px; flex: 0 0 auto; }
+.helppy-catpick-search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  outline: none;
+  min-width: 0;
+  color: var(--helppy-text);
+}
+.helppy-catpick-search input::placeholder { color: #9ca3af; }
+.helppy-catpick-list {
+  list-style: none;
+  padding: 6px;
+  margin: 0;
+  max-height: min(50vh, 300px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.helppy-catpick-list::-webkit-scrollbar { width: 6px; }
+.helppy-catpick-list::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+.helppy-catpick-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--helppy-radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--helppy-text);
+  transition: background .12s, color .12s;
+}
+.helppy-catpick-item i     { color: var(--helppy-green); font-size: 15px; flex: 0 0 auto; }
+.helppy-catpick-item span  { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.helppy-catpick-item small { color: #9ca3af; font-size: 11px; flex: 0 0 auto; }
+.helppy-catpick-item:hover { background: rgba(90, 122, 79, .10); color: var(--helppy-green-dark); }
+.helppy-catpick-empty {
+  padding: 14px 12px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* Dark mode */
+[data-theme="dark"] .helppy-catpick-panel      { background: var(--helppy-card); border-color: var(--helppy-border); }
+[data-theme="dark"] .helppy-catpick-search     { background: var(--helppy-surface-2); }
+[data-theme="dark"] .helppy-catpick-item       { color: var(--helppy-text); }
+[data-theme="dark"] .helppy-catpick-item:hover { background: var(--helppy-surface-2); color: var(--helppy-green-light); }
+
+/* Mobile: hide label text, show only icon so the bar stays compact */
+@media (max-width: 575.98px) {
+  .helppy-catpick-label  { display: none; }
+  .helppy-catpick-icon   { display: inline; }
+  .helppy-catpick-toggle { padding: 10px 6px; }
+  .helppy-catpick-panel  { left: 0; right: auto; width: min(300px, calc(100vw - 24px)); }
+}
+
 /* ---------- Buttons ---------- */
 .btn-helppy {
   background: var(--helppy-green);
@@ -1471,7 +1592,11 @@ body.helppy-no-scroll { overflow: hidden; }
   justify-content: space-between;
 }
 
-/* Push the "Kërko kategori" button to the right edge of the strip. */
+/* Pushes the name-search button to the right edge of the strip. */
+.name-search-wrap {
+  margin-left: auto;
+}
+/* Push the single "Kërko emrin e punëtorit" button to the right edge. */
 .category-search-btn-right { margin-left: auto; }
 .category-search-btn {
   display: inline-flex;
@@ -1619,28 +1744,19 @@ body.helppy-no-scroll { overflow: hidden; }
 
 /* Search panel — drops below the strip */
 .category-search-panel {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  left: auto;                       /* anchor to the button on the right */
-  width: 340px;                     /* compact dropdown, not full-strip */
-  max-width: calc(100vw - 24px);    /* never overflow the viewport */
-  z-index: 40;
+  /* Inline — sits in document flow and pushes content below instead of overlaying */
+  width: 100%;
+  order: 99;          /* flex order: always renders after chips + button row */
   background: #fff;
   border: 1px solid var(--helppy-border);
   border-radius: var(--helppy-radius);
   box-shadow: var(--helppy-shadow-lg);
-  max-height: 50vh;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
+  animation: panelSlideIn .18s ease-out;
 }
-/* On phones the dropdown still fills the strip width — that's easier to tap. */
-@media (max-width: 575.98px) {
-  .category-search-panel {
-    left: 0; right: 0;
-    width: auto;
-    max-width: none;
-  }
+@keyframes panelSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .category-search-input-wrap {
   display: flex;
@@ -1691,7 +1807,9 @@ body.helppy-no-scroll { overflow: hidden; }
 @media (max-width: 767.98px) {
   .category-chips-desktop { display: none; }
   .category-dropdown-mobile { display: block; }
-  .category-search-btn { width: 100%; justify-content: center; }
+  .category-search-btn-right { margin-left: 0; width: 100%; justify-content: center; }
+  .name-search-wrap { margin-left: 0; width: 100%; }
+  .name-search-wrap .category-search-btn { width: 100%; justify-content: center; }
   .category-strip { flex-direction: column; gap: 8px; }
 }
 .category-chip {

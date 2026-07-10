@@ -1,6 +1,16 @@
 <?php
 declare(strict_types=1);
 
+// ngrok free tier shows a browser interstitial on first visit. Bypass it by
+// redirecting to the same URL with the skip param if we're on an ngrok host.
+if (!isset($_GET['ngrok-skip-browser-warning']) &&
+    str_contains($_SERVER['HTTP_HOST'] ?? '', 'ngrok')) {
+    $qs = $_SERVER['QUERY_STRING'] ?? '';
+    $sep = $qs ? '&' : '?';
+    header('Location: ' . $_SERVER['REQUEST_URI'] . $sep . 'ngrok-skip-browser-warning=skip', true, 302);
+    exit;
+}
+
 // Sessions live inside the project (storage/sessions/) so we never collide
 // with C:/laragon/tmp permissions or another app's sess_* files.
 $__sessDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'sessions';
