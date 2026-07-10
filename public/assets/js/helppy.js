@@ -741,41 +741,6 @@
       });
     }
 
-    // -- "Kërko emrin e punëtorit" name search panel ------------------
-    var nameBtn   = root.querySelector('[data-name-search-toggle]');
-    var namePanel = root.querySelector('[data-name-search-panel]');
-    var nameInput = root.querySelector('[data-name-search-input]');
-    var nameClos  = root.querySelector('[data-name-search-close]');
-
-    if (nameBtn && namePanel) {
-      function openNamePanel() {
-        document.dispatchEvent(new CustomEvent('helppy:dropdown-open', { detail: { source: namePanel } }));
-        namePanel.hidden = false;
-        nameBtn.setAttribute('aria-expanded', 'true');
-        var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
-                    || (window.matchMedia && window.matchMedia('(hover: none)').matches);
-        if (nameInput && !isTouch) { nameInput.value = ''; nameInput.focus(); }
-      }
-      function closeNamePanel() {
-        namePanel.hidden = true;
-        nameBtn.setAttribute('aria-expanded', 'false');
-      }
-      nameBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        if (namePanel.hidden) openNamePanel(); else closeNamePanel();
-      });
-      if (nameClos) nameClos.addEventListener('click', closeNamePanel);
-      document.addEventListener('click', function (e) {
-        if (!root.contains(e.target)) closeNamePanel();
-      });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !namePanel.hidden) { closeNamePanel(); nameBtn.focus(); }
-      });
-      document.addEventListener('helppy:dropdown-open', function (e) {
-        if (!e.detail || e.detail.source !== namePanel) closeNamePanel();
-      });
-    }
-
     // -- Mobile dropdown ----------------------------------------------
     var ddRoot   = root.querySelector('[data-cat-dropdown]');
     if (ddRoot) {

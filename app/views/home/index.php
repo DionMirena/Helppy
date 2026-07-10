@@ -152,27 +152,15 @@
         </div>
       <?php endif; ?>
 
-      <!-- Button only — panel lives as a sibling below so it pushes providers down -->
-      <div class="name-search-wrap">
-        <button type="button" class="category-search-btn"
-                data-name-search-toggle aria-haspopup="true" aria-expanded="false">
-          <i class="bi bi-person-search"></i>
-          <span class="d-none d-sm-inline">Kërko emrin e punëtorit</span>
+      <!-- Inline name search — always visible at the end of the strip -->
+      <form method="get" action="<?= e(CONFIG['base_url']) ?>/search" class="strip-name-search">
+        <i class="bi bi-person-search"></i>
+        <input type="text" name="q" placeholder="Kërko emrin e punëtorit…"
+               autocomplete="off" aria-label="Kërko emrin e punëtorit">
+        <button type="submit" aria-label="Kërko">
+          <i class="bi bi-search"></i>
         </button>
-      </div>
-
-      <!-- Full-width inline panel: pushes the provider grid down instead of overlaying it -->
-      <div class="category-search-panel" data-name-search-panel hidden>
-        <form method="get" action="<?= e(CONFIG['base_url']) ?>/search"
-              class="category-search-input-wrap">
-          <i class="bi bi-person-search"></i>
-          <input type="text" name="q" placeholder="Kërko emrin e punëtorit…"
-                 autocomplete="off" data-name-search-input aria-label="Kërko emrin e punëtorit">
-          <button type="button" class="category-search-close" data-name-search-close title="Mbyll">
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </form>
-      </div>
+      </form>
     </div>
   </div>
 </section>

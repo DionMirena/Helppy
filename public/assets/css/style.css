@@ -1592,9 +1592,60 @@ body.helppy-no-scroll { overflow: hidden; }
   justify-content: space-between;
 }
 
-/* Pushes the name-search button to the right edge of the strip. */
-.name-search-wrap {
+/* Inline name-search form sitting at the end of the category strip */
+.strip-name-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin-left: auto;
+  background: #fff;
+  border: 1px solid var(--helppy-border);
+  border-radius: var(--helppy-radius-pill);
+  padding: 4px 6px 4px 12px;
+  box-shadow: 0 1px 4px rgba(17,24,39,.06);
+  min-width: 0;
+  flex-shrink: 1;
+}
+.strip-name-search i.bi-person-search {
+  color: var(--helppy-green);
+  font-size: 15px;
+  flex: 0 0 auto;
+}
+.strip-name-search input {
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  outline: none;
+  min-width: 0;
+  width: 180px;
+  color: var(--helppy-text);
+}
+.strip-name-search input::placeholder { color: #9ca3af; }
+.strip-name-search button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--helppy-green);
+  border: none;
+  border-radius: var(--helppy-radius-pill);
+  color: #fff;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: background .15s;
+}
+.strip-name-search button:hover { background: var(--helppy-green-dark); }
+
+[data-theme="dark"] .strip-name-search {
+  background: var(--helppy-card);
+  border-color: var(--helppy-border);
+}
+[data-theme="dark"] .strip-name-search input { color: var(--helppy-text); }
+
+@media (max-width: 767.98px) {
+  .strip-name-search { margin-left: 0; width: 100%; }
+  .strip-name-search input { width: 100%; flex: 1; }
 }
 /* Push the single "Kërko emrin e punëtorit" button to the right edge. */
 .category-search-btn-right { margin-left: auto; }
@@ -1808,8 +1859,6 @@ body.helppy-no-scroll { overflow: hidden; }
   .category-chips-desktop { display: none; }
   .category-dropdown-mobile { display: block; }
   .category-search-btn-right { margin-left: 0; width: 100%; justify-content: center; }
-  .name-search-wrap { margin-left: 0; width: 100%; }
-  .name-search-wrap .category-search-btn { width: 100%; justify-content: center; }
   .category-strip { flex-direction: column; gap: 8px; }
 }
 .category-chip {
