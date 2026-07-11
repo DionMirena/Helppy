@@ -228,7 +228,7 @@
         <button type="button" class="btn btn-helppy load-more-btn"
                 data-providers-load-more
                 <?= (int)$totalCount <= (int)$pageSize ? 'hidden' : '' ?>>
-          <img class="load-more-logo" src="<?= e(CONFIG['base_url']) ?>/assets/img/logo.svg" alt="">
+          <img class="load-more-logo" src="<?= e(CONFIG['base_path']) ?>/assets/img/logo.svg" alt="">
           <span class="load-more-label">Shfaq më shumë</span>
           <span class="load-more-loading" hidden>
             <i class="bi bi-arrow-clockwise"></i> Duke shfaqur të tjerë...

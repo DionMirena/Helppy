@@ -1,7 +1,7 @@
 <?php
 $photoUrl = !empty($p['photo'])
     ? CONFIG['upload_url'] . '/' . rawurlencode($p['photo'])
-    : CONFIG['base_url'] . '/assets/img/default-avatar.svg';
+    : CONFIG['base_path'] . '/assets/img/default-avatar.svg';
 $avg = $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
 ?>
 <div class="container py-4">

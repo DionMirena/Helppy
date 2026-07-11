@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 // ngrok free tier shows a browser interstitial on first visit. Bypass it by
 // redirecting to the same URL with the skip param if we're on an ngrok host.
-if (!isset($_GET['ngrok-skip-browser-warning']) &&
-    str_contains($_SERVER['HTTP_HOST'] ?? '', 'ngrok')) {
+// HTTP_HOST is the backend host (helppy.com.loc), so check the forwarded host too.
+$__publicHost = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? '';
+if (!isset($_GET['ngrok-skip-browser-warning']) && str_contains($__publicHost, 'ngrok')) {
     $qs = $_SERVER['QUERY_STRING'] ?? '';
     $sep = $qs ? '&' : '?';
     header('Location: ' . $_SERVER['REQUEST_URI'] . $sep . 'ngrok-skip-browser-warning=skip', true, 302);

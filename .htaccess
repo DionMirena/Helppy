@@ -1,9 +1,19 @@
 RewriteEngine On
 RewriteBase /
 
-# Serve real static files from public/ (CSS, JS, images, uploads, etc.)
-RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
-RewriteRule ^(.*)$ public/$1 [L]
+# 1. Serve real files/dirs that exist at the project root (catches root/index.php)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
 
-# Route all app requests through public/index.php with the path as ?url=
+# 2. Loop guard: if the URL was already rewritten to /public/... on a previous
+#    pass, stop here and let public/.htaccess take over
+RewriteCond %{REQUEST_URI} ^/public/
+RewriteRule ^ - [L]
+
+# 3. Static assets that live inside public/ — serve them directly
+RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
+RewriteRule ^(.+)$ public/$1 [L]
+
+# 4. All app routes go through the front controller
 RewriteRule ^(.*)$ public/index.php?url=$1 [QSA,L]

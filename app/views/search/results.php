@@ -183,7 +183,7 @@
     </h2>
     <?php if ($hasFilters): ?>
       <a class="btn btn-sm btn-outline-danger clear-filters-btn"
-         href="<?= e(CONFIG['base_url']) ?>/search"
+         href="<?= e(CONFIG['base_url']) ?>/"
          title="Largo të gjithë filtrat">
         <i class="bi bi-x-circle"></i> Hiq filtrat
       </a>

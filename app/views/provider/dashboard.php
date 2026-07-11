@@ -1,59 +1,174 @@
 <?php
 $photoUrl = !empty($p['photo'])
     ? CONFIG['upload_url'] . '/' . rawurlencode($p['photo'])
-    : CONFIG['base_url'] . '/assets/img/default-avatar.svg';
+    : CONFIG['base_path'] . '/assets/img/default-avatar.svg';
 $selectedCats = array_column($p['categories'], 'id');
 ?>
 <div class="container py-4">
-  <h2>Profili im</h2>
-  <p class="text-muted">
-    <a href="<?= e(CONFIG['base_url']) ?>/provider/<?= (int)$user['id'] ?>" target="_blank">Shiko profilin publik &rarr;</a>
-  </p>
 
-  <div class="row mt-4">
-    <div class="col-md-4">
-      <div class="text-center mb-3">
-        <img class="profile-photo mb-2" src="<?= e($photoUrl) ?>" alt="profil">
-        <form method="post" action="<?= e(CONFIG['base_url']) ?>/provider/photo" enctype="multipart/form-data">
-          <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-          <input class="form-control form-control-sm" type="file" name="photo" accept="image/jpeg,image/png,image/webp" required>
-          <button class="btn btn-helppy btn-sm mt-2" type="submit">Ngarko foto</button>
-        </form>
+  <!-- Page header -->
+  <div class="d-flex align-items-center justify-content-between gap-2 mb-4">
+    <h2 class="mb-0 dashboard-page-title">Profili im</h2>
+    <a href="<?= e(CONFIG['base_url']) ?>/provider/<?= (int)$user['id'] ?>" target="_blank"
+       class="btn btn-helppy-outline btn-sm flex-shrink-0">
+      <i class="bi bi-box-arrow-up-right"></i>
+      <span class="d-none d-sm-inline">Shiko profilin publik</span>
+    </a>
+  </div>
+
+  <!-- ===== Profile hero card ===== -->
+  <div class="dashboard-hero mb-4">
+    <div class="dashboard-hero-photo">
+      <img class="profile-photo" src="<?= e($photoUrl) ?>" alt="profil">
+      <form method="post" action="<?= e(CONFIG['base_url']) ?>/provider/photo"
+            enctype="multipart/form-data" class="dashboard-photo-form">
+        <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+        <label class="dashboard-photo-label">
+          <i class="bi bi-camera-fill"></i> Zgjidh foto
+          <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required>
+        </label>
+        <button class="btn btn-helppy btn-sm w-100" type="submit">
+          <i class="bi bi-upload"></i> Ngarko
+        </button>
+      </form>
+    </div>
+
+    <div class="dashboard-hero-info">
+      <div class="dashboard-stat-card">
+        <div class="dashboard-stat-icon" style="background:var(--helppy-green-bg);color:var(--helppy-green);">
+          <i class="bi bi-bar-chart-fill"></i>
+        </div>
+        <h6 class="dashboard-stat-title">Statistika</h6>
+        <div class="dashboard-stat-row">
+          <span class="text-muted small">Vlerësimi mesatar</span>
+          <strong><?= $p['avg_rating'] !== null ? round($p['avg_rating'],1) . ' ★' : '—' ?></strong>
+        </div>
+        <div class="dashboard-stat-row">
+          <span class="text-muted small">Numri i vlerësimeve</span>
+          <strong><?= (int)$p['review_count'] ?></strong>
+        </div>
+        <div class="dashboard-stat-row">
+          <span class="text-muted small">Vizita në profil</span>
+          <strong><?= (int)$p['views'] ?></strong>
+        </div>
       </div>
 
-      <div class="bg-white p-3 rounded">
-        <h6>Statistika</h6>
-        <p class="mb-1">Vleresimi mesatar: <strong><?= $p['avg_rating'] !== null ? round($p['avg_rating'],1) : '—' ?></strong></p>
-        <p class="mb-1">Numri i vleresimeve: <strong><?= (int)$p['review_count'] ?></strong></p>
-        <p class="mb-0">Vizita ne profil: <strong><?= (int)$p['views'] ?></strong></p>
-      </div>
-
-      <div class="bg-white p-3 rounded mt-3">
-        <h6>Abonimi</h6>
+      <div class="dashboard-stat-card">
+        <div class="dashboard-stat-icon" style="background:var(--helppy-blue-bg);color:var(--helppy-blue);">
+          <i class="bi bi-credit-card-fill"></i>
+        </div>
+        <h6 class="dashboard-stat-title">Abonimi</h6>
         <?php if ($subscription): ?>
-          <p class="mb-1">Tier: <strong><?= e(ucfirst((string)$subscription['tier'])) ?></strong></p>
-          <p class="mb-1">Skadon: <strong><?= e(date('d M Y', strtotime((string)$subscription['expires_at']))) ?></strong></p>
-          <p class="mb-2 small text-muted">
+          <div class="dashboard-stat-row">
+            <span class="text-muted small">Tier</span>
+            <strong><?= e(ucfirst((string)$subscription['tier'])) ?></strong>
+          </div>
+          <div class="dashboard-stat-row">
+            <span class="text-muted small">Skadon</span>
+            <strong><?= e(date('d M Y', strtotime((string)$subscription['expires_at']))) ?></strong>
+          </div>
+          <p class="text-muted small mb-3">
             <?= max(0, (int)floor((strtotime((string)$subscription['expires_at']) - time()) / 86400)) ?> ditë të mbetura
           </p>
-          <a class="btn btn-helppy-outline btn-sm w-100" href="<?= e(CONFIG['base_url']) ?>/subscribe">Menaxho</a>
+          <a class="btn btn-helppy-outline btn-sm w-100" href="<?= e(CONFIG['base_url']) ?>/subscribe">
+            <i class="bi bi-gear"></i> Menaxho
+          </a>
         <?php else: ?>
-          <p class="mb-2 small text-muted">Nuk ke abonim aktiv. Aktivizo një tier për të postuar oferta.</p>
+          <p class="text-muted small mb-3">Nuk ke abonim aktiv. Aktivizo një tier për të postuar oferta.</p>
           <a class="btn btn-helppy btn-sm w-100" href="<?= e(CONFIG['base_url']) ?>/subscribe">
             <i class="bi bi-credit-card"></i> Abonohu
           </a>
         <?php endif; ?>
       </div>
     </div>
+  </div>
 
-    <div class="col-md-8">
-      <?php
-        $currentCityName = '';
-        foreach ($cities as $c) { if ((int)$user['city_id']===(int)$c['id']) { $currentCityName = $c['name']; break; } }
-        $gmapsEnabled = !empty(CONFIG['google_maps']['enabled']) && !empty(CONFIG['google_maps']['api_key']);
-        $hasPin       = $p['latitude'] !== null && $p['longitude'] !== null;
-      ?>
-      <form method="post" action="<?= e(CONFIG['base_url']) ?>/provider/edit" class="provider-form">
+  <!-- ===== Foto të punës (portfolio) — moved up so it's visible ===== -->
+  <section id="work-photos" class="mb-4">
+    <h3 class="section-title"><i class="bi bi-images"></i> Foto të punës</h3>
+
+    <div class="row g-3">
+      <div class="col-md-5 order-2 order-md-1">
+        <?php if (!$subscription): ?>
+          <div class="alert alert-warning mb-0">
+            <strong><i class="bi bi-lock"></i> Funksion me abonim aktiv.</strong>
+            <p class="mb-2 small">
+              Aktivizo një abonim për të shtuar foto të punës që klientët t'i shohin
+              në profilin tënd publik.
+            </p>
+            <a class="btn btn-helppy btn-sm w-100" href="<?= e(CONFIG['base_url']) ?>/subscribe">
+              <i class="bi bi-credit-card"></i> Abonohu
+            </a>
+          </div>
+        <?php else: ?>
+          <form method="post" action="<?= e(CONFIG['base_url']) ?>/provider/work-photo"
+                enctype="multipart/form-data" class="form-card">
+            <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+            <p class="text-muted small mb-2">
+              JPG, PNG ose WEBP. Maksimumi 3MB për foto. Deri në 30 foto në total.
+            </p>
+            <div class="mb-2">
+              <label class="form-label">Foto</label>
+              <input class="form-control" type="file" name="photo"
+                     accept="image/jpeg,image/png,image/webp" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Përshkrim (opsional)</label>
+              <input class="form-control" type="text" name="caption" maxlength="120"
+                     placeholder="p.sh. Banjë e rinovuar, Prishtinë">
+            </div>
+            <button class="btn btn-helppy w-100" type="submit">
+              <i class="bi bi-plus-lg"></i> Shto foto të punës
+            </button>
+          </form>
+        <?php endif; ?>
+      </div>
+
+      <div class="col-md-7 order-1 order-md-2">
+        <?php if (!$workPhotos): ?>
+          <div class="gallery-empty">
+            <i class="bi bi-camera"></i>
+            <p class="text-muted mb-0">
+              <?php if ($subscription): ?>
+                Ende s'ke shtuar foto. Ngarko të parën nga ana e majtë.
+              <?php else: ?>
+                Ende s'ke shtuar foto. Aktivizo një abonim për të filluar.
+              <?php endif; ?>
+            </p>
+          </div>
+        <?php else: ?>
+          <div class="gallery-grid">
+            <?php foreach ($workPhotos as $w): ?>
+              <div class="gallery-item">
+                <img src="<?= e(CONFIG['upload_url'] . '/' . rawurlencode((string)$w['filename'])) ?>"
+                     alt="<?= e((string)($w['caption'] ?? '')) ?>" loading="lazy">
+                <form method="post"
+                      action="<?= e(CONFIG['base_url']) ?>/provider/work-photo/<?= (int)$w['id'] ?>/delete"
+                      class="gallery-delete"
+                      onsubmit="return confirm('Fshi këtë foto?');">
+                  <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
+                  <button type="submit" class="btn btn-sm btn-danger" title="Fshi">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Edit form ===== -->
+  <section class="mb-4">
+    <h3 class="section-title"><i class="bi bi-pencil-square"></i> Ndrysho profilin</h3>
+    <?php
+      $currentCityName = '';
+      foreach ($cities as $c) { if ((int)$user['city_id']===(int)$c['id']) { $currentCityName = $c['name']; break; } }
+      $gmapsEnabled = !empty(CONFIG['google_maps']['enabled']) && !empty(CONFIG['google_maps']['api_key']);
+      $hasPin       = $p['latitude'] !== null && $p['longitude'] !== null;
+    ?>
+    <form method="post" action="<?= e(CONFIG['base_url']) ?>/provider/edit" class="provider-form">
         <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
 
         <!-- ===== Të dhënat bazë ===== -->
@@ -172,11 +287,11 @@ $selectedCats = array_column($p['categories'], 'id');
             <div class="input-group input-group-sm mt-2 new-category-input" data-new-cat>
               <span class="input-group-text"><i class="bi bi-plus-circle"></i></span>
               <input class="form-control" type="text" maxlength="80"
-                     placeholder="Nuk po e gjeni? Shkruani kategori të re (p.sh. Saldator)"
+                     placeholder="Shkruani kategori të re…"
                      data-new-cat-input
                      aria-label="Kategori e re">
               <button type="button" class="btn btn-helppy" data-new-cat-submit>
-                <i class="bi bi-plus-lg"></i> Shto
+                <i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">Shto</span>
               </button>
             </div>
             <small class="text-muted d-block mt-1" data-new-cat-hint>
@@ -273,7 +388,7 @@ $selectedCats = array_column($p['categories'], 'id');
                     <i class="bi bi-pin-map"></i> Nuk është vendosur ende.
                   <?php endif; ?>
                 </span>
-                <div class="d-flex gap-2 mt-2 flex-wrap">
+                <div class="d-grid d-sm-flex gap-2 mt-2">
                   <button type="button" class="btn btn-sm btn-helppy-outline" id="provider-locate">
                     <i class="bi bi-crosshair"></i> Vendndodhja ime
                   </button>
@@ -300,90 +415,14 @@ $selectedCats = array_column($p['categories'], 'id');
           </div>
         </fieldset>
 
-        <div class="d-flex justify-content-end">
+        <div class="d-grid d-sm-flex justify-content-sm-end">
           <button class="btn btn-helppy btn-lg" type="submit">
             <i class="bi bi-check2"></i> Ruaj ndryshimet
           </button>
         </div>
       </form>
-    </div>
-  </div>
-
-  <!-- ============ Foto të punës (portfolio) ============ -->
-  <section id="work-photos" class="mt-4">
-    <h3 class="section-title"><i class="bi bi-images"></i> Foto të punës</h3>
-
-    <div class="row g-3">
-      <div class="col-lg-5">
-        <?php if (!$subscription): ?>
-          <div class="alert alert-warning mb-0">
-            <strong><i class="bi bi-lock"></i> Funksion me abonim aktiv.</strong>
-            <p class="mb-2 small">
-              Aktivizo një abonim për të shtuar foto të punës që klientët t'i shohin
-              në profilin tënd publik.
-            </p>
-            <a class="btn btn-helppy btn-sm w-100" href="<?= e(CONFIG['base_url']) ?>/subscribe">
-              <i class="bi bi-credit-card"></i> Abonohu
-            </a>
-          </div>
-        <?php else: ?>
-          <form method="post" action="<?= e(CONFIG['base_url']) ?>/provider/work-photo"
-                enctype="multipart/form-data" class="form-card">
-            <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-            <p class="text-muted small mb-2">
-              JPG, PNG ose WEBP. Maksimumi 3MB për foto. Deri në 30 foto në total.
-            </p>
-            <div class="mb-2">
-              <label class="form-label">Foto</label>
-              <input class="form-control" type="file" name="photo"
-                     accept="image/jpeg,image/png,image/webp" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Përshkrim (opsional)</label>
-              <input class="form-control" type="text" name="caption" maxlength="120"
-                     placeholder="p.sh. Banjë e rinovuar, Prishtinë">
-            </div>
-            <button class="btn btn-helppy w-100" type="submit">
-              <i class="bi bi-plus-lg"></i> Shto foto të punës
-            </button>
-          </form>
-        <?php endif; ?>
-      </div>
-
-      <div class="col-lg-7">
-        <?php if (!$workPhotos): ?>
-          <div class="gallery-empty">
-            <i class="bi bi-camera"></i>
-            <p class="text-muted mb-0">
-              <?php if ($subscription): ?>
-                Ende s'ke shtuar foto. Ngarko të parën nga ana e majtë.
-              <?php else: ?>
-                Ende s'ke shtuar foto. Aktivizo një abonim për të filluar.
-              <?php endif; ?>
-            </p>
-          </div>
-        <?php else: ?>
-          <div class="gallery-grid">
-            <?php foreach ($workPhotos as $w): ?>
-              <div class="gallery-item">
-                <img src="<?= e(CONFIG['upload_url'] . '/' . rawurlencode((string)$w['filename'])) ?>"
-                     alt="<?= e((string)($w['caption'] ?? '')) ?>" loading="lazy">
-                <form method="post"
-                      action="<?= e(CONFIG['base_url']) ?>/provider/work-photo/<?= (int)$w['id'] ?>/delete"
-                      class="gallery-delete"
-                      onsubmit="return confirm('Fshi këtë foto?');">
-                  <input type="hidden" name="_csrf" value="<?= e(Request::csrfToken()) ?>">
-                  <button type="submit" class="btn btn-sm btn-danger" title="Fshi">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </form>
-              </div>
-            <?php endforeach; ?>
-          </div>
-        <?php endif; ?>
-      </div>
-    </div>
   </section>
+
 </div>
 
 <?php

@@ -10,9 +10,9 @@ return [
         'charset'  => 'utf8mb4',
     ],
 
-    'base_url'   => 'https://gruffly-prize-dreadful.ngrok-free.devhelppy.com',      
+    'base_url'   => 'https://gruffly-prize-dreadful.ngrok-free.dev/helppy.com',      
     'upload_dir' => __DIR__ . '/../public/uploads',
-    'upload_url' => 'https://gruffly-prize-dreadful.ngrok-free.devuploads', // 
+    'upload_url' => 'https://gruffly-prize-dreadful.ngrok-free.dev/uploads',
     'debug'      => true,
 
     // ============================================================

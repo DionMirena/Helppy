@@ -835,6 +835,150 @@ tr.is-just-added > td:first-child::before {
 }
 .nearby-banner i.bi-info-circle-fill { color: #2293c4; font-size: 18px; }
 
+/* ---------- Provider dashboard hero card (photo + stats + subscription) ---------- */
+.dashboard-hero {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  background: #fff;
+  border: 1px solid var(--helppy-border);
+  border-radius: var(--helppy-radius);
+  padding: 24px;
+  box-shadow: var(--helppy-shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+.dashboard-hero::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--helppy-green) 0%, var(--helppy-blue) 50%, var(--helppy-amber) 100%);
+  border-radius: var(--helppy-radius) var(--helppy-radius) 0 0;
+}
+
+.dashboard-hero-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  width: 160px;
+}
+.dashboard-hero-photo .profile-photo {
+  width: 140px;
+  height: 140px;
+  border: 3px solid var(--helppy-green-light);
+  box-shadow: 0 4px 16px rgba(78, 168, 76, .18);
+}
+
+.dashboard-photo-form { width: 100%; text-align: center; }
+.dashboard-photo-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 10px;
+  background: var(--helppy-green-bg);
+  border: 1.5px dashed var(--helppy-green-light);
+  border-radius: var(--helppy-radius-sm);
+  color: var(--helppy-green-dark);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  margin-bottom: 6px;
+}
+.dashboard-photo-label:hover { background: var(--helppy-green-light); color: #fff; border-color: var(--helppy-green); }
+.dashboard-photo-label input[type="file"] { display: none; }
+
+.dashboard-hero-info {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.dashboard-stat-card {
+  flex: 1;
+  min-width: 180px;
+  background: var(--helppy-surface-2);
+  border: 1px solid var(--helppy-border);
+  border-radius: var(--helppy-radius-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dashboard-stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--helppy-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+.dashboard-stat-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--helppy-muted);
+  margin: 0 0 4px;
+}
+.dashboard-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--helppy-border);
+}
+.dashboard-stat-row:last-of-type { border-bottom: none; }
+
+/* Tablet (768–991px): hero stacks, photo goes row */
+@media (max-width: 991.98px) {
+  .dashboard-hero { gap: 16px; }
+}
+@media (max-width: 767.98px) {
+  .dashboard-hero { flex-direction: column; align-items: stretch; padding: 20px; }
+  .dashboard-hero-photo { width: 100%; flex-direction: row; align-items: center; gap: 16px; }
+  .dashboard-hero-photo .profile-photo { width: 100px; height: 100px; flex-shrink: 0; }
+  .dashboard-photo-form { flex: 1; }
+}
+/* Phone (< 576px): photo column, stat cards forced side-by-side */
+@media (max-width: 575.98px) {
+  .dashboard-hero { padding: 14px; gap: 14px; }
+  .dashboard-hero-photo { flex-direction: column; align-items: center; gap: 10px; }
+  .dashboard-hero-photo .profile-photo { width: 90px; height: 90px; }
+  .dashboard-photo-form { width: 100%; }
+  .dashboard-hero-info { flex-wrap: nowrap; gap: 10px; }
+  .dashboard-stat-card { min-width: 0; padding: 12px 10px; gap: 4px; }
+  .dashboard-stat-icon { width: 30px; height: 30px; font-size: 14px; margin-bottom: 2px; }
+  .dashboard-stat-title { font-size: 10px; letter-spacing: .04em; }
+  .dashboard-stat-row { font-size: 12px; padding: 2px 0; }
+}
+/* Very small phones (< 400px): allow stat cards to stack */
+@media (max-width: 399.98px) {
+  .dashboard-hero-info { flex-wrap: wrap; }
+  .dashboard-stat-card { min-width: 100%; }
+}
+/* Page title: slightly smaller on phones */
+@media (max-width: 575.98px) {
+  .dashboard-page-title { font-size: 20px; }
+}
+
+[data-theme="dark"] .dashboard-hero { background: var(--helppy-card); border-color: var(--helppy-border); }
+[data-theme="dark"] .dashboard-stat-card { background: var(--helppy-surface-2); border-color: var(--helppy-border); }
+[data-theme="dark"] .dashboard-photo-label { background: rgba(143,174,130,.10); border-color: var(--helppy-green-light); color: var(--helppy-green-light); }
+[data-theme="dark"] .dashboard-photo-label:hover { background: var(--helppy-green); color: #fff; }
+
 /* ---------- Provider dashboard form (sectioned card layout) ---------- */
 .provider-form { display: flex; flex-direction: column; gap: var(--helppy-space-3); }
 .form-card {
@@ -2922,9 +3066,10 @@ section + section { margin-top: var(--helppy-space-2); }
 /* ---------- Container side padding on phones ---------- */
 @media (max-width: 575.98px) {
   .container, .container-fluid { padding-left: 16px; padding-right: 16px; }
-  .form-card { padding: 18px; }
+  .form-card { padding: 14px; border-radius: var(--helppy-radius-sm); }
+  .form-card-title { font-size: 14px; padding-bottom: 6px; margin-bottom: 10px; }
   .profile-card { padding: 16px; }
-  .section-title { margin-top: var(--helppy-space-4); }
+  .section-title { margin-top: var(--helppy-space-4); font-size: 18px !important; }
   .btn-lg { font-size: 15px; }
   .form-control-lg, .form-select-lg { font-size: 16px; }   /* iOS no-zoom */
   .tier-price { font-size: 28px; }
@@ -2933,6 +3078,23 @@ section + section { margin-top: var(--helppy-space-2); }
   .table thead th { font-size: 12px; }
   .bookings-table th:nth-child(1),
   .bookings-table td:nth-child(1) { display: none; }  /* hide ID col on phones */
+
+  /* Provider dashboard: location map tighter on phones */
+  .location-map-col .provider-map { min-height: 220px; }
+  .location-coords { padding: 8px 10px; }
+
+  /* Category picker: children area scrollable so it doesn't push the page */
+  .category-picker-group .category-picker-children {
+    max-height: 240px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Category picker toggle: allow full width on xs so label doesn't clip */
+  .category-picker-toggle { font-size: 13px; padding: 8px 12px; }
+
+  /* Provider form: form card row gaps tighter */
+  .provider-form { gap: 10px; }
 }
 
 @media (max-width: 359.98px) {
@@ -4083,3 +4245,115 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
 }
 [data-theme="dark"] .providers-map-toolbar { background: var(--helppy-card); }
 [data-theme="dark"] .map-side-panel { background: var(--helppy-card); }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE RESPONSIVENESS — comprehensive pass
+   ═══════════════════════════════════════════════════════════ */
+
+/* ---------- Search bar: prevent horizontal overflow on tiny screens ---------- */
+@media (max-width: 575.98px) {
+  .helppy-search {
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px;
+  }
+  /* Name input stretches to full width on its own row */
+  .helppy-search .helppy-search-q {
+    flex: 1 1 100%;
+    order: -1;
+    border-bottom: 1px solid var(--helppy-border);
+    padding-bottom: 8px;
+    margin-bottom: 2px;
+  }
+  /* City + category pickers share a row */
+  .helppy-search .helppy-citypicker { flex: 1; min-width: 0; }
+  /* Dividers hidden on wrap layout */
+  .helppy-search .helppy-search-divider { display: none !important; }
+  /* Search button full-width below */
+  .helppy-search .btn-helppy {
+    flex: 1 1 100%;
+    order: 10;
+    margin-top: 4px;
+  }
+  /* Location icon hidden on mobile to save space */
+  .helppy-search .location-icon { display: none; }
+}
+
+/* ---------- Category strip: search panel full-width on mobile ---------- */
+@media (max-width: 767.98px) {
+  .category-search-panel {
+    left: 0; right: 0;
+    width: auto;
+  }
+  .category-search-results {
+    max-height: min(45vh, 280px);
+  }
+}
+
+/* ---------- Nearby banner: button stacks on very narrow phones ---------- */
+@media (max-width: 479.98px) {
+  .nearby-banner .d-flex { flex-direction: column; }
+  .nearby-banner .btn { width: 100%; }
+}
+
+/* ---------- Results header: count + filter button ---------- */
+@media (max-width: 575.98px) {
+  .section.container.py-3 > .d-flex { flex-wrap: wrap; gap: 8px; }
+}
+
+/* ---------- Provider dashboard: fieldset row layout on small tablets ---------- */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  /* Keep name + phone side-by-side on small tablets */
+  .provider-form .row .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+}
+
+/* ---------- Location card: stacked map below controls on tablets ---------- */
+@media (max-width: 991.98px) {
+  .location-map-col .provider-map { min-height: 260px; }
+}
+
+/* ---------- Gallery grid in work-photos section: tighter on mobile ---------- */
+@media (max-width: 767.98px) {
+  #work-photos .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  #work-photos .gallery-item .gallery-delete { opacity: 1; }
+}
+@media (max-width: 399.98px) {
+  #work-photos .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- Helppy citypicker panel: position fix on mobile ---------- */
+@media (max-width: 575.98px) {
+  .helppy-citypicker-panel { left: 0; right: 0; width: auto; min-width: 0; }
+}
+
+/* ---------- Work photos upload form: tighter inside col on mobile ---------- */
+@media (max-width: 767.98px) {
+  #work-photos .form-card { padding: 14px; }
+}
+
+/* ---------- Section-title icon alignment on mobile ---------- */
+@media (max-width: 575.98px) {
+  .section-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .section-title i { font-size: 18px; }
+}
+
+/* ---------- Ensure all buttons have minimum touch targets ---------- */
+.btn, .btn-helppy, .btn-helppy-outline, .btn-ghost,
+.helppy-citypicker-toggle, .category-picker-toggle,
+.dashboard-photo-label, .category-dropdown-toggle {
+  min-height: 44px;
+}
+.btn-sm { min-height: 36px; }
+
+/* ---------- Inputs: no iOS zoom (font-size must be >= 16px) ---------- */
+@media (max-width: 575.98px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="file"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}

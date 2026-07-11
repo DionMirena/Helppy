@@ -6,7 +6,7 @@ $__isHome      = $__currentPath === '';
 <nav class="navbar navbar-expand-lg helppy-nav">
   <div class="container-fluid helppy-nav-container">
     <a class="navbar-brand text-white d-flex align-items-center" href="<?= e(CONFIG['base_url']) ?>/">
-      <img src="<?= e(CONFIG['base_url']) ?>/assets/img/logo.svg" alt="Helppy" height="32" class="me-2">
+      <img src="<?= e(CONFIG['base_path']) ?>/assets/img/logo.svg" alt="Helppy" height="32" class="me-2">
       <span class="fw-bold">Helppy</span>
     </a>
 

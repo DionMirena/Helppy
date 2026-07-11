@@ -1,7 +1,7 @@
 <?php
 $photoUrl = !empty($p['photo'])
     ? CONFIG['upload_url'] . '/' . rawurlencode($p['photo'])
-    : CONFIG['base_url'] . '/assets/img/default-avatar.svg';
+    : CONFIG['base_path'] . '/assets/img/default-avatar.svg';
 $avg = isset($p['avg_rating']) && $p['avg_rating'] !== null ? round((float)$p['avg_rating'], 1) : null;
 $phoneRaw = !empty($p['phone']) ? preg_replace('/[^0-9+]/', '', $p['phone']) : '';
 $isOnline = Presence::isOnline($p['last_seen_at'] ?? null);
