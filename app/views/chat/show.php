@@ -1,4 +1,4 @@
-<section class="container py-4">
+<div class="chat-page-wrap">
   <div class="chat-shell">
     <div class="chat-header">
       <a class="chat-back" href="<?= e(CONFIG['base_url']) ?>/chat" title="Mbrapa"><i class="bi bi-arrow-left"></i></a>
@@ -62,7 +62,31 @@
       <button type="submit" class="btn btn-helppy" aria-label="Dërgo"><i class="bi bi-send-fill"></i></button>
     </form>
   </div>
-</section>
+</div>
+
+<script>
+// Lock page scroll and resize shell to visible viewport (handles mobile keyboard)
+(function () {
+  document.body.classList.add('helppy-chat-page');
+
+  var shell = document.querySelector('.chat-shell');
+  var nav   = document.querySelector('.helppy-nav');
+  if (!shell) return;
+
+  function resize() {
+    var navH = nav ? nav.offsetHeight : 56;
+    var vvH  = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    shell.style.height = (vvH - navH) + 'px';
+  }
+
+  resize();
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', resize);
+    window.visualViewport.addEventListener('scroll', resize);
+  }
+  window.addEventListener('resize', resize);
+})();
+</script>
 
 <script>
 (function () {

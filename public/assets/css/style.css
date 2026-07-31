@@ -2538,15 +2538,48 @@ main { flex: 1 0 auto; }
 }
 
 /* ---------- Chat thread ---------- */
+/* Full-viewport chat page — locks page scroll, footer hidden, shell fills screen */
+body.helppy-chat-page {
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+}
+body.helppy-chat-page main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+body.helppy-chat-page .helppy-footer { display: none; }
+.chat-page-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
 .chat-shell {
   display: flex; flex-direction: column;
   background: #fff;
   border-radius: var(--helppy-radius);
   box-shadow: var(--helppy-shadow);
   overflow: hidden;
-  height: calc(100vh - 180px);
+  /* Desktop fallback height */
+  height: calc(100vh - 140px);
   min-height: 480px;
-  max-height: 760px;
+  max-height: 820px;
+}
+/* On mobile JS overrides the height via visualViewport; these are fallbacks */
+@media (max-width: 991.98px) {
+  .chat-shell {
+    height: calc(100dvh - 60px);
+    min-height: 0;
+    max-height: none;
+    border-radius: 0;
+  }
+  .chat-page-wrap { padding: 0; }
 }
 .chat-header {
   display: flex; align-items: center; gap: 12px;
