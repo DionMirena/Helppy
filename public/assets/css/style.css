@@ -5404,6 +5404,18 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
   justify-content: center;
   flex-wrap: wrap;
 }
+.about-review-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 17px;
+  color: #fff;
+  flex-shrink: 0;
+}
 @media (max-width: 575.98px) {
   .hiw-cta { padding: 32px 20px; }
   .hiw-cta-btns .btn-hero-search,
