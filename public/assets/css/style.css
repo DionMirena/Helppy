@@ -1737,6 +1737,7 @@ body.helppy-no-scroll { overflow: hidden; }
   gap: 10px;
   align-items: center;
   justify-content: space-between;
+  overflow: visible;
 }
 
 /* Inline name-search form sitting at the end of the category strip */
@@ -1940,11 +1941,13 @@ body.helppy-no-scroll { overflow: hidden; }
 [data-theme="dark"] .category-dropdown-item { color: var(--helppy-text); }
 [data-theme="dark"] .category-dropdown-item:hover { background: var(--helppy-surface-2); color: var(--helppy-green-light); }
 
-/* Search panel — drops below the strip */
+/* Search panel — floats below the strip without pushing content down */
 .category-search-panel {
-  /* Inline — sits in document flow and pushes content below instead of overlaying */
-  width: 100%;
-  order: 99;          /* flex order: always renders after chips + button row */
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 1200;
   background: #fff;
   border: 1px solid var(--helppy-border);
   border-radius: var(--helppy-radius);
@@ -4282,12 +4285,8 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
   .helppy-search .location-icon { display: none; }
 }
 
-/* ---------- Category strip: search panel full-width on mobile ---------- */
+/* ---------- Category strip: search panel on mobile ---------- */
 @media (max-width: 767.98px) {
-  .category-search-panel {
-    left: 0; right: 0;
-    width: auto;
-  }
   .category-search-results {
     max-height: min(45vh, 280px);
   }
