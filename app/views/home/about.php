@@ -68,128 +68,140 @@
     </div>
   </div>
 
-  <!-- Reviews section -->
-  <div class="mb-2 d-flex align-items-center justify-content-between flex-wrap gap-3">
+  <!-- Reviews slider -->
+  <div class="mb-3 d-flex align-items-center justify-content-between flex-wrap gap-3">
     <div>
       <h2 class="h4 fw-bold mb-1" style="color:var(--helppy-navy)">Çfarë thonë përdoruesit</h2>
       <p class="text-muted small mb-0">Opinione reale nga klientë dhe mjeshtra të platformës.</p>
     </div>
-    <a class="btn-hero-search" href="<?= $baseUrl ?>/register"
-       style="font-size:14px; padding:9px 18px">
+    <a class="btn-hero-search" href="<?= $baseUrl ?>/register" style="font-size:14px; padding:9px 18px">
       <i class="bi bi-star"></i> Lër një opinion
     </a>
   </div>
 
-  <div class="row g-3 mb-5">
+  <div class="review-slider-wrap mb-5">
+    <div class="review-slider" id="reviewSlider">
 
-    <div class="col-md-6">
-      <div class="card border-0 shadow-sm h-100 p-4">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="about-review-avatar" style="background:var(--helppy-navy)">A</div>
-          <div>
-            <div class="fw-bold" style="color:var(--helppy-navy)">Artan Krasniqi</div>
-            <div class="text-muted small">Klient · Prishtinë</div>
+      <div class="review-slide">
+        <div class="review-card">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="about-review-avatar" style="background:var(--helppy-navy)">A</div>
+            <div>
+              <div class="fw-bold" style="color:var(--helppy-navy)">Artan Krasniqi</div>
+              <div class="text-muted small">Klient · Prishtinë</div>
+            </div>
+            <div class="ms-auto text-warning fs-6">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
           </div>
-          <div class="ms-auto text-warning">
-            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          </div>
+          <p class="text-muted mb-0" style="line-height:1.75; font-size:14px">
+            "Gjeta hidraulikun brenda 10 minutave. Erdhi në kohë, punoi profesionalisht dhe çmimi ishte shumë i arsyeshëm. Helppy e bëri të lehtë gjithë procesin."
+          </p>
         </div>
-        <p class="text-muted mb-0" style="line-height:1.7; font-size:14px">
-          "Gjeta hidraulikun brenda 10 minutave. Erdhi në kohë, punoi profesionalisht dhe çmimi ishte shumë i arsyeshëm. Helppy e bëri të lehtë gjithë procesin."
-        </p>
       </div>
+
+      <div class="review-slide">
+        <div class="review-card">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="about-review-avatar" style="background:var(--helppy-amber)">L</div>
+            <div>
+              <div class="fw-bold" style="color:var(--helppy-navy)">Lirinda Berisha</div>
+              <div class="text-muted small">Kliente · Prishtinë</div>
+            </div>
+            <div class="ms-auto text-warning fs-6">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+          </div>
+          <p class="text-muted mb-0" style="line-height:1.75; font-size:14px">
+            "Shërbim fantastik! Porosita një elektricist për riparimin e pajisjeve në shtëpi dhe gjithçka u krye në mënyrë perfekte. Do ta përdor sërish patjetër."
+          </p>
+        </div>
+      </div>
+
+      <div class="review-slide">
+        <div class="review-card">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="about-review-avatar" style="background:#1e3a5f">B</div>
+            <div>
+              <div class="fw-bold" style="color:var(--helppy-navy)">Besnik Morina</div>
+              <div class="text-muted small">Mjeshtër · Prishtinë</div>
+            </div>
+            <div class="ms-auto text-warning fs-6">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+            </div>
+          </div>
+          <p class="text-muted mb-0" style="line-height:1.75; font-size:14px">
+            "Që kur u regjistrova si karpentier në Helppy, klientët e rinj nuk kanë reshtur. Platforma është shumë e lehtë për t'u përdorur dhe mbeshtetja është e shkëlqyer."
+          </p>
+        </div>
+      </div>
+
+      <div class="review-slide">
+        <div class="review-card">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="about-review-avatar" style="background:#e67e22">V</div>
+            <div>
+              <div class="fw-bold" style="color:var(--helppy-navy)">Vjosa Ahmeti</div>
+              <div class="text-muted small">Kliante · Prishtinë</div>
+            </div>
+            <div class="ms-auto text-warning fs-6">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+          </div>
+          <p class="text-muted mb-0" style="line-height:1.75; font-size:14px">
+            "Mora shërbim pastrimi për shtëpinë time dhe rezultati ishte i jashtëzakonshëm. Rezervova direkt nga telefoni, pa asnjë ndërmjetës. Rekomandoj me gjithë zemër!"
+          </p>
+        </div>
+      </div>
+
+      <div class="review-slide">
+        <div class="review-card">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="about-review-avatar" style="background:var(--helppy-navy)">F</div>
+            <div>
+              <div class="fw-bold" style="color:var(--helppy-navy)">Fisnik Gashi</div>
+              <div class="text-muted small">Mjeshtër · Prishtinë</div>
+            </div>
+            <div class="ms-auto text-warning fs-6">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+          </div>
+          <p class="text-muted mb-0" style="line-height:1.75; font-size:14px">
+            "Si hidraulik, Helppy më ka dhënë mundësinë të rris biznesin tim. Klientët vijnë vetë — unë fokusohem vetëm në punë. Investimi më i mirë profesional që kam bërë."
+          </p>
+        </div>
+      </div>
+
+      <div class="review-slide">
+        <div class="review-card">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="about-review-avatar" style="background:var(--helppy-amber)">D</div>
+            <div>
+              <div class="fw-bold" style="color:var(--helppy-navy)">Drita Llazi</div>
+              <div class="text-muted small">Kliante · Prishtinë</div>
+            </div>
+            <div class="ms-auto text-warning fs-6">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+            </div>
+          </div>
+          <p class="text-muted mb-0" style="line-height:1.75; font-size:14px">
+            "Aplikacioni është shumë intuitiv. Gjeta bojaxhi për banesën time në pak minuta, komunikova direkt me të dhe caktova kohën e punës vetë. Shumë praktik!"
+          </p>
+        </div>
+      </div>
+
     </div>
 
-    <div class="col-md-6">
-      <div class="card border-0 shadow-sm h-100 p-4">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="about-review-avatar" style="background:var(--helppy-amber)">L</div>
-          <div>
-            <div class="fw-bold" style="color:var(--helppy-navy)">Lirinda Berisha</div>
-            <div class="text-muted small">Kliente · Prishtinë</div>
-          </div>
-          <div class="ms-auto text-warning">
-            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          </div>
-        </div>
-        <p class="text-muted mb-0" style="line-height:1.7; font-size:14px">
-          "Shërbim fantastik! Porosita një elektricist për riparimin e pajisjeve në shtëpi dhe gjithçka u krye në mënyrë perfekte. Do ta përdor sërish patjetër."
-        </p>
-      </div>
+    <!-- Controls -->
+    <div class="review-slider-controls">
+      <button class="review-slider-btn" id="reviewPrev" aria-label="E mëparshme">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <div class="review-slider-dots" id="reviewDots"></div>
+      <button class="review-slider-btn" id="reviewNext" aria-label="E ardhshme">
+        <i class="bi bi-chevron-right"></i>
+      </button>
     </div>
-
-    <div class="col-md-6">
-      <div class="card border-0 shadow-sm h-100 p-4">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="about-review-avatar" style="background:#1e3a5f">B</div>
-          <div>
-            <div class="fw-bold" style="color:var(--helppy-navy)">Besnik Morina</div>
-            <div class="text-muted small">Mjeshtër · Prishtinë</div>
-          </div>
-          <div class="ms-auto text-warning">
-            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
-          </div>
-        </div>
-        <p class="text-muted mb-0" style="line-height:1.7; font-size:14px">
-          "Që kur u regjistrova si karpentier në Helppy, klientët e rinj nuk kanë reshtur. Platforma është shumë e lehtë për t'u përdorur dhe mbeshtetja është e shkëlqyer."
-        </p>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="card border-0 shadow-sm h-100 p-4">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="about-review-avatar" style="background:#e67e22">V</div>
-          <div>
-            <div class="fw-bold" style="color:var(--helppy-navy)">Vjosa Ahmeti</div>
-            <div class="text-muted small">Kliante · Prishtinë</div>
-          </div>
-          <div class="ms-auto text-warning">
-            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          </div>
-        </div>
-        <p class="text-muted mb-0" style="line-height:1.7; font-size:14px">
-          "Mora shërbim pastrimi për shtëpinë time dhe rezultati ishte i jashtëzakonshëm. Rezervova direkt nga telefoni, pa asnjë ndërmjetës. Rekomandoj me gjithë zemër!"
-        </p>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="card border-0 shadow-sm h-100 p-4">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="about-review-avatar" style="background:var(--helppy-navy)">F</div>
-          <div>
-            <div class="fw-bold" style="color:var(--helppy-navy)">Fisnik Gashi</div>
-            <div class="text-muted small">Mjeshtër · Prishtinë</div>
-          </div>
-          <div class="ms-auto text-warning">
-            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          </div>
-        </div>
-        <p class="text-muted mb-0" style="line-height:1.7; font-size:14px">
-          "Si hidraulik, Helppy më ka dhënë mundësinë të rris biznesin tim. Klientët vijnë vetë — unë fokusohem vetëm në punë. Investimi më i mirë profesional që kam bërë."
-        </p>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="card border-0 shadow-sm h-100 p-4">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="about-review-avatar" style="background:var(--helppy-amber)">D</div>
-          <div>
-            <div class="fw-bold" style="color:var(--helppy-navy)">Drita Llazi</div>
-            <div class="text-muted small">Kliante · Prishtinë</div>
-          </div>
-          <div class="ms-auto text-warning">
-            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
-          </div>
-        </div>
-        <p class="text-muted mb-0" style="line-height:1.7; font-size:14px">
-          "Aplikacioni është shumë intuitiv. Gjeta bojaxhi për banesën time në pak minuta, komunikova direkt me të dhe caktova kohën e punës vetë. Shumë praktik!"
-        </p>
-      </div>
-    </div>
-
   </div>
 
   <!-- Bottom CTA -->
@@ -203,3 +215,48 @@
   </div>
 
 </div>
+
+<script>
+(function () {
+  const slider = document.getElementById('reviewSlider');
+  const slides = slider.querySelectorAll('.review-slide');
+  const dotsWrap = document.getElementById('reviewDots');
+  const total = slides.length;
+  let current = 0;
+  let autoTimer;
+
+  // Build dots
+  slides.forEach(function (_, i) {
+    const d = document.createElement('button');
+    d.className = 'review-dot' + (i === 0 ? ' is-active' : '');
+    d.setAttribute('aria-label', 'Opinioni ' + (i + 1));
+    d.addEventListener('click', function () { goTo(i); resetAuto(); });
+    dotsWrap.appendChild(d);
+  });
+
+  function goTo(idx) {
+    current = (idx + total) % total;
+    slider.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+    dotsWrap.querySelectorAll('.review-dot').forEach(function (d, i) {
+      d.classList.toggle('is-active', i === current);
+    });
+  }
+
+  document.getElementById('reviewPrev').addEventListener('click', function () { goTo(current - 1); resetAuto(); });
+  document.getElementById('reviewNext').addEventListener('click', function () { goTo(current + 1); resetAuto(); });
+
+  function startAuto() { autoTimer = setInterval(function () { goTo(current + 1); }, 4000); }
+  function resetAuto() { clearInterval(autoTimer); startAuto(); }
+
+  // Sync dot on manual scroll
+  slider.addEventListener('scroll', function () {
+    const idx = Math.round(slider.scrollLeft / slider.offsetWidth);
+    dotsWrap.querySelectorAll('.review-dot').forEach(function (d, i) {
+      d.classList.toggle('is-active', i === idx);
+    });
+    current = idx;
+  }, { passive: true });
+
+  startAuto();
+})();
+</script>
