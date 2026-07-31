@@ -42,10 +42,10 @@ $__isHome      = $__currentPath === '';
           <a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/si-funksionon">Si funksionon</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/posts">Rreth nesh</a>
+          <a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/rreth-nesh">Rreth nesh</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/posts">Kontakt</a>
+          <a class="nav-link text-white" href="<?= e(CONFIG['base_url']) ?>/kontakt">Kontakt</a>
         </li>
       </ul>
 

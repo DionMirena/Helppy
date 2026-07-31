@@ -59,6 +59,8 @@ $router = new Router();
 // PUBLIC
 $router->get('/',                          [HomeController::class,    'index']);
 $router->get('/si-funksionon',             [HomeController::class,    'howItWorks']);
+$router->get('/rreth-nesh',                [HomeController::class,    'about']);
+$router->get('/kontakt',                   [HomeController::class,    'contact']);
 $router->get('/api/providers.json',        [HomeController::class,    'providersJson']);
 $router->get('/map',                       [HomeController::class,    'map']);
 $router->get('/api/providers/map.json',    [HomeController::class,    'mapJson']);

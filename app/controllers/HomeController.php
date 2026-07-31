@@ -72,6 +72,14 @@ final class HomeController extends Controller {
         ]);
     }
 
+    public function about(array $params = []): void {
+        $this->render('home/about', ['title' => 'Rreth nesh – Helppy.com']);
+    }
+
+    public function contact(array $params = []): void {
+        $this->render('home/contact', ['title' => 'Kontakt – Helppy.com']);
+    }
+
     /** GET /map — full-page map of all providers with a GPS pin. */
     public function map(array $params = []): void {
         $this->render('home/map', [
