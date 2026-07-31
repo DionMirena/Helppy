@@ -218,12 +218,16 @@
 
 <script>
 (function () {
-  const slider = document.getElementById('reviewSlider');
-  const slides = slider.querySelectorAll('.review-slide');
+  const slider  = document.getElementById('reviewSlider');
+  const slides  = Array.from(slider.querySelectorAll('.review-slide'));
   const dotsWrap = document.getElementById('reviewDots');
-  const total = slides.length;
-  let current = 0;
+  const total   = slides.length;
+  let current   = 0;
+  let busy      = false;
   let autoTimer;
+
+  // Activate first slide
+  slides[0].classList.add('is-active');
 
   // Build dots
   slides.forEach(function (_, i) {
@@ -234,12 +238,44 @@
     dotsWrap.appendChild(d);
   });
 
-  function goTo(idx) {
-    current = (idx + total) % total;
-    slider.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+  function updateDots(idx) {
     dotsWrap.querySelectorAll('.review-dot').forEach(function (d, i) {
-      d.classList.toggle('is-active', i === current);
+      d.classList.toggle('is-active', i === idx);
     });
+  }
+
+  function goTo(next) {
+    if (busy || next === current) return;
+    busy = true;
+
+    const prev      = current;
+    const direction = next > prev || (prev === total - 1 && next === 0) ? 'forward' : 'back';
+    const outClass  = direction === 'forward' ? 'slide-out-left'  : 'slide-out-right';
+    const inClass   = direction === 'forward' ? 'slide-in-right'  : 'slide-in-left';
+
+    next = (next + total) % total;
+
+    // Animate old slide out (keep it in position during animation)
+    const oldSlide = slides[prev];
+    oldSlide.style.position = 'absolute';
+    oldSlide.style.inset    = '0';
+    oldSlide.classList.add(outClass);
+
+    // Animate new slide in
+    const newSlide = slides[next];
+    newSlide.classList.add('is-active', inClass);
+
+    current = next;
+    updateDots(current);
+
+    oldSlide.addEventListener('animationend', function handler() {
+      oldSlide.removeEventListener('animationend', handler);
+      oldSlide.classList.remove('is-active', outClass);
+      oldSlide.style.position = '';
+      oldSlide.style.inset    = '';
+      newSlide.classList.remove(inClass);
+      busy = false;
+    }, { once: true });
   }
 
   document.getElementById('reviewPrev').addEventListener('click', function () { goTo(current - 1); resetAuto(); });
@@ -247,15 +283,6 @@
 
   function startAuto() { autoTimer = setInterval(function () { goTo(current + 1); }, 4000); }
   function resetAuto() { clearInterval(autoTimer); startAuto(); }
-
-  // Sync dot on manual scroll
-  slider.addEventListener('scroll', function () {
-    const idx = Math.round(slider.scrollLeft / slider.offsetWidth);
-    dotsWrap.querySelectorAll('.review-dot').forEach(function (d, i) {
-      d.classList.toggle('is-active', i === idx);
-    });
-    current = idx;
-  }, { passive: true });
 
   startAuto();
 })();

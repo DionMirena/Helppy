@@ -5417,30 +5417,39 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
 }
 
 /* ── Review slider ── */
-.review-slider-wrap { position: relative; }
+.review-slider-wrap { position: relative; overflow: hidden; border-radius: var(--helppy-radius); }
 .review-slider {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  gap: 0;
-  border-radius: var(--helppy-radius);
+  position: relative;
+  min-height: 160px;
 }
-.review-slider::-webkit-scrollbar { display: none; }
-.review-slider { scrollbar-width: none; }
 .review-slide {
-  flex: 0 0 100%;
-  scroll-snap-align: start;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
   padding: 4px;
-  box-sizing: border-box;
 }
+.review-slide.is-active {
+  position: relative;
+  opacity: 1;
+  pointer-events: auto;
+}
+/* slide directions */
+.review-slide.slide-in-right  { animation: reviewInRight  .38s cubic-bezier(.25,.46,.45,.94) forwards; }
+.review-slide.slide-in-left   { animation: reviewInLeft   .38s cubic-bezier(.25,.46,.45,.94) forwards; }
+.review-slide.slide-out-left  { animation: reviewOutLeft  .38s cubic-bezier(.25,.46,.45,.94) forwards; }
+.review-slide.slide-out-right { animation: reviewOutRight .38s cubic-bezier(.25,.46,.45,.94) forwards; }
+
+@keyframes reviewInRight  { from { opacity:0; transform:translateX(60px); }  to { opacity:1; transform:translateX(0); } }
+@keyframes reviewInLeft   { from { opacity:0; transform:translateX(-60px); } to { opacity:1; transform:translateX(0); } }
+@keyframes reviewOutLeft  { from { opacity:1; transform:translateX(0); }  to { opacity:0; transform:translateX(-60px); } }
+@keyframes reviewOutRight { from { opacity:1; transform:translateX(0); }  to { opacity:0; transform:translateX(60px); } }
+
 .review-card {
   background: #fff;
   border-radius: var(--helppy-radius);
   box-shadow: 0 2px 16px rgba(22,37,67,.09);
   padding: 28px 28px 24px;
-  height: 100%;
   border: 1px solid var(--helppy-border);
 }
 [data-theme="dark"] .review-card {
