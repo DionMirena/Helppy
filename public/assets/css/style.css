@@ -4687,8 +4687,8 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
 .btn-hero-search:active { transform: translateY(1px); }
 .btn-hero-outline {
   background: transparent;
-  color: #fff;
-  border: 2px solid rgba(255,255,255,.75);
+  color: var(--helppy-navy);
+  border: 2px solid var(--helppy-navy);
   border-radius: var(--helppy-radius-sm);
   padding: 11px 22px;
   font-size: 15px;
@@ -4702,7 +4702,7 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
   min-height: 44px;
   white-space: nowrap;
 }
-.btn-hero-outline:hover { background: rgba(255,255,255,.15); border-color: #fff; color: #fff; }
+.btn-hero-outline:hover { background: var(--helppy-navy); color: #fff; }
 .btn-hero-outline.is-light {
   color: #fff;
   border-color: #fff;

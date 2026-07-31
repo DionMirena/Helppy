@@ -139,7 +139,7 @@ function hiwVideo(string $slot, array $vids, string $fallbackLabel): string {
     <p>Bashkohu me mijëra klientë dhe mjeshtra që tashmë e përdorin Helppy çdo ditë.</p>
     <div class="hiw-cta-btns">
       <a class="btn-hero-search" href="<?= $baseUrl ?>/search"><i class="bi bi-search"></i> Gjej mjeshtër tani</a>
-      <a class="btn-hero-outline" href="<?= $baseUrl ?>/register"><i class="bi bi-person-plus"></i> Regjistrohu falas</a>
+      <a class="btn-hero-outline is-light" href="<?= $baseUrl ?>/register"><i class="bi bi-person-plus"></i> Regjistrohu falas</a>
     </div>
   </div>
 
