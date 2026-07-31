@@ -26,5 +26,6 @@
     <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/subscriptions"><i class="bi bi-credit-card"></i> Abonimet</a>
     <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/payouts"><i class="bi bi-bank"></i> Llogaria e admin</a>
     <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/users"><i class="bi bi-person-gear"></i> Përdoruesit</a>
+    <a class="btn btn-helppy" href="<?= e(CONFIG['base_url']) ?>/admin/tutorials"><i class="bi bi-play-btn"></i> Videot tutoriale</a>
   </div>
 </div>

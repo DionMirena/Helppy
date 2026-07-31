@@ -2,10 +2,11 @@
   <div class="container">
     <form method="get" action="<?= e(CONFIG['base_url']) ?>/search" class="helppy-search">
       <span class="location-icon"><i class="bi bi-search"></i></span>
-      <input type="text" name="q" class="form-control helppy-search-q"
+      <input type="text" name="q" class="category-search-btn category-search-btn-right"
              placeholder="Kërko emrin e punëtorit…" autocomplete="off"
              value="<?= e((string)($query ?? '')) ?>"
              aria-label="Kërko sipas emrit">
+
       <div class="helppy-search-divider d-none d-sm-block"></div>
 
       <span class="location-icon"><i class="bi bi-geo-alt-fill"></i></span>
@@ -14,7 +15,7 @@
         <input type="hidden" name="city" value="<?= $city ? (int)$city['id'] : '' ?>" data-citypicker-value>
         <button type="button" class="helppy-citypicker-toggle"
                 aria-haspopup="listbox" aria-expanded="false" data-citypicker-toggle>
-          <span class="helppy-citypicker-label" data-citypicker-label><?= $city ? e($city['name']) : 'Te gjitha qytetet' ?></span>
+          <span class="helppy-citypicker-label" data-citypicker-label data-mobile="Qyteti"><?= $city ? e($city['name']) : 'Te gjitha qytetet' ?></span>
           <i class="bi bi-chevron-down helppy-citypicker-caret" aria-hidden="true"></i>
         </button>
         <div class="helppy-citypicker-panel" role="listbox" data-citypicker-panel hidden>
@@ -41,11 +42,13 @@
 
       <div class="helppy-search-divider d-none d-sm-block"></div>
 
+      <span class="location-icon"><i class="bi bi-grid"></i></span>
+
       <div class="helppy-citypicker<?= $category ? ' is-selected' : '' ?>" data-citypicker>
         <input type="hidden" name="category" value="<?= $category ? (int)$category['id'] : '' ?>" data-citypicker-value>
         <button type="button" class="helppy-citypicker-toggle"
                 aria-haspopup="listbox" aria-expanded="false" data-citypicker-toggle>
-          <span class="helppy-citypicker-label" data-citypicker-label><?= $category ? e($category['name']) : 'Te gjitha kategorite' ?></span>
+          <span class="helppy-citypicker-label" data-citypicker-label data-mobile="Kategoria"><?= $category ? e($category['name']) : 'Te gjitha kategorite' ?></span>
           <i class="bi bi-chevron-down helppy-citypicker-caret" aria-hidden="true"></i>
         </button>
         <div class="helppy-citypicker-panel" role="listbox" data-citypicker-panel hidden>

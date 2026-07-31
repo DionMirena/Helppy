@@ -44,10 +44,10 @@
         <input class="form-control" name="company_name" value="<?= e($old['company_name'] ?? '') ?>"></div>
 
       <div class="mb-3"><label class="form-label">Kategorite (zgjidhni te pakten nje)</label>
-        <div>
+        <div class="register-cat-grid">
           <?php foreach ($categories as $cat):
             $checked = in_array((string)$cat['id'], (array)($old['categories'] ?? []), true); ?>
-            <label class="me-3">
+            <label class="category-check">
               <input type="checkbox" name="categories[]" value="<?= (int)$cat['id'] ?>" <?= $checked?'checked':'' ?>>
               <?= e($cat['name']) ?>
             </label>

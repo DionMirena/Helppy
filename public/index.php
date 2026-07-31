@@ -8,7 +8,8 @@ $__publicHost = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? ''
 if (!isset($_GET['ngrok-skip-browser-warning']) && str_contains($__publicHost, 'ngrok')) {
     $qs = $_SERVER['QUERY_STRING'] ?? '';
     $sep = $qs ? '&' : '?';
-    header('Location: ' . $_SERVER['REQUEST_URI'] . $sep . 'ngrok-skip-browser-warning=skip', true, 302);
+    // 307 preserves the request method (POST stays POST, form data is not lost)
+    header('Location: ' . $_SERVER['REQUEST_URI'] . $sep . 'ngrok-skip-browser-warning=skip', true, 307);
     exit;
 }
 
@@ -57,6 +58,7 @@ $router = new Router();
 
 // PUBLIC
 $router->get('/',                          [HomeController::class,    'index']);
+$router->get('/si-funksionon',             [HomeController::class,    'howItWorks']);
 $router->get('/api/providers.json',        [HomeController::class,    'providersJson']);
 $router->get('/map',                       [HomeController::class,    'map']);
 $router->get('/api/providers/map.json',    [HomeController::class,    'mapJson']);
@@ -164,6 +166,8 @@ $router->post('/admin/categories/{id}/delete', [AdminController::class,'deleteCa
 $router->post('/admin/reviews/{id}/delete',[AdminController::class,   'deleteReview']);
 $router->get('/admin/posts',               [AdminController::class,   'posts']);
 $router->post('/admin/posts/{id}/hide',    [AdminController::class,   'hidePost']);
+$router->get('/admin/tutorials',           [AdminController::class,   'tutorials']);
+$router->post('/admin/tutorials/{slot}',   [AdminController::class,   'saveTutorial']);
 
 $url = $_GET['url'] ?? '/';
 $router->dispatch(Request::method(), $url);

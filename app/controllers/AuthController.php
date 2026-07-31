@@ -30,6 +30,14 @@ final class AuthController extends Controller {
                 Verification::send((int)$user['id']);
             } catch (Throwable $e) {
                 $this->logMailError('login', $e);
+                if (CONFIG['debug']) {
+                    $codeRow = DB::q('SELECT verification_code FROM users WHERE id=?', [(int)$user['id']])->fetch();
+                    $debugCode = $codeRow['verification_code'] ?? '?';
+                    Auth::setPending((int)$user['id']);
+                    $this->flash('warning', "SMTP mungon. Kodi juaj i verifikimit: $debugCode");
+                    $this->redirect('/verify-email');
+                    return;
+                }
                 $this->flash('danger', 'Kodi i verifikimit nuk u dergua. Provoni perseri.');
                 $this->redirect('/login');
             }
@@ -127,7 +135,13 @@ final class AuthController extends Controller {
             Verification::send($uid);
         } catch (Throwable $e) {
             $this->logMailError('signup', $e);
-            $this->flash('danger', 'Llogaria u krijua, por emaili nuk u dergua. Provoni te dergoni perseri.');
+            if (CONFIG['debug']) {
+                $codeRow = DB::q('SELECT verification_code FROM users WHERE id=?', [$uid])->fetch();
+                $debugCode = $codeRow['verification_code'] ?? '?';
+                $this->flash('warning', "Email nuk u dërgua (SMTP mungon). Kodi juaj i verifikimit: $debugCode");
+            } else {
+                $this->flash('danger', 'Llogaria u krijua, por emaili nuk u dergua. Provoni te dergoni perseri.');
+            }
         }
 
         $user = User::find($uid);
@@ -197,7 +211,13 @@ final class AuthController extends Controller {
             $this->flash('info', 'Kodi u dergua perseri.');
         } catch (Throwable $e) {
             $this->logMailError('resend', $e);
-            $this->flash('danger', 'Emaili nuk u dergua. Provoni perseri me vone.');
+            if (CONFIG['debug']) {
+                $codeRow = DB::q('SELECT verification_code FROM users WHERE id=?', [$uid])->fetch();
+                $debugCode = $codeRow['verification_code'] ?? '?';
+                $this->flash('warning', "SMTP mungon. Kodi juaj: $debugCode");
+            } else {
+                $this->flash('danger', 'Emaili nuk u dergua. Provoni perseri me vone.');
+            }
         }
         $this->redirect('/verify-email');
     }

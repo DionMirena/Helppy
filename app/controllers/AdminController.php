@@ -279,4 +279,39 @@ final class AdminController extends Controller {
         $this->flash('success', 'Biseda u fshi.');
         $this->redirect('/chat');
     }
+
+    public function tutorials(array $params = []): void {
+        Auth::require('admin');
+        $this->render('admin/tutorials', [
+            'title'  => 'Admin – Videot tutoriale',
+            'videos' => TutorialVideo::allIndexed(),
+        ]);
+    }
+
+    public function saveTutorial(array $params = []): void {
+        Auth::require('admin');
+        $slot = $params['slot'] ?? '';
+        $row  = TutorialVideo::bySlot($slot);
+        if (!$row) { $this->notFound(); return; }
+
+        $url = trim($_POST['video_url'] ?? '');
+
+        // Handle file upload
+        if (!empty($_FILES['video_file']['tmp_name']) && $_FILES['video_file']['error'] === UPLOAD_ERR_OK) {
+            $ext     = strtolower(pathinfo($_FILES['video_file']['name'], PATHINFO_EXTENSION));
+            $allowed = ['mp4', 'webm', 'ogg'];
+            if (in_array($ext, $allowed, true)) {
+                $uploadDir = dirname(__DIR__, 2) . '/public/uploads/videos/';
+                if (!is_dir($uploadDir)) { mkdir($uploadDir, 0755, true); }
+                $filename = preg_replace('/[^a-z0-9_\-]/', '', $slot) . '_' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['video_file']['tmp_name'], $uploadDir . $filename)) {
+                    $url = CONFIG['base_url'] . '/uploads/videos/' . $filename;
+                }
+            }
+        }
+
+        TutorialVideo::setUrl($slot, $url);
+        $this->flash('success', 'Videoja u ruajt.');
+        $this->redirect('/admin/tutorials');
+    }
 }

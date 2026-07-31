@@ -64,6 +64,14 @@ final class HomeController extends Controller {
         ]);
     }
 
+    /** GET /si-funksionon — video tutorial page */
+    public function howItWorks(array $params = []): void {
+        $this->render('home/how-it-works', [
+            'title'  => 'Si funksionon – Helppy.com',
+            'videos' => TutorialVideo::allIndexed(),
+        ]);
+    }
+
     /** GET /map — full-page map of all providers with a GPS pin. */
     public function map(array $params = []): void {
         $this->render('home/map', [
