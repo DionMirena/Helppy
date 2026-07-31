@@ -126,15 +126,23 @@
       <h2 class="home-section-title">Shërbimet më të kërkuara</h2>
       <a class="home-section-link" href="<?= $baseUrl ?>/search">Shiko të gjitha shërbimet <i class="bi bi-arrow-right"></i></a>
     </div>
-    <div class="services-grid">
-      <?php foreach (array_slice($topCategories, 0, 8) as $cat): ?>
-        <a class="service-card" href="<?= $baseUrl ?>/search?category=<?= (int)$cat['id'] ?>">
-          <span class="service-icon">
-            <i class="bi <?= e(!empty($cat['icon']) ? $cat['icon'] : 'bi-tools') ?>"></i>
-          </span>
-          <span class="service-name"><?= e($cat['name']) ?></span>
-        </a>
-      <?php endforeach; ?>
+    <div class="services-scroller-wrap">
+      <button class="services-arrow services-arrow-prev" id="svcPrev" aria-label="E mëparshme">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <div class="services-scroller" id="svcScroller">
+        <?php foreach ($topCategories as $cat): ?>
+          <a class="service-card" href="<?= $baseUrl ?>/search?category=<?= (int)$cat['id'] ?>">
+            <span class="service-icon">
+              <i class="bi <?= e(!empty($cat['icon']) ? $cat['icon'] : 'bi-tools') ?>"></i>
+            </span>
+            <span class="service-name"><?= e($cat['name']) ?></span>
+          </a>
+        <?php endforeach; ?>
+      </div>
+      <button class="services-arrow services-arrow-next" id="svcNext" aria-label="E ardhshme">
+        <i class="bi bi-chevron-right"></i>
+      </button>
     </div>
   </div>
 </section>
@@ -331,3 +339,34 @@
     </div>
   </div>
 </section>
+
+<script>
+(function () {
+  var scroller = document.getElementById('svcScroller');
+  var btnPrev  = document.getElementById('svcPrev');
+  var btnNext  = document.getElementById('svcNext');
+  if (!scroller) return;
+
+  var cardWidth = function () {
+    var card = scroller.querySelector('.service-card');
+    if (!card) return 150;
+    var style = getComputedStyle(scroller);
+    return card.offsetWidth + parseInt(style.gap || 14);
+  };
+
+  function scroll(dir) {
+    scroller.scrollBy({ left: dir * cardWidth() * 3, behavior: 'smooth' });
+  }
+
+  btnPrev.addEventListener('click', function () { scroll(-1); });
+  btnNext.addEventListener('click', function () { scroll(1); });
+
+  function updateArrows() {
+    btnPrev.disabled = scroller.scrollLeft <= 2;
+    btnNext.disabled = scroller.scrollLeft + scroller.offsetWidth >= scroller.scrollWidth - 2;
+  }
+
+  scroller.addEventListener('scroll', updateArrows, { passive: true });
+  updateArrows();
+})();
+</script>

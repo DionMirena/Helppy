@@ -4805,14 +4805,52 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
 .home-section-link:hover { color: var(--helppy-green-dark); text-decoration: underline; }
 
 /* ── Services grid ── */
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 16px;
+/* Services scroller */
+.services-scroller-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-@media (max-width: 991.98px) { .services-grid { grid-template-columns: repeat(4, 1fr); } }
-@media (max-width: 575.98px) { .services-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; } }
-@media (max-width: 399.98px) { .services-grid { grid-template-columns: repeat(3, 1fr); } }
+.services-scroller {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding: 6px 2px 10px;
+  flex: 1;
+  min-width: 0;
+}
+.services-scroller::-webkit-scrollbar { display: none; }
+.services-scroller { scrollbar-width: none; }
+.services-scroller .service-card {
+  flex: 0 0 130px;
+  scroll-snap-align: start;
+}
+@media (max-width: 575.98px) {
+  .services-scroller .service-card { flex: 0 0 110px; }
+}
+.services-arrow {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--helppy-navy);
+  background: #fff;
+  color: var(--helppy-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background .15s, color .15s, opacity .15s;
+  box-shadow: 0 2px 8px rgba(22,37,67,.10);
+}
+.services-arrow:hover { background: var(--helppy-navy); color: #fff; }
+.services-arrow:disabled { opacity: .3; cursor: default; }
+[data-theme="dark"] .services-arrow { background: var(--helppy-card); border-color: var(--helppy-border); color: var(--helppy-text); }
 
 .service-card {
   display: flex;
@@ -5182,7 +5220,6 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
   .home-footer-trust { gap: 20px; justify-content: flex-start; }
 }
 @media (max-width: 991.98px) {
-  .services-grid { grid-template-columns: repeat(4, 1fr); }
   .home-hero-trust { gap: 12px; }
   .home-hero-trust li { font-size: 12px; }
 }
