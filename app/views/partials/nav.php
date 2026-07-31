@@ -8,14 +8,15 @@ $__isHome      = $__currentPath === '';
     <a class="navbar-brand text-white d-flex align-items-center gap-2"
        href="<?= e(CONFIG['base_url']) ?>/">
       <img src="<?= e(CONFIG['base_path']) ?>/assets/img/logo.svg" alt="Helppy" height="30" class="me-1">
-      <span class="fw-bold fs-5">Helppy<span style="color:var(--helppy-amber)">.</span>com</span>
+      <span class="fw-bold fs-5 d-none d-lg-inline">Helppy<span style="color:var(--helppy-amber)">.</span>com</span>
     </a>
 
     <?php if (!$__isHome): ?>
       <button type="button" class="helppy-back-btn" data-helppy-back
               aria-label="Kthehu mbrapa" title="Kthehu mbrapa">
         <i class="bi bi-arrow-left"></i>
-        <span class="back-btn-label">Mbrapa</span>
+        <span class="back-btn-label-desktop">Mbrapa</span>
+        <span class="back-btn-label-mobile">Kthehu</span>
       </button>
     <?php endif; ?>
 
@@ -28,7 +29,7 @@ $__isHome      = $__currentPath === '';
 
     <button class="navbar-toggler border-0" type="button"
             data-bs-toggle="collapse" data-bs-target="#navmenu" aria-label="Menu">
-      <i class="bi bi-list text-white fs-4"></i>
+      <i class="bi bi-list text-white nav-toggler-icon"></i>
     </button>
 
     <div class="collapse navbar-collapse justify-content-between" id="navmenu">
@@ -96,6 +97,7 @@ $__isHome      = $__currentPath === '';
                role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <span class="profile-avatar"><?= e(mb_strtoupper(mb_substr((string)$u['name'], 0, 1))) ?></span>
               <span class="d-none d-lg-inline"><?= e($u['name']) ?></span>
+              <span class="d-inline d-lg-none fw-semibold" style="font-size:14px">Profili</span>
               <i class="bi bi-caret-down-fill profile-caret"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-end profile-dropdown">
