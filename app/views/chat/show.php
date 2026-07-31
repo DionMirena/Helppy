@@ -65,18 +65,22 @@
 </div>
 
 <script>
-// Lock page scroll and resize shell to visible viewport (handles mobile keyboard)
 (function () {
   document.body.classList.add('helppy-chat-page');
 
-  var shell = document.querySelector('.chat-shell');
-  var nav   = document.querySelector('.helppy-nav');
-  if (!shell) return;
+  var wrap = document.querySelector('.chat-page-wrap');
+  var nav  = document.querySelector('.helppy-nav');
+  if (!wrap) return;
 
   function resize() {
-    var navH = nav ? nav.offsetHeight : 56;
-    var vvH  = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    shell.style.height = (vvH - navH) + 'px';
+    var navH      = nav ? nav.offsetHeight : 56;
+    var vvH       = window.visualViewport ? window.visualViewport.height   : window.innerHeight;
+    var vvOffsetY = window.visualViewport ? window.visualViewport.offsetTop : 0;
+    // Pin the wrap starting just below the nav, height = visible area below nav
+    wrap.style.top    = navH + 'px';
+    wrap.style.height = (vvH - navH) + 'px';
+    // On iOS the page scrolls when keyboard opens; counteract it with translateY
+    wrap.style.transform = 'translateY(' + vvOffsetY + 'px)';
   }
 
   resize();
