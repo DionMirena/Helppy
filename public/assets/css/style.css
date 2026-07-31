@@ -3710,18 +3710,56 @@ body.helppy-lightbox-open { overflow: hidden; }
 }
 .nav-link-icon[hidden] { display: none !important; }
 
-/* Inside the collapsed mobile drawer items go full-width for tap-friendliness. */
+/* Mobile: collapse overlays the page so the hamburger stays in place */
 @media (max-width: 991.98px) {
-  .helppy-nav .navbar-collapse { margin-top: 8px; }
+  .helppy-nav { position: relative; }
+  .helppy-nav .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--helppy-navy-dark, #0e1b30);
+    z-index: 1080;
+    padding: 8px 16px 18px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.28);
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
   .helppy-nav .navbar-nav { gap: 4px; }
   .nav-link-icon {
     padding: 10px 12px !important;
     border-radius: var(--helppy-radius-sm);
   }
   .nav-link-icon:hover { background: rgba(255, 255, 255, .10); }
-  /* Theme toggle inside the drawer aligns with the others. */
   .theme-toggle-btn { width: auto; justify-content: flex-start; padding: 10px 12px; }
 }
+
+/* Mobile profile button (outside collapse, next to Abonohu) */
+.nav-mobile-profile { flex-shrink: 0; }
+.nav-mobile-profile-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px 4px 4px;
+  border-radius: var(--helppy-radius-pill);
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.20);
+  transition: background .15s;
+}
+.nav-mobile-profile-toggle:hover { background: rgba(255,255,255,.18); }
+.profile-avatar-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--helppy-amber);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.nav-mobile-profile-label { font-size: 13px; font-weight: 600; }
 
 /* Helppy nav container — keep things from overflowing on tiny phones. */
 .helppy-nav-container {
@@ -3777,7 +3815,8 @@ body.helppy-lightbox-open { overflow: hidden; }
   .helppy-nav-container .navbar-brand { order: 0; }
   .helppy-nav-container .helppy-back-btn { order: 1; }
   .helppy-nav-container .nav-abonohu-btn { order: 2; margin-left: auto; }
-  .helppy-nav-container .navbar-toggler { order: 3; margin-left: 6px; }
+  .helppy-nav-container .nav-mobile-profile { order: 3; margin-left: 6px; }
+  .helppy-nav-container .navbar-toggler { order: 4; margin-left: 6px; }
 }
 
 /* When ultra-narrow and the back button + Abonohu + toggler all fight for
