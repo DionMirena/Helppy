@@ -3762,17 +3762,72 @@ body.helppy-lightbox-open { overflow: hidden; }
     right: 0;
     background: var(--helppy-navy-dark, #0e1b30);
     z-index: 1080;
-    padding: 8px 16px 18px;
-    box-shadow: 0 8px 28px rgba(0,0,0,.28);
+    padding: 0 0 12px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.30);
     border-top: 1px solid rgba(255,255,255,.08);
+    max-height: calc(100dvh - 60px);
+    overflow-y: auto;
   }
-  .helppy-nav .navbar-nav { gap: 4px; }
-  .nav-link-icon {
-    padding: 10px 12px !important;
-    border-radius: var(--helppy-radius-sm);
-  }
-  .nav-link-icon:hover { background: rgba(255, 255, 255, .10); }
-  .theme-toggle-btn { width: auto; justify-content: flex-start; padding: 10px 12px; }
+  .helppy-nav .navbar-nav { gap: 2px; padding: 0 12px; }
+  .helppy-nav .navbar-nav .nav-link { padding: 11px 12px; border-radius: var(--helppy-radius-sm); }
+  .helppy-nav .navbar-nav .nav-link:hover { background: rgba(255,255,255,.08); }
+  .nav-link-icon { padding: 11px 12px !important; border-radius: var(--helppy-radius-sm); }
+  .nav-link-icon:hover { background: rgba(255,255,255,.08); }
+  .theme-toggle-btn { width: auto; justify-content: flex-start; padding: 11px 12px; }
+}
+
+/* Mobile menu profile block */
+.nav-menu-profile {
+  padding: 18px 16px 14px;
+}
+.nav-menu-avatar {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: var(--helppy-amber);
+  color: #fff;
+  font-size: 20px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.nav-role-pill {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.15);
+  color: rgba(255,255,255,.80);
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.nav-menu-profile-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.nav-menu-profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--helppy-radius-pill);
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fff;
+  font-size: 13px; font-weight: 600;
+  text-decoration: none;
+  transition: background .15s;
+}
+.nav-menu-profile-link:hover { background: rgba(255,255,255,.22); color: #fff; }
+.nav-menu-abonohu {
+  background: linear-gradient(135deg, rgba(245,158,11,.30), rgba(217,119,6,.40));
+  border-color: rgba(245,158,11,.40);
+  color: #fbbf24 !important;
+}
+.nav-menu-divider {
+  border-color: rgba(255,255,255,.10);
+  margin: 6px 0;
 }
 
 /* Mobile profile button (outside collapse, next to Abonohu) */
@@ -3856,9 +3911,7 @@ body.helppy-lightbox-open { overflow: hidden; }
 @media (max-width: 991.98px) {
   .helppy-nav-container .navbar-brand { order: 0; }
   .helppy-nav-container .helppy-back-btn { order: 1; }
-  .helppy-nav-container .nav-abonohu-btn { order: 2; margin-left: auto; }
-  .helppy-nav-container .nav-mobile-profile { order: 3; margin-left: 6px; }
-  .helppy-nav-container .navbar-toggler { order: 4; margin-left: 6px; }
+  .helppy-nav-container .navbar-toggler { order: 2; margin-left: auto; }
 }
 
 /* When ultra-narrow and the back button + Abonohu + toggler all fight for
@@ -5332,21 +5385,35 @@ td > a.btn { margin-bottom: 2px; }   /* if cells wrap to two lines, vertical bre
   text-align: center;
 }
 .hiw-hero-title {
-  font-size: clamp(28px, 4vw, 44px);
+  font-size: clamp(22px, 4vw, 44px);
   font-weight: 900;
   color: #fff;
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   letter-spacing: -0.4px;
 }
 .hiw-hero-sub {
-  font-size: 17px;
+  font-size: clamp(14px, 2vw, 17px);
   color: rgba(255,255,255,.70);
   margin: 0;
+  padding: 0 16px;
 }
 
-.hiw-container { padding: 56px 0 40px; }
+.hiw-container { padding: 32px 0 32px; }
 
-.hiw-group { margin-bottom: 60px; }
+.hiw-group { margin-bottom: 40px; }
+
+@media (max-width: 575.98px) {
+  .hiw-hero { padding: 28px 0 24px; }
+  .hiw-container { padding: 20px 0 20px; }
+  .hiw-group { margin-bottom: 28px; }
+  .hiw-group-header { margin-bottom: 16px; gap: 10px; }
+  .hiw-group-title { font-size: 16px; }
+  .hiw-card-body { padding: 14px; }
+  .hiw-card-title { font-size: 14px; margin-bottom: 6px; }
+  .hiw-card-desc { font-size: 13px; margin-bottom: 12px; }
+  .hiw-card-btn { font-size: 12px; padding: 8px 14px; }
+  .hiw-card-num { width: 26px; height: 26px; font-size: 12px; top: 8px; left: 8px; }
+}
 
 .hiw-group-header {
   display: flex;
